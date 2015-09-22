@@ -34,23 +34,19 @@ Download and install the Anaconda package
 
 #### On Mac (use macports): 
 
-Install macports following instructions at https://www.macports.org/install.php
-
-Install the relevant python packages in macports:
-
-sudo port install py27-scipy +openblas
-
-sudo port install py27-ipython +notebook
-
-sudo port install py27-notebook
-
-sudo port install py27-matplotlib
-
-sudo port select --set python python27
-
-sudo port select --set ipython2 py27-ipython
-
-sudo port select --set ipython py27-ipython
+<ul>
+<li>Install macports following instructions at https://www.macports.org/install.php</li>
+<li>Install the relevant python packages in macports
+<ul>
+<li>  sudo port install py27-scipy +openblas </li>
+<li>  sudo port install py27-ipython +notebook </li>
+<li>  sudo port install py27-notebook </li>
+<li>  sudo port install py27-matplotlib </li>
+<li>  sudo port select --set python python27 </li>
+<li>  sudo port select --set ipython2 py27-ipython </li>
+<li>  sudo port select --set ipython py27-ipython </li>
+</ul>
+</ul>
 
 Also, make sure that your $PATH has /opt/local/bin before /usr/bin 
 so you pick up the version of python you just installed
