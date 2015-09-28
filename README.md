@@ -1,6 +1,8 @@
 # mlpractical
 ## Machine Learning Practical (INFR11119)
 
+**Note:** At this point, you can go straight to 00_Introduction notebook - which contains more information.
+
 To run the notebooks (and later the code you are going to write within this course)
 you are expected to have installed the following packages:
 
@@ -60,7 +62,7 @@ git clone https://github.com/CSTR-Edinburgh/mlpractical.git
 
 (Note: you can do it from your git account if you have one as the
 above just clone the repo as anonymous user, though it does not 
-matter at this point, as you are not required to submit pull requests)
+matter at this point, as you are not required to submit pull requests, but you are **welcomed** to do so if you think some aspects of the notebooks can be improved!)
 
 Naviagate to the checked out directory (cd ~/mlpractical) and type:
 
