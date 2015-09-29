@@ -94,7 +94,7 @@ class MNISTDataProvider(DataProvider):
 
     def __randomize(self):
         assert isinstance(self.x, numpy.ndarray)
-        return numpy.random.permute(numpy.arange(0, self.x.shape[0]))
+        return numpy.random.permutation(numpy.arange(0, self.x.shape[0]))
 
     def next(self):
         
@@ -164,7 +164,7 @@ class FuncDataProvider(DataProvider):
 
     def __randomize(self):
         assert isinstance(self.x, numpy.ndarray)
-        return numpy.random.permute(numpy.arange(0, self.x.shape[0]))
+        return numpy.random.permutation(numpy.arange(0, self.x.shape[0]))
 
     def __iter__(self):
         return self
