@@ -1,6 +1,6 @@
+	## How do I get started?
 
-
-	1. <b>How do I get started?</b>   Setting up your virtual environment and getting the initial MLP materials is explained in the first part of the first lab, in `00_Introduction.ipynb`
+	Setting up your virtual environment and getting the initial MLP materials is explained in the first part of the first lab, in `00_Introduction.ipynb`
 
 	2. <b>How do I update to this weeks coursework?</b>  To avoid potential conflicts between the changes you have made since last week and our additions, we recommend stash your changes and pull the new code from the mlpractical repository by typing:
 	* git stash save "Lab1 work"
