@@ -5,8 +5,12 @@ Setting up your virtual environment and getting the initial MLP materials is exp
 ## How do I update to this weeks coursework?
 
 To avoid potential conflicts between the changes you have made since last week and our additions, we recommend stash your changes and pull the new code from the mlpractical repository by typing:
-	* git stash save "Lab1 work"
-	* git pull
+
+```
+git stash save "Lab1 work"
+git pull
+```
+
 Then, if you need to, you can always (temporaily) restore a desired state of the repository.
 
 
