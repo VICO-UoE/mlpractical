@@ -121,7 +121,7 @@ class MNISTDataProvider(DataProvider):
         return numpy.random.permutation(numpy.arange(0, self.x.shape[0]))
 
     def next(self):
-        print (self._curr_idx / self.batch_size)
+
         has_enough = (self._curr_idx + self.batch_size) <= self.x.shape[0]
         presented_max = (0 < self._max_num_batches <= (self._curr_idx / self.batch_size))
 
