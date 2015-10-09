@@ -44,5 +44,5 @@ and running two first interactive examples from 00_Introduction.py.
 If they run, you can simply modify `activate_mlp` alias in `./bashrc`to point to
 `venv2` instead of `venv`
 
-5) You can also remove both old `venv` amd other not needed anymore
+5) You can also remove both the old `venv` and other not needed anymore
 directories with numpy and OpenBLAS sources in `~/mlpractical/repos-3rd` directory.
