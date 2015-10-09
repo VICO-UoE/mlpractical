@@ -2,19 +2,17 @@
 # How to fix notebook's "kernel issues" on DICE
 
 Some of the people in mlpractical have been affected by a recent update to the numpy and numercial 
-library pushed to DICE last week. The symptom was restarting notebook kernel when someone
-tried to run the exercise involving numpy usage.
+library pushed to DICE last week. It concerns you when you get the message about the kernel was restarted when running code involving numpy usage.
 
-The reason of this most likely affected people who either 1) ended up with 
-default atlas libraries (which has been updated in the meantime) or 2) re-compiled 
-numpy with new DICE OpenBLAS already available, but LD_LIBRARY_PATH pointed to the 
-version compiled last time - which could introduce some unexepcted behaviours.
+In case you experience those issues you either 1) ended up with 
+default atlas libraries (which have been updated in the meantime) or 2) re-compiled 
+numpy with the new DICE OpenBLAS already available, but LD_LIBRARY_PATH you set last week put 
+priority to load OpenBLAS libraries compiled last time - which could introduce some unexepcted behaviour at runtime.
 
-## Fix
+## The Fix
 
-Follow the below setps **before** you activate the old virtual environment. The fix 
-basically involves rebuilding the virtual environments. But the whole process is now
-much simpler (due to the fact OpenBLAS is now a deafult numerical library on DICE).
+Follow the below stdps **before** you activate the old virtual environment (or deactivate it once activated). The fix 
+basically involves rebuilding the virtual environments. But the whole process is now much simpler due to the fact OpenBLAS is now a deafult numerical library on DICE.
 
 1) Comment out (or remove) `export=$LD_LIBRARY_PATH...` line in your ~/.bashrc script. Then type 
 `unset LD_LIBRARY_PATH` in the terminal. To make sure this variable is not
