@@ -16,18 +16,18 @@ Follow the below setps **before** you activate the old virtual environment. The 
 basically involves rebuilding the virtual environments. But the whole process is now
 much simpler (due to the fact OpenBLAS is now a deafult numerical library on DICE).
 
-1. Comment out (or remove) `export=$LD_LIBRARY_PATH...` line in your ~/.bashrc script. Then type 
+1) Comment out (or remove) `export=$LD_LIBRARY_PATH...` line in your ~/.bashrc script. Then type 
 `unset LD_LIBRARY_PATH` in the terminal. To make sure this variable is not
 set, type `export` and check visually in the printed list of variables
 
-2. Go to `~/mlpractical/repos-3rd/virtualenv` and install the new virtual
+2) Go to `~/mlpractical/repos-3rd/virtualenv` and install the new virtual
 environment by typing: 
 
 ```
 ./virtualenv.py --python /usr/bin/python2.7 --no-site-packages $MLP_WDIR/venv2
 ```
 
-3. Activate it by typing: source $MLP_WDIR/venv2/bin/activate and install the usual for the course packages using pip:
+3) Activate it by typing: source $MLP_WDIR/venv2/bin/activate and install the usual for the course packages using pip:
 
    * pip install pip --upgrade
    * pip install numpy
