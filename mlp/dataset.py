@@ -60,6 +60,13 @@ class DataProvider(object):
         """
         raise NotImplementedError()
 
+    def num_examples(self):
+        """
+        Returns a number of data-points in dataset
+        """
+        return NotImplementedError()
+
+
 
 class MNISTDataProvider(DataProvider):
     """
@@ -141,6 +148,9 @@ class MNISTDataProvider(DataProvider):
         self._curr_idx += self.batch_size
 
         return rval_x, self.__to_one_of_k(rval_t)
+
+    def num_examples(self):
+        return self.x.shape[0]
 
     def __to_one_of_k(self, y):
         rval = numpy.zeros((y.shape[0], self.num_classes), dtype=numpy.float32)
