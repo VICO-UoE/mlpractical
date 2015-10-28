@@ -116,6 +116,7 @@ class SGDOptimiser(Optimiser):
         tr_stats, valid_stats = [], []
 
         # do the initial validation
+        train_iterator.reset()
         tr_nll, tr_acc = self.validate(model, train_iterator)
         logger.info('Epoch %i: Training cost (%s) for random model is %.3f. Accuracy is %.2f%%'
                     % (self.lr_scheduler.epoch, cost_name, tr_nll, tr_acc * 100.))
