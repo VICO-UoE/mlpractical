@@ -46,21 +46,6 @@ class MLP(object):
             self.activations[i+1] = self.layers[i].fprop(self.activations[i])
         return self.activations[-1]
 
-    def fprop_droput(self, x, dropout_probabilites=None):
-        """
-
-        :param inputs: mini-batch of data-points x
-        :return: y (top layer activation) which is an estimate of y given x
-        """
-
-        if len(self.activations) != len(self.layers) + 1:
-            self.activations = [None]*(len(self.layers) + 1)
-
-        self.activations[0] = x
-        for i in xrange(0, len(self.layers)):
-            self.activations[i+1] = self.layers[i].fprop(self.activations[i])
-        return self.activations[-1]
-
     def bprop(self, cost_grad):
         """
         :param cost_grad: matrix -- grad of the cost w.r.t y
@@ -255,7 +240,7 @@ class Linear(Layer):
             raise NotImplementedError('Linear.bprop_cost method not implemented '
                                       'for the %s cost' % cost.get_name())
 
-    def pgrads(self, inputs, deltas, **kwargs):
+    def pgrads(self, inputs, deltas, l1_weight=0, l2_weight=0):
         """
         Return gradients w.r.t parameters
 
@@ -272,9 +257,18 @@ class Linear(Layer):
           1) da^i/dW^i and 2) da^i/db^i
         since W and b are only layer's parameters
         """
+        l2_W_penalty, l2_b_penalty = 0, 0
+        if l2_weight > 0:
+            l2_W_penalty = l2_weight*self.W
+            l2_b_penalty = l2_weight*self.b
 
-        grad_W = numpy.dot(inputs.T, deltas)
-        grad_b = numpy.sum(deltas, axis=0)
+        l1_W_penalty, l1_b_penalty = 0, 0
+        if l1_weight > 0:
+            l1_W_penalty = l1_weight*numpy.sign(self.W)
+            l1_b_penalty = l1_weight*numpy.sign(self.b)
+
+        grad_W = numpy.dot(inputs.T, deltas) + l2_W_penalty + l1_W_penalty
+        grad_b = numpy.sum(deltas, axis=0) + l2_b_penalty + l1_b_penalty
 
         return [grad_W, grad_b]
 
@@ -370,4 +364,3 @@ class Softmax(Linear):
 
     def get_name(self):
         return 'softmax'
-        

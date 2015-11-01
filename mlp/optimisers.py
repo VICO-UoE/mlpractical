@@ -58,7 +58,11 @@ class Optimiser(object):
 
 
 class SGDOptimiser(Optimiser):
-    def __init__(self, lr_scheduler):
+    def __init__(self, lr_scheduler,
+                 dp_scheduler=None,
+                 l1_weight=0.0,
+                 l2_weight=0.0):
+
         super(SGDOptimiser, self).__init__()
 
         assert isinstance(lr_scheduler, LearningRateScheduler), (
@@ -67,6 +71,9 @@ class SGDOptimiser(Optimiser):
         )
 
         self.lr_scheduler = lr_scheduler
+        self.dp_scheduler = dp_scheduler
+        self.l1_weight = l1_weight
+        self.l2_weight = l2_weight
 
     def train_epoch(self, model, train_iterator, learning_rate):
 
@@ -97,7 +104,10 @@ class SGDOptimiser(Optimiser):
 
             for i in xrange(0, len(model.layers)):
                 params = model.layers[i].get_params()
-                grads = model.layers[i].pgrads(model.activations[i], model.deltas[i + 1])
+                grads = model.layers[i].pgrads(inputs=model.activations[i],
+                                               deltas=model.deltas[i + 1],
+                                               l1_weight=self.l1_weight,
+                                               l2_weight=self.l2_weight)
                 uparams = []
                 for param, grad in zip(params, grads):
                     param = param - effective_learning_rate * grad
@@ -118,14 +128,14 @@ class SGDOptimiser(Optimiser):
         # do the initial validation
         train_iterator.reset()
         tr_nll, tr_acc = self.validate(model, train_iterator)
-        logger.info('Epoch %i: Training cost (%s) for random model is %.3f. Accuracy is %.2f%%'
+        logger.info('Epoch %i: Training cost (%s) for initial model is %.3f. Accuracy is %.2f%%'
                     % (self.lr_scheduler.epoch, cost_name, tr_nll, tr_acc * 100.))
         tr_stats.append((tr_nll, tr_acc))
 
         if valid_iterator is not None:
             valid_iterator.reset()
             valid_nll, valid_acc = self.validate(model, valid_iterator)
-            logger.info('Epoch %i: Validation cost (%s) for random model is %.3f. Accuracy is %.2f%%'
+            logger.info('Epoch %i: Validation cost (%s) for initial model is %.3f. Accuracy is %.2f%%'
                         % (self.lr_scheduler.epoch, cost_name, valid_nll, valid_acc * 100.))
             valid_stats.append((valid_nll, valid_acc))
 
@@ -154,8 +164,8 @@ class SGDOptimiser(Optimiser):
                 self.lr_scheduler.get_next_rate(None)
             vstop = time.clock()
 
-            train_speed = train_iterator.num_examples() / (tstop - tstart)
-            valid_speed = valid_iterator.num_examples() / (vstop - vstart)
+            train_speed = train_iterator.num_examples_presented() / (tstop - tstart)
+            valid_speed = valid_iterator.num_examples_presented() / (vstop - vstart)
             tot_time = vstop - tstart
             #pps = presentations per second
             logger.info("Epoch %i: Took %.0f seconds. Training speed %.0f pps. "
