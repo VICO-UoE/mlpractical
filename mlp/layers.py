@@ -257,18 +257,9 @@ class Linear(Layer):
           1) da^i/dW^i and 2) da^i/db^i
         since W and b are only layer's parameters
         """
-        l2_W_penalty, l2_b_penalty = 0, 0
-        if l2_weight > 0:
-            l2_W_penalty = l2_weight*self.W
-            l2_b_penalty = l2_weight*self.b
 
-        l1_W_penalty, l1_b_penalty = 0, 0
-        if l1_weight > 0:
-            l1_W_penalty = l1_weight*numpy.sign(self.W)
-            l1_b_penalty = l1_weight*numpy.sign(self.b)
-
-        grad_W = numpy.dot(inputs.T, deltas) + l2_W_penalty + l1_W_penalty
-        grad_b = numpy.sum(deltas, axis=0) + l2_b_penalty + l1_b_penalty
+        grad_W = numpy.dot(inputs.T, deltas)
+        grad_b = numpy.sum(deltas, axis=0)
 
         return [grad_W, grad_b]
 
@@ -352,7 +343,7 @@ class Softmax(Linear):
         return y
 
     def bprop(self, h, igrads):
-        raise NotImplementedError()
+        raise NotImplementedError('Softmax.bprop not implemented for hidden layer.')
 
     def bprop_cost(self, h, igrads, cost):
 
