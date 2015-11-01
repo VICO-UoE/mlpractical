@@ -144,7 +144,7 @@ class Layer(object):
 
         raise NotImplementedError()
 
-    def pgrads(self, inputs, deltas):
+    def pgrads(self, inputs, deltas, **kwargs):
         """
         Return gradients w.r.t parameters
         """
@@ -240,12 +240,13 @@ class Linear(Layer):
             raise NotImplementedError('Linear.bprop_cost method not implemented '
                                       'for the %s cost' % cost.get_name())
 
-    def pgrads(self, inputs, deltas):
+    def pgrads(self, inputs, deltas, l1_weight=0, l2_weight=0):
         """
         Return gradients w.r.t parameters
 
         :param inputs, input to the i-th layer
         :param deltas, deltas computed in bprop stage up to -ith layer
+        :param kwargs, key-value optional arguments
         :return list of grads w.r.t parameters dE/dW and dE/db in *exactly*
                 the same order as the params are returned by get_params()
 
@@ -274,8 +275,83 @@ class Linear(Layer):
     def get_name(self):
         return 'linear'
 
-        
-        
-        
-        
-        
+
+class Sigmoid(Linear):
+    def __init__(self,  idim, odim,
+                 rng=None,
+                 irange=0.1):
+
+        super(Sigmoid, self).__init__(idim, odim, rng, irange)
+    
+    def fprop(self, inputs):
+        #get the linear activations
+        a = super(Sigmoid, self).fprop(inputs)
+        #stabilise the exp() computation in case some values in
+        #'a' get very negative. We limit both tails, however only
+        #negative values may lead to numerical issues -- exp(-a)
+        #clip() function does the following operation faster:
+        # a[a < -30.] = 30,
+        # a[a > 30.] = 30.
+        numpy.clip(a, -30.0, 30.0, out=a)
+        h = 1.0/(1 + numpy.exp(-a))
+        return h
+    
+    def bprop(self, h, igrads):
+        dsigm = h * (1.0 - h)
+        deltas = igrads * dsigm
+        ___, ograds = super(Sigmoid, self).bprop(h=None, igrads=deltas)
+        return deltas, ograds
+
+    def cost_bprop(self, h, igrads, cost):
+        if cost is None or cost.get_name() == 'bce':
+            return super(Sigmoid, self).bprop(h=h, igrads=igrads)
+        else:
+            raise NotImplementedError('Sigmoid.bprop_cost method not implemented '
+                                      'for the %s cost' % cost.get_name())
+
+    def get_name(self):
+        return 'sigmoid'
+
+
+class Softmax(Linear):
+
+    def __init__(self,idim, odim,
+                 rng=None,
+                 irange=0.1):
+
+        super(Softmax, self).__init__(idim,
+                                      odim,
+                                      rng=rng,
+                                      irange=irange)
+    
+    def fprop(self, inputs):
+
+        # compute the linear outputs
+        a = super(Softmax, self).fprop(inputs)
+        # apply numerical stabilisation by subtracting max 
+        # from each row (not required for the coursework)
+        # then compute exponent
+        assert a.ndim in [1, 2], (
+            "Expected the linear activation in Softmax layer to be either "
+            "vector or matrix, got %ith dimensional tensor" % a.ndim
+        )
+        axis = a.ndim - 1
+        exp_a = numpy.exp(a - numpy.max(a, axis=axis, keepdims=True))
+        # finally, normalise by the sum within each example
+        y = exp_a/numpy.sum(exp_a, axis=axis, keepdims=True)
+
+        return y
+
+    def bprop(self, h, igrads):
+        raise NotImplementedError('Softmax.bprop not implemented for hidden layer.')
+
+    def bprop_cost(self, h, igrads, cost):
+
+        if cost is None or cost.get_name() == 'ce':
+            return super(Softmax, self).bprop(h=h, igrads=igrads)
+        else:
+            raise NotImplementedError('Softmax.bprop_cost method not implemented '
+                                      'for %s cost' % cost.get_name())
+
+    def get_name(self):
+        return 'softmax'
