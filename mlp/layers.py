@@ -290,7 +290,7 @@ class Sigmoid(Linear):
         #'a' get very negative. We limit both tails, however only
         #negative values may lead to numerical issues -- exp(-a)
         #clip() function does the following operation faster:
-        # a[a < -30.] = 30,
+        # a[a < -30.] = -30,
         # a[a > 30.] = 30.
         numpy.clip(a, -30.0, 30.0, out=a)
         h = 1.0/(1 + numpy.exp(-a))
