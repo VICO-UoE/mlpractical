@@ -76,7 +76,7 @@ class Optimiser(object):
                 if l2_weight > 0:
                     l2_cost += 0.5 * l2_weight * numpy.sum(param**2)
                 if l1_weight > 0:
-                    l1_cost += l1_weight * numpy.sum(numpy.sign(param))
+                    l1_cost += l1_weight * numpy.sum(numpy.abs(param))
 
         return l1_cost, l2_cost
 
