@@ -18,7 +18,7 @@ class MLP(object):
     through the model (for a mini-batch), which is required to compute
     the gradients for the parameters
     """
-    def __init__(self, cost):
+    def __init__(self, cost, rng=None):
 
         assert isinstance(cost, Cost), (
             "Cost needs to be of type mlp.costs.Cost, got %s" % type(cost)
@@ -30,6 +30,11 @@ class MLP(object):
         self.deltas = [] #keeps back-propagated error signals (deltas from equations)
                          # for a given minibatch and each layer
         self.cost = cost
+
+        if rng is None:
+            self.rng = numpy.random.RandomState([2015,11,11])
+        else:
+            self.rng = rng
 
     def fprop(self, x):
         """
@@ -44,6 +49,32 @@ class MLP(object):
         self.activations[0] = x
         for i in xrange(0, len(self.layers)):
             self.activations[i+1] = self.layers[i].fprop(self.activations[i])
+        return self.activations[-1]
+
+    def fprop_dropout(self, x, dp_scheduler):
+        """
+        :param inputs: mini-batch of data-points x
+        :param dp_scheduler: dropout scheduler
+        :return: y (top layer activation) which is an estimate of y given x
+        """
+
+        if len(self.activations) != len(self.layers) + 1:
+            self.activations = [None]*(len(self.layers) + 1)
+
+        p_inp, p_hid = dp_scheduler.get_rate()
+
+        d_inp = 1
+        p_inp_scaler, p_hid_scaler = 1.0/p_inp, 1.0/p_hid
+        if p_inp < 1:
+            d_inp = self.rng.binomial(1, p_inp, size=x.shape)
+
+        self.activations[0] = p_inp_scaler*d_inp*x
+        for i in xrange(0, len(self.layers)):
+            d_hid = 1
+            if p_hid < 1 and i > 0:
+                d_hid = self.rng.binomial(1, p_hid, size=self.activations[i].shape)
+            self.activations[i+1] = self.layers[i].fprop(p_hid_scaler*d_hid*self.activations[i])
+
         return self.activations[-1]
 
     def bprop(self, cost_grad):
@@ -258,8 +289,20 @@ class Linear(Layer):
         since W and b are only layer's parameters
         """
 
-        grad_W = numpy.dot(inputs.T, deltas)
-        grad_b = numpy.sum(deltas, axis=0)
+        #you could basically use different scalers for biases
+        #and weights, but it is not implemented here like this
+        l2_W_penalty, l2_b_penalty = 0, 0
+        if l2_weight > 0:
+            l2_W_penalty = l2_weight*self.W
+            l2_b_penalty = l2_weight*self.b
+
+        l1_W_penalty, l1_b_penalty = 0, 0
+        if l1_weight > 0:
+            l1_W_penalty = l1_weight*numpy.sign(self.W)
+            l1_b_penalty = l1_weight*numpy.sign(self.b)
+
+        grad_W = numpy.dot(inputs.T, deltas) + l2_W_penalty + l1_W_penalty
+        grad_b = numpy.sum(deltas, axis=0) + l2_b_penalty + l1_b_penalty
 
         return [grad_W, grad_b]
 
@@ -323,12 +366,12 @@ class Softmax(Linear):
                                       odim,
                                       rng=rng,
                                       irange=irange)
-    
+
     def fprop(self, inputs):
 
         # compute the linear outputs
         a = super(Softmax, self).fprop(inputs)
-        # apply numerical stabilisation by subtracting max 
+        # apply numerical stabilisation by subtracting max
         # from each row (not required for the coursework)
         # then compute exponent
         assert a.ndim in [1, 2], (
@@ -355,3 +398,88 @@ class Softmax(Linear):
 
     def get_name(self):
         return 'softmax'
+
+
+class Relu(Linear):
+    def __init__(self,  idim, odim,
+                 rng=None,
+                 irange=0.1):
+
+        super(Relu, self).__init__(idim, odim, rng, irange)
+
+    def fprop(self, inputs):
+        #get the linear activations
+        a = super(Relu, self).fprop(inputs)
+        h = numpy.clip(a, 0, 20.0)
+        #h = numpy.maximum(a, 0)
+        return h
+
+    def bprop(self, h, igrads):
+        deltas = (h > 0)*igrads + (h <= 0)*igrads
+        ___, ograds = super(Relu, self).bprop(h=None, igrads=deltas)
+        return deltas, ograds
+
+    def cost_bprop(self, h, igrads, cost):
+        raise NotImplementedError('Relu.bprop_cost method not implemented '
+                                      'for the %s cost' % cost.get_name())
+
+    def get_name(self):
+        return 'relu'
+
+
+class Tanh(Linear):
+    def __init__(self,  idim, odim,
+                 rng=None,
+                 irange=0.1):
+
+        super(Tanh, self).__init__(idim, odim, rng, irange)
+
+    def fprop(self, inputs):
+        #get the linear activations
+        a = super(Tanh, self).fprop(inputs)
+        numpy.clip(a, -30.0, 30.0, out=a)
+        h = numpy.tanh(a)
+        return h
+
+    def bprop(self, h, igrads):
+        deltas = (1.0 - h**2) * igrads
+        ___, ograds = super(Tanh, self).bprop(h=None, igrads=deltas)
+        return deltas, ograds
+
+    def cost_bprop(self, h, igrads, cost):
+        raise NotImplementedError('Tanh.bprop_cost method not implemented '
+                                      'for the %s cost' % cost.get_name())
+
+    def get_name(self):
+        return 'tanh'
+
+
+class Maxout(Linear):
+    def __init__(self,  idim, odim, k,
+                 rng=None,
+                 irange=0.05):
+
+        super(Maxout, self).__init__(idim, odim, rng, irange)
+        self.k = k
+
+    def fprop(self, inputs):
+        #get the linear activations
+        a = super(Maxout, self).fprop(inputs)
+        ar = a.reshape(a.shape[0], self.odim, self.k)
+        h, h_argmax = max_and_argmax(ar, axes=3, keepdims_argmax=True)
+        self.h_argmax = h_argmax
+        return h
+
+    def bprop(self, h, igrads):
+        igrads_up = igrads.reshape(a.shape[0], -1, 1)
+        igrads_up = numpy.tile(a, 1, self.k)
+        deltas = (igrads_up * self.h_argmax).reshape(a.shape[0], -1)
+        ___, ograds = super(Maxout, self).bprop(h=None, igrads=deltas)
+        return deltas, ograds
+
+    def cost_bprop(self, h, igrads, cost):
+        raise NotImplementedError('Maxout.bprop_cost method not implemented '
+                                      'for the %s cost' % cost.get_name())
+
+    def get_name(self):
+        return 'maxout'

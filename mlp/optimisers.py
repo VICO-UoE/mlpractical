@@ -112,8 +112,12 @@ class SGDOptimiser(Optimiser):
 
         acc_list, nll_list = [], []
         for x, t in train_iterator:
+
             # get the prediction
-            y = model.fprop(x)
+            if self.dp_scheduler is not None:
+                y = model.fprop_dropout(x, self.dp_scheduler)
+            else:
+                y = model.fprop(x)
 
             # compute the cost and grad of the cost w.r.t y
             cost = model.cost.cost(y, t)
