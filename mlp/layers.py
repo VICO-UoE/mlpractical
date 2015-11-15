@@ -469,7 +469,7 @@ class Relu(Linear):
         return h
 
     def bprop(self, h, igrads):
-        deltas = (h > 0)*igrads + (h <= 0)*igrads
+        deltas = (h > 0)*igrads
         ___, ograds = super(Relu, self).bprop(h=None, igrads=deltas)
         return deltas, ograds
 
@@ -527,6 +527,11 @@ class Maxout(Linear):
         return h[:, :, 0] #get rid of the last reduced dimensison (of size 1)
 
     def bprop(self, h, igrads):
+	    #hack for dropout backprop (ignore dropped neurons), note, this is not
+        #entirely correct when h fires at 0 exaclty (but is not dropped, when 
+        #derivative should be 1. However, this is rather unlikely to happen and
+        #probably can be ignored right now
+        igrads = (h != 0)*igrads
         #convert into the shape where upsampling is easier
         igrads_up = igrads.reshape(igrads.shape[0], self.max_odim, 1)
         #upsample to the linear dimension (but reshaped to (batch_size, maxed_num (1), pool_size)
