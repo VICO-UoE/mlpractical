@@ -265,6 +265,11 @@ class Linear(Layer):
         :param inputs: matrix of features (x) or the output of the previous layer h^{i-1}
         :return: h^i, matrix of transformed by layer features
         """
+
+        #input comes from 4D convolutional tensor, reshape to expected shape
+        if inputs.ndim == 4:
+            inputs = inputs.reshape(inputs.shape[0], -1)
+
         a = numpy.dot(inputs, self.W) + self.b
         # here f() is an identity function, so just return a linear transformation
         return a
@@ -333,6 +338,10 @@ class Linear(Layer):
           1) da^i/dW^i and 2) da^i/db^i
         since W and b are only layer's parameters
         """
+
+        #input comes from 4D convolutional tensor, reshape to expected shape
+        if inputs.ndim == 4:
+            inputs = inputs.reshape(inputs.shape[0], -1)
 
         #you could basically use different scalers for biases
         #and weights, but it is not implemented here like this
