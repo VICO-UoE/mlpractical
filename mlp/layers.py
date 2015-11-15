@@ -10,6 +10,51 @@ from mlp.costs import Cost
 logger = logging.getLogger(__name__)
 
 
+def max_and_argmax(x, axes=None, keepdims_max=False, keepdims_argmax=False):
+    """
+    Return both max and argmax for the given multi-dimensional array, possibly
+    preserve the original shapes
+    :param x: input tensor
+    :param axes: tuple of ints denoting axes across which
+                 one should perform reduction
+    :param keepdims_max: boolean, if true, shape of x is preserved in result
+    :param keepdims_argmax:, boolean, if true, shape of x is preserved in result
+    :return: max (number) and argmax (indices) of max element along certain axes
+             in multi-dimensional tensor
+    """
+    if axes is None:
+        rval_argmax = numpy.argmax(x)
+        if keepdims_argmax:
+            rval_argmax = numpy.unravel_index(rval_argmax, x.shape)
+    else:
+        if isinstance(axes, int):
+            axes = (axes,)
+        axes = tuple(axes)
+        keep_axes = numpy.array([i for i in range(x.ndim) if i not in axes])
+        transposed_x = numpy.transpose(x, numpy.concatenate((keep_axes, axes)))
+        reshaped_x = transposed_x.reshape(transposed_x.shape[:len(keep_axes)] + (-1,))
+        rval_argmax = numpy.asarray(numpy.argmax(reshaped_x, axis=-1), dtype=numpy.int64)
+
+        # rval_max_arg keeps the arg index referencing to the axis along which reduction was performed (axis=-1)
+        # when keepdims_argmax is True we need to map it back to the original shape of tensor x
+        # print 'rval maxaarg', rval_argmax.ndim, rval_argmax.shape, rval_argmax
+        if keepdims_argmax:
+            dim = tuple([x.shape[a] for a in axes])
+            rval_argmax = numpy.array([idx + numpy.unravel_index(val, dim)
+                                       for idx, val in numpy.ndenumerate(rval_argmax)])
+            # convert to numpy indexing convention (row indices first, then columns)
+            rval_argmax = zip(*rval_argmax)
+
+    if keepdims_max is False and keepdims_argmax is True:
+        # this could potentially save O(N) steps by not traversing array once more
+        # to get max value, haven't benchmark it though
+        rval_max = x[rval_argmax]
+    else:
+        rval_max = numpy.asarray(numpy.amax(x, axis=axes, keepdims=keepdims_max))
+
+    return rval_max, rval_argmax
+
+
 class MLP(object):
     """
     This is a container for an arbitrary sequence of other transforms
@@ -18,7 +63,7 @@ class MLP(object):
     through the model (for a mini-batch), which is required to compute
     the gradients for the parameters
     """
-    def __init__(self, cost):
+    def __init__(self, cost, rng=None):
 
         assert isinstance(cost, Cost), (
             "Cost needs to be of type mlp.costs.Cost, got %s" % type(cost)
@@ -30,6 +75,11 @@ class MLP(object):
         self.deltas = [] #keeps back-propagated error signals (deltas from equations)
                          # for a given minibatch and each layer
         self.cost = cost
+
+        if rng is None:
+            self.rng = numpy.random.RandomState([2015,11,11])
+        else:
+            self.rng = rng
 
     def fprop(self, x):
         """
@@ -44,6 +94,32 @@ class MLP(object):
         self.activations[0] = x
         for i in xrange(0, len(self.layers)):
             self.activations[i+1] = self.layers[i].fprop(self.activations[i])
+        return self.activations[-1]
+
+    def fprop_dropout(self, x, dp_scheduler):
+        """
+        :param inputs: mini-batch of data-points x
+        :param dp_scheduler: dropout scheduler
+        :return: y (top layer activation) which is an estimate of y given x
+        """
+
+        if len(self.activations) != len(self.layers) + 1:
+            self.activations = [None]*(len(self.layers) + 1)
+
+        p_inp, p_hid = dp_scheduler.get_rate()
+
+        d_inp = 1
+        p_inp_scaler, p_hid_scaler = 1.0/p_inp, 1.0/p_hid
+        if p_inp < 1:
+            d_inp = self.rng.binomial(1, p_inp, size=x.shape)
+
+        self.activations[0] = p_inp_scaler*d_inp*x
+        for i in xrange(0, len(self.layers)):
+            d_hid = 1
+            if p_hid < 1 and i > 0:
+                d_hid = self.rng.binomial(1, p_hid, size=self.activations[i].shape)
+            self.activations[i+1] = self.layers[i].fprop(p_hid_scaler*d_hid*self.activations[i])
+
         return self.activations[-1]
 
     def bprop(self, cost_grad):
@@ -189,6 +265,11 @@ class Linear(Layer):
         :param inputs: matrix of features (x) or the output of the previous layer h^{i-1}
         :return: h^i, matrix of transformed by layer features
         """
+
+        #input comes from 4D convolutional tensor, reshape to expected shape
+        if inputs.ndim == 4:
+            inputs = inputs.reshape(inputs.shape[0], -1)
+
         a = numpy.dot(inputs, self.W) + self.b
         # here f() is an identity function, so just return a linear transformation
         return a
@@ -258,8 +339,24 @@ class Linear(Layer):
         since W and b are only layer's parameters
         """
 
-        grad_W = numpy.dot(inputs.T, deltas)
-        grad_b = numpy.sum(deltas, axis=0)
+        #input comes from 4D convolutional tensor, reshape to expected shape
+        if inputs.ndim == 4:
+            inputs = inputs.reshape(inputs.shape[0], -1)
+
+        #you could basically use different scalers for biases
+        #and weights, but it is not implemented here like this
+        l2_W_penalty, l2_b_penalty = 0, 0
+        if l2_weight > 0:
+            l2_W_penalty = l2_weight*self.W
+            l2_b_penalty = l2_weight*self.b
+
+        l1_W_penalty, l1_b_penalty = 0, 0
+        if l1_weight > 0:
+            l1_W_penalty = l1_weight*numpy.sign(self.W)
+            l1_b_penalty = l1_weight*numpy.sign(self.b)
+
+        grad_W = numpy.dot(inputs.T, deltas) + l2_W_penalty + l1_W_penalty
+        grad_b = numpy.sum(deltas, axis=0) + l2_b_penalty + l1_b_penalty
 
         return [grad_W, grad_b]
 
@@ -323,12 +420,12 @@ class Softmax(Linear):
                                       odim,
                                       rng=rng,
                                       irange=irange)
-    
+
     def fprop(self, inputs):
 
         # compute the linear outputs
         a = super(Softmax, self).fprop(inputs)
-        # apply numerical stabilisation by subtracting max 
+        # apply numerical stabilisation by subtracting max
         # from each row (not required for the coursework)
         # then compute exponent
         assert a.ndim in [1, 2], (
@@ -355,3 +452,97 @@ class Softmax(Linear):
 
     def get_name(self):
         return 'softmax'
+
+
+class Relu(Linear):
+    def __init__(self,  idim, odim,
+                 rng=None,
+                 irange=0.1):
+
+        super(Relu, self).__init__(idim, odim, rng, irange)
+
+    def fprop(self, inputs):
+        #get the linear activations
+        a = super(Relu, self).fprop(inputs)
+        h = numpy.clip(a, 0, 20.0)
+        #h = numpy.maximum(a, 0)
+        return h
+
+    def bprop(self, h, igrads):
+        deltas = (h > 0)*igrads + (h <= 0)*igrads
+        ___, ograds = super(Relu, self).bprop(h=None, igrads=deltas)
+        return deltas, ograds
+
+    def cost_bprop(self, h, igrads, cost):
+        raise NotImplementedError('Relu.bprop_cost method not implemented '
+                                      'for the %s cost' % cost.get_name())
+
+    def get_name(self):
+        return 'relu'
+
+
+class Tanh(Linear):
+    def __init__(self,  idim, odim,
+                 rng=None,
+                 irange=0.1):
+
+        super(Tanh, self).__init__(idim, odim, rng, irange)
+
+    def fprop(self, inputs):
+        #get the linear activations
+        a = super(Tanh, self).fprop(inputs)
+        numpy.clip(a, -30.0, 30.0, out=a)
+        h = numpy.tanh(a)
+        return h
+
+    def bprop(self, h, igrads):
+        deltas = (1.0 - h**2) * igrads
+        ___, ograds = super(Tanh, self).bprop(h=None, igrads=deltas)
+        return deltas, ograds
+
+    def cost_bprop(self, h, igrads, cost):
+        raise NotImplementedError('Tanh.bprop_cost method not implemented '
+                                      'for the %s cost' % cost.get_name())
+
+    def get_name(self):
+        return 'tanh'
+
+
+class Maxout(Linear):
+    def __init__(self,  idim, odim, k,
+                 rng=None,
+                 irange=0.05):
+
+        super(Maxout, self).__init__(idim, odim*k, rng, irange)
+
+        self.max_odim = odim
+        self.k = k
+
+    def fprop(self, inputs):
+        #get the linear activations
+        a = super(Maxout, self).fprop(inputs)
+        ar = a.reshape(a.shape[0], self.max_odim, self.k)
+        h, h_argmax = max_and_argmax(ar, axes=2, keepdims_max=True, keepdims_argmax=True)
+        self.h_argmax = h_argmax
+        return h[:, :, 0] #get rid of the last reduced dimensison (of size 1)
+
+    def bprop(self, h, igrads):
+        #convert into the shape where upsampling is easier
+        igrads_up = igrads.reshape(igrads.shape[0], self.max_odim, 1)
+        #upsample to the linear dimension (but reshaped to (batch_size, maxed_num (1), pool_size)
+        igrads_up = numpy.tile(igrads_up, (1, 1, self.k))
+        #generate mask matrix and set to 1 maxed elements
+        mask = numpy.zeros_like(igrads_up)
+        mask[self.h_argmax] = 1.0
+        #do bprop through max operator and then reshape into 2D
+        deltas = (igrads_up * mask).reshape(igrads_up.shape[0], -1)
+        #and then do bprop thorough linear part
+        ___, ograds = super(Maxout, self).bprop(h=None, igrads=deltas)
+        return deltas, ograds
+
+    def cost_bprop(self, h, igrads, cost):
+        raise NotImplementedError('Maxout.bprop_cost method not implemented '
+                                      'for the %s cost' % cost.get_name())
+
+    def get_name(self):
+        return 'maxout'

@@ -153,3 +153,18 @@ class LearningRateNewBob(LearningRateScheduler):
             self.epoch += 1
     
         return self.rate
+
+
+class DropoutFixed(LearningRateList):
+
+    def __init__(self, p_inp_keep, p_hid_keep):
+        assert 0 < p_inp_keep <= 1 and 0 < p_hid_keep <= 1, (
+            "Dropout 'keep' probabilites are suppose to be in (0, 1] range"
+        )
+        super(DropoutFixed, self).__init__([(p_inp_keep, p_hid_keep)], max_epochs=999)
+
+    def get_rate(self):
+        return self.lr_list[0]
+
+    def get_next_rate(self, current_error=None):
+        return self.get_rate()
