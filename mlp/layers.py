@@ -10,6 +10,51 @@ from mlp.costs import Cost
 logger = logging.getLogger(__name__)
 
 
+def max_and_argmax(x, axes=None, keepdims_max=False, keepdims_argmax=False):
+    """
+    Return both max and argmax for the given multi-dimensional array, possibly
+    preserve the original shapes
+    :param x: input tensor
+    :param axes: tuple of ints denoting axes across which
+                 one should perform reduction
+    :param keepdims_max: boolean, if true, shape of x is preserved in result
+    :param keepdims_argmax:, boolean, if true, shape of x is preserved in result
+    :return: max (number) and argmax (indices) of max element along certain axes
+             in multi-dimensional tensor
+    """
+    if axes is None:
+        rval_argmax = numpy.argmax(x)
+        if keepdims_argmax:
+            rval_argmax = numpy.unravel_index(rval_argmax, x.shape)
+    else:
+        if isinstance(axes, int):
+            axes = (axes,)
+        axes = tuple(axes)
+        keep_axes = numpy.array([i for i in range(x.ndim) if i not in axes])
+        transposed_x = numpy.transpose(x, numpy.concatenate((keep_axes, axes)))
+        reshaped_x = transposed_x.reshape(transposed_x.shape[:len(keep_axes)] + (-1,))
+        rval_argmax = numpy.asarray(numpy.argmax(reshaped_x, axis=-1), dtype=numpy.int64)
+
+        # rval_max_arg keeps the arg index referencing to the axis along which reduction was performed (axis=-1)
+        # when keepdims_argmax is True we need to map it back to the original shape of tensor x
+        # print 'rval maxaarg', rval_argmax.ndim, rval_argmax.shape, rval_argmax
+        if keepdims_argmax:
+            dim = tuple([x.shape[a] for a in axes])
+            rval_argmax = numpy.array([idx + numpy.unravel_index(val, dim)
+                                       for idx, val in numpy.ndenumerate(rval_argmax)])
+            # convert to numpy indexing convention (row indices first, then columns)
+            rval_argmax = zip(*rval_argmax)
+
+    if keepdims_max is False and keepdims_argmax is True:
+        # this could potentially save O(N) steps by not traversing array once more
+        # to get max value, haven't benchmark it though
+        rval_max = x[rval_argmax]
+    else:
+        rval_max = numpy.asarray(numpy.amax(x, axis=axes, keepdims=keepdims_max))
+
+    return rval_max, rval_argmax
+
+
 class MLP(object):
     """
     This is a container for an arbitrary sequence of other transforms
@@ -459,21 +504,30 @@ class Maxout(Linear):
                  rng=None,
                  irange=0.05):
 
-        super(Maxout, self).__init__(idim, odim, rng, irange)
+        super(Maxout, self).__init__(idim, odim*k, rng, irange)
+
+        self.max_odim = odim
         self.k = k
 
     def fprop(self, inputs):
         #get the linear activations
         a = super(Maxout, self).fprop(inputs)
-        ar = a.reshape(a.shape[0], self.odim, self.k)
-        h, h_argmax = max_and_argmax(ar, axes=3, keepdims_argmax=True)
+        ar = a.reshape(a.shape[0], self.max_odim, self.k)
+        h, h_argmax = max_and_argmax(ar, axes=2, keepdims_max=True, keepdims_argmax=True)
         self.h_argmax = h_argmax
-        return h
+        return h[:, :, 0] #get rid of the last reduced dimensison (of size 1)
 
     def bprop(self, h, igrads):
-        igrads_up = igrads.reshape(a.shape[0], -1, 1)
-        igrads_up = numpy.tile(a, 1, self.k)
-        deltas = (igrads_up * self.h_argmax).reshape(a.shape[0], -1)
+        #convert into the shape where upsampling is easier
+        igrads_up = igrads.reshape(igrads.shape[0], self.max_odim, 1)
+        #upsample to the linear dimension (but reshaped to (batch_size, maxed_num (1), pool_size)
+        igrads_up = numpy.tile(igrads_up, (1, 1, self.k))
+        #generate mask matrix and set to 1 maxed elements
+        mask = numpy.zeros_like(igrads_up)
+        mask[self.h_argmax] = 1.0
+        #do bprop through max operator and then reshape into 2D
+        deltas = (igrads_up * mask).reshape(igrads_up.shape[0], -1)
+        #and then do bprop thorough linear part
         ___, ograds = super(Maxout, self).bprop(h=None, igrads=deltas)
         return deltas, ograds
 
