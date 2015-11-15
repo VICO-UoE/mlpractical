@@ -527,7 +527,7 @@ class Maxout(Linear):
         return h[:, :, 0] #get rid of the last reduced dimensison (of size 1)
 
     def bprop(self, h, igrads):
-	    #hack for dropout backprop (ignore dropped neurons), note, this is not
+	#hack for dropout backprop (ignore dropped neurons), note, this is not
         #entirely correct when h fires at 0 exaclty (but is not dropped, when 
         #derivative should be 1. However, this is rather unlikely to happen and
         #probably can be ignored right now
