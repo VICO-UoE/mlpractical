@@ -119,7 +119,7 @@ class MLP(object):
             d_hid = 1
             if p_hid < 1:
                 d_hid = self.rng.binomial(1, p_hid, size=self.activations[i].shape)
-            self.activations[i] = p_hid_scaler*d_hid*self.activations[i]
+            self.activations[i] *= p_hid_scaler * d_hid
             self.activations[i+1] = self.layers[i].fprop(self.activations[i])
 
         return self.activations[-1]
@@ -529,10 +529,11 @@ class Maxout(Linear):
         return h[:, :, 0] #get rid of the last reduced dimensison (of size 1)
 
     def bprop(self, h, igrads):
-	#hack for dropout backprop (ignore dropped neurons), note, this is not
-        #entirely correct when h fires at 0 exaclty (but is not dropped, when 
-        #derivative should be 1. However, this is rather unlikely to happen and
-        #probably can be ignored right now
+        #hack for dropout backprop (ignore dropped neurons). Note, this is not
+        #entirely correct when h fires at 0 exaclty (but is not dropped, in which case
+        #derivative should be 1). However, this is rather unlikely to happen (that h fires as 0)
+        #and probably can be ignored for now. Otherwise, one would have to keep the dropped unit
+        #indexes and zero grads according to them.
         igrads = (h != 0)*igrads
         #convert into the shape where upsampling is easier
         igrads_up = igrads.reshape(igrads.shape[0], self.max_odim, 1)
