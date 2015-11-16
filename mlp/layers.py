@@ -114,11 +114,13 @@ class MLP(object):
             d_inp = self.rng.binomial(1, p_inp, size=x.shape)
 
         self.activations[0] = p_inp_scaler*d_inp*x
-        for i in xrange(0, len(self.layers)):
+        self.activations[1] = self.layers[0].fprop(self.activations[0])
+        for i in xrange(1, len(self.layers)):
             d_hid = 1
-            if p_hid < 1 and i > 0:
+            if p_hid < 1:
                 d_hid = self.rng.binomial(1, p_hid, size=self.activations[i].shape)
-            self.activations[i+1] = self.layers[i].fprop(p_hid_scaler*d_hid*self.activations[i])
+            self.activations[i] = p_hid_scaler*d_hid*self.activations[i]
+            self.activations[i+1] = self.layers[i].fprop(self.activations[i])
 
         return self.activations[-1]
 
