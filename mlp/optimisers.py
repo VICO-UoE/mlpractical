@@ -124,7 +124,7 @@ class SGDOptimiser(Optimiser):
             cost_grad = model.cost.grad(y, t)
 
             # do backward pass through the model
-            model.bprop(cost_grad)
+            model.bprop(cost_grad, self.dp_scheduler)
 
             #update the model, here we iterate over layers
             #and then over each parameter in the layer

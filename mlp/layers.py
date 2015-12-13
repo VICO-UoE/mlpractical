@@ -113,18 +113,18 @@ class MLP(object):
         if p_inp < 1:
             d_inp = self.rng.binomial(1, p_inp, size=x.shape)
 
-        self.activations[0] = p_inp_scaler*d_inp*x
+        self.activations[0] = p_inp_scaler*d_inp*x #it's OK to scale the inputs by p_inp_scaler here
         self.activations[1] = self.layers[0].fprop(self.activations[0])
         for i in xrange(1, len(self.layers)):
             d_hid = 1
             if p_hid < 1:
                 d_hid = self.rng.binomial(1, p_hid, size=self.activations[i].shape)
-            self.activations[i] *= p_hid_scaler * d_hid
-            self.activations[i+1] = self.layers[i].fprop(self.activations[i])
+            self.activations[i] *= d_hid #but not the hidden activations, since the non-linearity grad *may* explicitly depend on them
+            self.activations[i+1] = self.layers[i].fprop(p_hid_scaler*self.activations[i])
 
         return self.activations[-1]
 
-    def bprop(self, cost_grad):
+    def bprop(self, cost_grad, dp_scheduler=None):
         """
         :param cost_grad: matrix -- grad of the cost w.r.t y
         :return: None, the deltas are kept in the model
@@ -144,10 +144,15 @@ class MLP(object):
         self.deltas[top_layer_idx], ograds = self.layers[top_layer_idx - 1].\
             bprop_cost(self.activations[top_layer_idx], cost_grad, self.cost)
 
+        p_hid_scaler = 1.0
+        if dp_scheduler is not None:
+            p_inp, p_hid = dp_scheduler.get_rate()
+            p_hid_scaler /= p_hid
+
         # then back-prop through remaining layers
         for i in xrange(top_layer_idx - 1, 0, -1):
             self.deltas[i], ograds = self.layers[i - 1].\
-                bprop(self.activations[i], ograds)
+                bprop(self.activations[i], ograds*p_hid_scaler)
 
     def add_layer(self, layer):
         self.layers.append(layer)
