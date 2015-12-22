@@ -67,7 +67,7 @@ def verify_layer_gradient(layer, x, eps=1e-4, tol=1e-6):
 
 
 def test_conv_linear_fprop(layer, kernel_order='ioxy', kernels_first=True,
-                           dtype=np.float):
+                           dtype=numpy.float):
     """ 
     Tests forward propagation method of a convolutional layer.
     
@@ -110,14 +110,14 @@ def test_conv_linear_fprop(layer, kernel_order='ioxy', kernels_first=True,
     ValueError
         Raised if `kernel_order` is not a valid order string.
     """
-    inputs = np.arange(96).reshape((2, 3, 4, 4)).astype(dtype)
-    kernels = np.arange(-12, 12).reshape((3, 2, 2, 2)).astype(dtype)
+    inputs = numpy.arange(96).reshape((2, 3, 4, 4)).astype(dtype)
+    kernels = numpy.arange(-12, 12).reshape((3, 2, 2, 2)).astype(dtype)
     if kernel_order == 'oixy':
         kernels = kernels.swapaxes(0, 1)
     elif kernel_order != 'ioxy':
         raise ValueError('kernel_order must be one of "ioxy" and "oixy"')
-    biases = np.arange(2).astype(dtype)
-    true_output = np.array(
+    biases = numpy.arange(2).astype(dtype)
+    true_output = numpy.array(
       [[[[  496.,   466.,   436.],
          [  376.,   346.,   316.],
          [  256.,   226.,   196.]],
@@ -142,7 +142,7 @@ def test_conv_linear_fprop(layer, kernel_order='ioxy', kernels_first=True,
             'Correct shape is {0} but returned shape is {1}.'
             .format(true_output.shape, layer_output.shape)
         )
-        assert np.allclose(layer_output, true_output), (
+        assert numpy.allclose(layer_output, true_output), (
             'Layer fprop does not give correct output. '
             'Correct output is {0}\n but returned output is {1}.'
             .format(true_output, layer_output)
@@ -153,7 +153,7 @@ def test_conv_linear_fprop(layer, kernel_order='ioxy', kernels_first=True,
 
   
 def test_conv_linear_bprop(layer, kernel_order='ioxy', kernels_first=True,
-                           dtype=np.float):
+                           dtype=numpy.float):
     """ 
     Tests input gradients backpropagation method of a convolutional layer.
     
@@ -196,15 +196,15 @@ def test_conv_linear_bprop(layer, kernel_order='ioxy', kernels_first=True,
     ValueError
         Raised if `kernel_order` is not a valid order string.
     """
-    inputs = np.arange(96).reshape((2, 3, 4, 4)).astype(dtype)
-    kernels = np.arange(-12, 12).reshape((3, 2, 2, 2)).astype(dtype)
+    inputs = numpy.arange(96).reshape((2, 3, 4, 4)).astype(dtype)
+    kernels = numpy.arange(-12, 12).reshape((3, 2, 2, 2)).astype(dtype)
     if kernel_order == 'oixy':
         kernels = kernels.swapaxes(0, 1)
     elif kernel_order != 'ioxy':
         raise ValueError('kernel_order must be one of "ioxy" and "oixy"')
-    biases = np.arange(2).astype(dtype)
-    igrads = np.arange(-20, 16).reshape((2, 2, 3, 3)).astype(dtype)
-    true_ograds = np.array(
+    biases = numpy.arange(2).astype(dtype)
+    igrads = numpy.arange(-20, 16).reshape((2, 2, 3, 3)).astype(dtype)
+    true_ograds = numpy.array(
       [[[[ 328.,  605.,  567.,  261.],
          [ 534.,  976.,  908.,  414.],
          [ 426.,  772.,  704.,  318.],
@@ -241,7 +241,7 @@ def test_conv_linear_bprop(layer, kernel_order='ioxy', kernels_first=True,
             'Correct shape is {0} but returned shape is {1}.'
             .format(igrads.shape, layer_deltas.shape)
         )
-        assert np.allclose(layer_deltas, igrads), (
+        assert numpy.allclose(layer_deltas, igrads), (
             'Layer bprop does not give correct deltas output. '
             'Correct output is {0}\n but returned output is {1}.'
             .format(igrads, layer_deltas)
@@ -251,7 +251,7 @@ def test_conv_linear_bprop(layer, kernel_order='ioxy', kernels_first=True,
             'Correct shape is {0} but returned shape is {1}.'
             .format(true_ograds.shape, layer_ograds.shape)
         )
-        assert np.allclose(layer_ograds, true_ograds), (
+        assert numpy.allclose(layer_ograds, true_ograds), (
             'Layer bprop does not give correct ograds output. '
             'Correct output is {0}\n but returned output is {1}.'
             .format(true_ograds, layer_ograds)
@@ -262,7 +262,7 @@ def test_conv_linear_bprop(layer, kernel_order='ioxy', kernels_first=True,
 
    
 def test_conv_linear_pgrads(layer, kernel_order='ioxy', kernels_first=True,
-                            dtype=np.float):
+                            dtype=numpy.float):
     """ 
     Tests parameter gradients backpropagation method of a convolutional layer.
     
@@ -305,11 +305,11 @@ def test_conv_linear_pgrads(layer, kernel_order='ioxy', kernels_first=True,
     ValueError
         Raised if `kernel_order` is not a valid order string.
     """
-    inputs = np.arange(96).reshape((2, 3, 4, 4)).astype(dtype)
-    kernels = np.arange(-12, 12).reshape((3, 2, 2, 2)).astype(dtype)
-    biases = np.arange(2).astype(dtype)
-    deltas = np.arange(-20, 16).reshape((2, 2, 3, 3)).astype(dtype)
-    true_kernel_grads = np.array(
+    inputs = numpy.arange(96).reshape((2, 3, 4, 4)).astype(dtype)
+    kernels = numpy.arange(-12, 12).reshape((3, 2, 2, 2)).astype(dtype)
+    biases = numpy.arange(2).astype(dtype)
+    deltas = numpy.arange(-20, 16).reshape((2, 2, 3, 3)).astype(dtype)
+    true_kernel_grads = numpy.array(
       [[[[  390.,   264.],
          [ -114.,  -240.]],
         [[ 5088.,  5124.],
@@ -327,7 +327,7 @@ def test_conv_linear_pgrads(layer, kernel_order='ioxy', kernels_first=True,
         true_kernel_grads = true_kernel_grads.swapaxes(0, 1)
     elif kernel_order != 'ioxy':
         raise ValueError('kernel_order must be one of "ioxy" and "oixy"')
-    true_bias_grads = np.array([-126.,   36.], dtype=dtype)
+    true_bias_grads = numpy.array([-126.,   36.], dtype=dtype)
     try:
         orig_params = layer.get_params()
         if kernels_first:
@@ -340,7 +340,7 @@ def test_conv_linear_pgrads(layer, kernel_order='ioxy', kernels_first=True,
             'Correct shape is {0} but returned shape is {1}.'
             .format(true_kernel_grads.shape, layer_kernel_grads.shape)
         )
-        assert np.allclose(layer_kernel_grads, true_kernel_grads), (
+        assert numpy.allclose(layer_kernel_grads, true_kernel_grads), (
             'Layer pgrads does not give correct kernel gradients output. '
             'Correct output is {0}\n but returned output is {1}.'
             .format(true_kernel_grads, layer_kernel_grads)
@@ -350,7 +350,7 @@ def test_conv_linear_pgrads(layer, kernel_order='ioxy', kernels_first=True,
             'Correct shape is {0} but returned shape is {1}.'
             .format(true_kernel_grads.shape, layer_kernel_grads.shape)
         )
-        assert np.allclose(layer_bias_grads, true_bias_grads), (
+        assert numpy.allclose(layer_bias_grads, true_bias_grads), (
             'Layer pgrads does not give correct bias gradients output. '
             'Correct output is {0}\n but returned output is {1}.'
             .format(true_bias_grads, layer_bias_grads)
