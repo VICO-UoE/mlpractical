@@ -348,7 +348,7 @@ def test_conv_linear_pgrads(layer, kernel_order='ioxy', kernels_first=True,
         assert layer_bias_grads.shape == true_bias_grads.shape, (
             'Layer pgrads gives incorrect shaped bias gradients output. '
             'Correct shape is {0} but returned shape is {1}.'
-            .format(true_kernel_grads.shape, layer_kernel_grads.shape)
+            .format(true_bias_grads.shape, layer_bias_grads.shape)
         )
         assert numpy.allclose(layer_bias_grads, true_bias_grads), (
             'Layer pgrads does not give correct bias gradients output. '
