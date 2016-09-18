@@ -10,7 +10,7 @@ There are several virtual environment solutions available in the Python eco-syst
 
 Here we will instead use the environment capabilities of the [Conda](http://conda.pydata.org/docs/) package management system. Unlike pip and virtualenv/pyvenv, Conda is not limited to managing Python packages but is a language and platform agnostic package manager. Both NumPy and SciPy have many non-Python external dependencies and their performance is very dependent on correctly linking to optimised linear algebra libraries. 
 
-Conda can handle installation of both the Python libraries we will be using and all their external dependencies, in particular allowing easy local installation of [optimised numerical computing libraries](https://docs.continuum.io/mkl-optimizations/). Further Conda can easily be installed on Linux, OSX and Windows systems meaning if you wish to set up an environment on a personal machine as well this should be easy to do whatever your operating system of choice is.
+Conda can handle installation of the Python libraries we will be using and all their external dependencies, in particular allowing easy installation of [optimised numerical computing libraries](https://docs.continuum.io/mkl-optimizations/). Further Conda can easily be installed on Linux, OSX and Windows systems meaning if you wish to set up an environment on a personal machine as well this should be easy to do whatever your operating system of choice is.
 
 There are several options available for installing Conda on a system. Here we will use the Python 2.7 version of [Miniconda](http://conda.pydata.org/miniconda.html), which installs just Conda and its dependencies. An alternative is to install the [Anaconda Python distribution](https://docs.continuum.io/anaconda/), which installs Conda and a large selection of popular Python packages. As we will require only a small subset of these packages we will use the more barebones Miniconda to avoid eating into your DICE disk quota too much, however if installing on a personal machine you may wish to consider Anaconda if you want to explore other Python packages. 
 
@@ -24,7 +24,7 @@ For those wishing to install on a personal Windows or OSX machine, the initial i
 
 Open a bash terminal (`Applications > Terminal` on DICE).
 
- We first need to download the latest 64-bit Python 2.7 Miniconda install script:
+We first need to download the latest 64-bit Python 2.7 Miniconda install script:
 
 ```
 wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
@@ -136,7 +136,7 @@ If you are already familiar with Git you may wish to skip over the explanatory s
 
 ---
 
-If necessary, change the current directory in the terminal to the one you wish to clone the code to. By default we will assume you are cloning to the root home directory (run `cd ~` to get to this directory) however if you have a existing system for organising your workspace feel free to keep to that. To clone the `mlpractical` code to the current directory run
+If necessary, change the current directory in the terminal to the one you wish to clone the code to. By default we will assume you are cloning to your home directory (run `cd ~` to get to this directory) however if you have an existing system for organising your workspace feel free to keep to that. To clone the `mlpractical` code to the current directory run
 
 ```
 git clone https://github.com/CSTR-Edinburgh/mlpractical.git
@@ -149,13 +149,13 @@ cd mlpractical
 ls -a
 ```
 
-For the most part this will look much like any other directory, with by default there being the following three non-hidden sub-directories:
+For the most part this will look much like any other directory, with there being the following three non-hidden sub-directories:
 
   * `data`: Data files used in the labs and assignments.
   * `mlp`: The custom Python package we will use in this course.
   * `notebooks`: The Jupyter notebook files for each lab and coursework.
 
-Additionally you will have seen there exists a hidden `.git` subdirectory (on Unix systems by default files and directories prepended with a period '.' are hidden). This directory contains the repository history database and various configuration files and references. Unless you are sure you know what you are doing you generally should not edit any of the files in this directory directly - generally most configuration options can be enacted more safely using a `git config` command. For instance to set the user name and email used in commits run:
+Additionally there exists a hidden `.git` subdirectory (on Unix systems by default files and directories prepended with a period '.' are hidden). This directory contains the repository history database and various configuration files and references. Unless you are sure you know what you are doing you generally should not edit any of the files in this directory directly. Generally most configuration options can be enacted more safely using a `git config` command. For instance to globally set the user name and email used in commits run:
 
 ```
 git config --global user.name "[your name]"
