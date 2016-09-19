@@ -1,64 +1,105 @@
-# Machine Learning Practical (INFR11119),
-# Pawel Swietojanski, University of Edinburgh
+"""Model costs."""
 
 
-import numpy
+import numpy as np
 
 
-class Cost(object):
+class MeanSquaredErrorCost(object):
     """
-    Defines an interface for the cost object
     """
-    def cost(self, y, t, **kwargs):
-        """
-        Implements a cost for monitoring purposes
-        :param y: matrix -- an output of the model
-        :param t: matrix -- an expected output the model should produce
-        :param kwargs: -- some optional parameters required by the cost
-        :return: the scalar value representing the cost given y and t
-        """
-        raise NotImplementedError()
 
-    def grad(self, y, t, **kwargs):
-        """
-        Implements a gradient of the cost w.r.t y
-        :param y: matrix -- an output of the model
-        :param t: matrix -- an expected output the model should produce
-        :param kwargs: -- some optional parameters required by the cost
-        :return: matrix - the gradient of the cost w.r.t y
-        """
-        raise NotImplementedError()
+    def __call__(self, outputs, targets):
+        return 0.5 * np.mean(np.sum((outputs - targets)**2, axis=1))
 
-    def get_name(self):
-        return 'cost'
+    def grad(self, outputs, targets):
+        return outputs - targets
+
+    def __repr__(self):
+        return 'MeanSquaredErrorCost'
 
 
-class MSECost(Cost):
-    def cost(self, y, t, **kwargs):
-        se = 0.5*numpy.sum((y - t)**2, axis=1)
-        return numpy.mean(se)
-
-    def grad(self, y, t, **kwargs):
-        return y - t
-
-    def get_name(self):
-        return 'mse'
-
-
-class CECost(Cost):
+class BinaryCrossEntropyCost(object):
     """
-    Cross Entropy (Negative log-likelihood) cost for multiple classes
     """
-    def cost(self, y, t, **kwargs):
-        #assumes t is 1-of-K coded and y is a softmax
-        #transformed estimate at the output layer
-        nll = t * numpy.log(y)
-        return -numpy.mean(numpy.sum(nll, axis=1))
 
-    def grad(self, y, t, **kwargs):
-        #assumes t is 1-of-K coded and y is a softmax
-        #transformed estimate at the output layer
-        return y - t
+    def __call__(self, outputs, targets):
+        return -np.mean(
+            targets * np.log(outputs) + (1. - targets) * np.log(1. - ouputs))
 
-    def get_name(self):
-        return 'ce'
+    def grad(self, outputs, targets):
+        return (1. - targets) / (1. - outputs) - (targets / outputs)
+
+    def __repr__(self):
+        return 'BinaryCrossEntropyCost'
+
+
+class BinaryCrossEntropySigmoidCost(object):
+    """
+    """
+
+    def __call__(self, outputs, targets):
+        probs = 1. / (1. + np.exp(-outputs))
+        return -np.mean(
+            targets * np.log(probs) + (1. - targets) * np.log(1. - probs))
+
+    def grad(self, outputs, targets):
+        probs = 1. / (1. + np.exp(-outputs))
+        return probs - targets
+
+    def __repr__(self):
+        return 'BinaryCrossEntropySigmoidCost'
+
+
+class BinaryAccuracySigmoidCost(object):
+    """
+    """
+
+    def __call__(self, outputs, targets):
+        return ((outputs > 0) == targets).mean()
+
+    def ___repr__(self):
+        return 'BinaryAccuracySigmoidCost'
+
+
+class CrossEntropyCost(object):
+    """
+    """
+
+    def __call__(self, outputs, targets):
+        return -np.mean(np.sum(targets * np.log(outputs), axis=1))
+
+    def grad(self, outputs, targets):
+        return -targets / outputs
+
+    def __repr__(self):
+        return 'CrossEntropyCost'
+
+
+class CrossEntropySoftmaxCost(object):
+    """
+    """
+
+    def __call__(self, outputs, targets):
+        probs = np.exp(outputs)
+        probs /= probs.sum(-1)[:, None]
+        return -np.mean(np.sum(targets * np.log(probs), axis=1))
+
+    def grad(self, outputs, targets):
+        probs = np.exp(outputs)
+        probs /= probs.sum(-1)[:, None]
+        return probs - targets
+
+    def __repr__(self):
+        return 'CrossEntropySoftmaxCost'
+
+
+class MulticlassAccuracySoftmaxCost(object):
+    """
+    """
+
+    def __call__(self, outputs, targets):
+        probs = np.exp(outputs)
+        return np.mean(np.argmax(probs, -1) == np.argmax(targets, -1))
+
+    def __repr__(self):
+        return 'MulticlassAccuracySoftmaxCost'
