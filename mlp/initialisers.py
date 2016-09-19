@@ -5,8 +5,7 @@ This module defines classes to initialise the parameters in a layer.
 """
 
 import numpy as np
-
-DEFAULT_SEED = 123456  # Default random number generator seed if none provided.
+from mlp import DEFAULT_SEED
 
 
 class ConstantInit(object):

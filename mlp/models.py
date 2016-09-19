@@ -1,6 +1,5 @@
-"""
-Model definitions.
-"""
+# -*- coding: utf-8 -*-
+"""Model definitions."""
 
 from mlp.layers import LayerWithParameters
 

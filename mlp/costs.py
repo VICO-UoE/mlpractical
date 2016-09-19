@@ -1,5 +1,5 @@
+# -*- coding: utf-8 -*-
 """Model costs."""
-
 
 import numpy as np
 

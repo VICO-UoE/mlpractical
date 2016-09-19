@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Learning rules."""
 
 import numpy as np
