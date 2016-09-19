@@ -8,11 +8,11 @@ One way of overcoming these issues is to use project-specific *virtual environme
 
 There are several virtual environment solutions available in the Python eco-system, including the native [pyvenv](https://docs.python.org/3/library/venv.html) in Python 3 and the popular [virtualenv](https://virtualenv.pypa.io/en/stable/). Also related is [pip](https://pip.pypa.io/en/stable/) a Python package manager natively included in Python 2.7.9 and above.
 
-Here we will instead use the environment capabilities of the [Conda](http://conda.pydata.org/docs/) package management system. Unlike pip and virtualenv/pyvenv, Conda is not limited to managing Python packages but is a language and platform agnostic package manager. Both NumPy and SciPy have many non-Python external dependencies and their performance is very dependent on correctly linking to optimised linear algebra libraries. 
+Here we will instead use the environment capabilities of the [Conda](http://conda.pydata.org/docs/) package management system. Unlike pip and virtualenv/pyvenv, Conda is not limited to managing Python packages but is a language and platform agnostic package manager. Both NumPy and SciPy have many non-Python external dependencies and their performance is very dependent on correctly linking to optimised linear algebra libraries.
 
 Conda can handle installation of the Python libraries we will be using and all their external dependencies, in particular allowing easy installation of [optimised numerical computing libraries](https://docs.continuum.io/mkl-optimizations/). Further Conda can easily be installed on Linux, OSX and Windows systems meaning if you wish to set up an environment on a personal machine as well this should be easy to do whatever your operating system of choice is.
 
-There are several options available for installing Conda on a system. Here we will use the Python 2.7 version of [Miniconda](http://conda.pydata.org/miniconda.html), which installs just Conda and its dependencies. An alternative is to install the [Anaconda Python distribution](https://docs.continuum.io/anaconda/), which installs Conda and a large selection of popular Python packages. As we will require only a small subset of these packages we will use the more barebones Miniconda to avoid eating into your DICE disk quota too much, however if installing on a personal machine you may wish to consider Anaconda if you want to explore other Python packages. 
+There are several options available for installing Conda on a system. Here we will use the Python 2.7 version of [Miniconda](http://conda.pydata.org/miniconda.html), which installs just Conda and its dependencies. An alternative is to install the [Anaconda Python distribution](https://docs.continuum.io/anaconda/), which installs Conda and a large selection of popular Python packages. As we will require only a small subset of these packages we will use the more barebones Miniconda to avoid eating into your DICE disk quota too much, however if installing on a personal machine you may wish to consider Anaconda if you want to explore other Python packages.
 
 ## Installing Miniconda
 
@@ -87,9 +87,9 @@ or on Windows only
 activate mlp
 ```
 
-When a environment is activated its name will be prepended on to the prompt which should now look something like `(mlp) [machine-name]:~$` on DICE. 
+When a environment is activated its name will be prepended on to the prompt which should now look something like `(mlp) [machine-name]:~$` on DICE.
 
-**You need to run this `source activate mlp` command every time you wish to activate the `mlp` environment in a terminal (for example at the beginning of each lab)**. When the environment is activated, the environment will be searched first when running commands so that e.g. `python` will launch the Python interpreter installed locally in the `mlp` environment rather than a system-wide version. 
+**You need to run this `source activate mlp` command every time you wish to activate the `mlp` environment in a terminal (for example at the beginning of each lab)**. When the environment is activated, the environment will be searched first when running commands so that e.g. `python` will launch the Python interpreter installed locally in the `mlp` environment rather than a system-wide version.
 
 If you wish to deactivate an environment loaded in the current terminal e.g. to launch the system Python interpreter, you can run `source deactivate` (just `deactivate` on Windows).
 
@@ -99,7 +99,7 @@ We will now install the dependencies for the course into the new environment:
 conda install numpy scipy matplotlib jupyter
 ```
 
-Again you will be given list of the packages to be installed and asked to confirm whether to proceed. Enter `y` then wait for the packages to install (this should take around five minutes). In addition to Jupyter, NumPy and SciPy which we have already mentioned, we are also installing [matplotlib](http://matplotlib.org/) a plotting and visualisation library. 
+Again you will be given list of the packages to be installed and asked to confirm whether to proceed. Enter `y` then wait for the packages to install (this should take around five minutes). In addition to Jupyter, NumPy and SciPy which we have already mentioned, we are also installing [matplotlib](http://matplotlib.org/) a plotting and visualisation library.
 
 Once the installation is finished, to recover some disk space we can clear the package tarballs Conda just downloaded:
 
@@ -115,7 +115,7 @@ The next step in getting our environment set up will be to download the course c
 
 https://github.com/CSTR-Edinburgh/mlpractical
 
-[Git](https://git-scm.com/) is a distributed version control system and [Github](https://github.com) a popular site for hosting Git repositories. We will be using Git to distribute the code for all the labs and assignments. We will explain all the necessary `git` commands as we go, though those new to Git may find [this concise guide by Roger Dudler](http://rogerdudler.github.io/git-guide/) or [this slightly longer one from Atlassian](https://www.atlassian.com/git/tutorials/) useful. 
+[Git](https://git-scm.com/) is a distributed version control system and [Github](https://github.com) a popular site for hosting Git repositories. We will be using Git to distribute the code for all the labs and assignments. We will explain all the necessary `git` commands as we go, though those new to Git may find [this concise guide by Roger Dudler](http://rogerdudler.github.io/git-guide/) or [this slightly longer one from Atlassian](https://www.atlassian.com/git/tutorials/) useful.
 
 Git is installed by default on DICE desktops. If you are running a system which does not have Git installed, you can use Conda to install it in your environment using:
 
@@ -123,13 +123,13 @@ Git is installed by default on DICE desktops. If you are running a system which 
 conda install git
 ```
 
-We will now go over the process of [cloning](https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-clone) a local copy of the `mlpractical` repository. 
+We will now go over the process of [cloning](https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-clone) a local copy of the `mlpractical` repository.
 
 ---
 **Confident Git users only:**
 
 For those who have their own Github account (you can set up a free account easily [here](https://github.com/join)) and are confident Git users, you may wish to consider instead [creating a private fork](http://stackoverflow.com/a/30352360) of the `CSTR-Edinburgh/mlpractical` repository on Github. This is not required for the course, however it will allow you to push your local commits to Github making it easier to for example sync your work between DICE computers and a personal machine.
- 
+
 **Note we do not recommend creating a public fork using the default forking mechanism on Github as this will make any commits you push to the fork publicly available which creates a risk of plagiarism.**
 
 If you are already familiar with Git you may wish to skip over the explanatory sections below.
@@ -146,7 +146,7 @@ This will create a new `mlpractical` subdirectory with a local copy of the repos
 
 ```
 cd mlpractical
-ls -a
+ls -a  # Windows equivalent: dir /a
 ```
 
 For the most part this will look much like any other directory, with there being the following three non-hidden sub-directories:
@@ -166,13 +166,13 @@ From the root `mlpractical` directory if you now run:
 
 `git status`
 
-a status message containing information about your local clone of the repository should be displayed. 
+a status message containing information about your local clone of the repository should be displayed.
 
 Providing you have not made any changes yet, all that will be displayed is the name of the current *branch* (we will explain what a branch is to those new to Git in a little while), a message that the branch is up to date with the remote repository and that there is nothing to commit in the working directory.
 
 The two key concepts you will need to know about Git for this course are *commits* and *branches*.
 
-A *commit* in Git is a snapshot of the state of the project. The snapshots are recorded in the repository history and allow us to track changes to the code over time and rollback changes if necessary. In Git there is a three stage process to creating a new commit. 
+A *commit* in Git is a snapshot of the state of the project. The snapshots are recorded in the repository history and allow us to track changes to the code over time and rollback changes if necessary. In Git there is a three stage process to creating a new commit.
 
   1. The relevant edits are made to files in the working directory and any new files created.
 
@@ -224,7 +224,7 @@ To checkout a new branch from the remote `CSTR-Edinburgh/mlpractical` repository
 git checkout -b [local-name-for-branch] origin/[remote-branch]
 ```
 
-This will create and checkout and new local branch *tracking* the remote branch. We will use this command at the beginning of each lab to checkout the code for that week and create a local branch for you to commit your work to. 
+This will create and checkout and new local branch *tracking* the remote branch. We will use this command at the beginning of each lab to checkout the code for that week and create a local branch for you to commit your work to.
 
 ## Installing the `mlp` Python package
 
@@ -250,6 +250,34 @@ import mlp
 
 Running the `import` statement any further times will have no effect even if the underlying module code has been changed. To reload an already imported module we instead need to use the [`reload`](https://docs.python.org/2.7/library/functions.html#reload) function.
 
+## Adding a data directory variable to the environment
+
+We observed previously the presence of a `data` subdirectory in the local repository. This directory holds the data files that will be used in the course. To enable the data loaders in the `mlp` package to locate these data files we need to set a `MLP_DATA_DIR` environment variable pointing to this directory.
+
+Assuming you used the recommended Miniconda install location and cloned the `mlpractical` repository to your home directory, this variable can be automatically defined when activating the environment by running the following commands (on non-Windows systems):
+
+```
+cd ~/miniconda2/envs/mlp
+mkdir -p ./etc/conda/activate.d
+mkdir -p ./etc/conda/deactivate.d
+echo -e '#!/bin/sh\n' >> ./etc/conda/activate.d/env_vars.sh
+echo "export MLP_DATA_DIR=$HOME/mlpractical/data" >> ./etc/conda/activate.d/env_vars.sh
+echo -e ''#!/bin/sh\n' >> ./etc/conda/deactivate.d/env_vars.sh
+echo 'unset MLP_DATA_DIR' >> ./etc/conda/deactivate.d/env_vars.sh
+```
+
+And on Windows systems (replacing the `[]` placeholders with the relevant paths):
+
+```
+cd [path-to-conda-root]\envs\mlp
+mkdir .\etc\conda\activate.d
+mkdir .\etc\conda\deactivate.d
+@echo "set MLP_DATA_DIR=[path-to-local-repository]\data" >> .\etc\conda\activate.d\env_vars.bat
+@echo "set MLP_DATA_DIR="  >> .\etc\conda\deactivate.d\env_vars.bat
+```
+
+After running these commands, deactivate then reactivate your environment to define the variable in the current session.
+
 ## Loading the first lab notebook
 
 Your environment is now all set up so you can move on to the introductory exercises in the first lab notebook.
@@ -264,7 +292,7 @@ To open a notebook, you first need to launch a Jupyter notebook server instance.
 jupyter notebook
 ```
 
-This will start a notebook server instance in the current terminal (with a series of status messages being streamed to the terminal output) and launch a browser window which will load the notebook application interface. 
+This will start a notebook server instance in the current terminal (with a series of status messages being streamed to the terminal output) and launch a browser window which will load the notebook application interface.
 
 By default the notebook interface will show a list of the files in the directory the notebook server was launched from when first loaded. If you click on the `notebooks` directory in this file list, a list of files in this directory should then be displayed. Click the `00_Introduction.ipynb` entry to load the first notebook.
 
