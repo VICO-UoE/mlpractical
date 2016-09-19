@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Model trainers."""
+"""Model optimisers."""
 
 import time
 import logging
@@ -10,7 +10,7 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
-class Trainer(object):
+class Optimiser(object):
 
     def __init__(self, model, cost, learning_rule, train_dataset,
                  valid_dataset=None, data_monitors=None):
