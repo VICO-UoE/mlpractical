@@ -1,214 +1,134 @@
-# Machine Learning Practical (INFR11119),
-# Pawel Swietojanski, University of Edinburgh
+# -*- coding: utf-8 -*-
+"""Model optimisers.
 
-import numpy
+This module contains objects implementing (batched) stochastic gradient descent
+based optimisation of models.
+"""
+
 import time
 import logging
-
-from mlp.layers import MLP
-from mlp.dataset import DataProvider
-from mlp.schedulers import LearningRateScheduler
+from collections import OrderedDict
+import numpy as np
 
 
 logger = logging.getLogger(__name__)
 
 
 class Optimiser(object):
-    def train_epoch(self, model, train_iter):
-        raise NotImplementedError()
+    """Basic model optimiser."""
 
-    def train(self, model, train_iter, valid_iter=None):
-        raise NotImplementedError()
+    def __init__(self, model, cost, learning_rule, train_dataset,
+                 valid_dataset=None, data_monitors=None):
+        """Create a new optimiser instance.
 
-    def validate(self, model, valid_iterator, l1_weight=0, l2_weight=0):
-        assert isinstance(model, MLP), (
-            "Expected model to be a subclass of 'mlp.layers.MLP'"
-            " class but got %s " % type(model)
-        )
-
-        assert isinstance(valid_iterator, DataProvider), (
-            "Expected iterator to be a subclass of 'mlp.dataset.DataProvider'"
-            " class but got %s " % type(valid_iterator)
-        )
-
-        acc_list, nll_list = [], []
-        for x, t in valid_iterator:
-            y = model.fprop(x)
-            nll_list.append(model.cost.cost(y, t))
-            acc_list.append(numpy.mean(self.classification_accuracy(y, t)))
-
-        acc = numpy.mean(acc_list)
-        nll = numpy.mean(nll_list)
-
-        prior_costs = Optimiser.compute_prior_costs(model, l1_weight, l2_weight)
-
-        return nll + sum(prior_costs), acc
-
-    @staticmethod
-    def classification_accuracy(y, t):
+        Args:
+            model: The model to optimise.
+            cost: The scalar cost function to minimise.
+            learning_rule: Gradient based learning rule to use to minimise
+                cost.
+            train_dataset: Data provider for training set data batches.
+            valid_dataset: Data provider for validation set data batches.
+            data_monitors: Dictionary of functions evaluated on targets and
+                model outputs (averaged across both full training and
+                validation data sets) to monitor during training in addition
+                to the cost. Keys should correspond to a string label for
+                the statistic being evaluated.
         """
-        Returns classification accuracy given the estimate y and targets t
-        :param y: matrix -- estimate produced by the model in fprop
-        :param t: matrix -- target  1-of-K coded
-        :return: vector of y.shape[0] size with binary values set to 0
-                 if example was miscalssified or 1 otherwise
+        self.model = model
+        self.cost = cost
+        self.learning_rule = learning_rule
+        self.learning_rule.initialise(self.model.params)
+        self.train_dataset = train_dataset
+        self.valid_dataset = valid_dataset
+        self.data_monitors = OrderedDict([('cost', cost)])
+        if data_monitors is not None:
+            self.data_monitors.update(data_monitors)
+
+    def do_training_epoch(self):
+        """Do a single training epoch.
+
+        This iterates through all batches in training dataset, for each
+        calculating the gradient of the estimated loss given the batch with
+        respect to all the model parameters and then updates the model
+        parameters according to the learning rule.
         """
-        y_idx = numpy.argmax(y, axis=1)
-        t_idx = numpy.argmax(t, axis=1)
-        rval = numpy.equal(y_idx, t_idx)
-        return rval
+        for inputs_batch, targets_batch in self.train_dataset:
+            activations = self.model.fprop(inputs_batch)
+            grads_wrt_outputs = self.cost.grad(activations[-1], targets_batch)
+            grads_wrt_params = self.model.grads_wrt_params(
+                activations, grads_wrt_outputs)
+            self.learning_rule.update_params(grads_wrt_params)
 
-    @staticmethod
-    def compute_prior_costs(model, l1_weight, l2_weight):
+    def eval_monitors(self, dataset, label):
+        """Evaluates the monitors for the given dataset.
+
+        Args:
+            dataset: Dataset to perform evaluation with.
+            label: Tag to add to end of monitor keys to identify dataset.
+
+        Returns:
+            OrderedDict of monitor values evaluated on dataset.
         """
-        Computes the cost contributions coming from parameter-dependent only
-        regularisation penalties
+        data_mon_vals = OrderedDict([(key + label, 0.) for key
+                                     in self.data_monitors.keys()])
+        for inputs_batch, targets_batch in dataset:
+            activations = self.model.fprop(inputs_batch)
+            for key, data_monitor in self.data_monitors.items():
+                data_mon_vals[key + label] += data_monitor(
+                    activations[-1], targets_batch)
+        for key, data_monitor in self.data_monitors.items():
+            data_mon_vals[key + label] /= dataset.num_batches
+        return data_mon_vals
+
+    def get_epoch_stats(self):
+        """Computes training statistics for an epoch.
+
+        Returns:
+            An OrderedDict with keys corresponding to the statistic labels and
+            values corresponding to the value of the statistic.
         """
-        assert isinstance(model, MLP), (
-            "Expected model to be a subclass of 'mlp.layers.MLP'"
-            " class but got %s " % type(model)
-        )
+        epoch_stats = OrderedDict()
+        epoch_stats.update(self.eval_monitors(self.train_dataset, '(train)'))
+        if self.valid_dataset is not None:
+            epoch_stats.update(self.eval_monitors(
+                self.valid_dataset, '(valid)'))
+        epoch_stats['cost(param)'] = self.model.params_cost()
+        return epoch_stats
 
-        l1_cost, l2_cost = 0, 0
-        for i in xrange(0, len(model.layers)):
-            params = model.layers[i].get_params()
-            for param in params:
-                if l2_weight > 0:
-                    l2_cost += 0.5 * l2_weight * numpy.sum(param**2)
-                if l1_weight > 0:
-                    l1_cost += l1_weight * numpy.sum(numpy.abs(param))
+    def log_stats(self, epoch, epoch_time, stats):
+        """Outputs stats for a training epoch to a logger.
 
-        return l1_cost, l2_cost
+        Args:
+            epoch (int): Epoch counter.
+            epoch_time: Time taken in seconds for the epoch to complete.
+            stats: Monitored stats for the epoch.
+        """
+        logger.info('Epoch {0}: {1:.1f}s to complete\n    {2}'.format(
+            epoch, epoch_time,
+            ', '.join(['{0}={1:.2e}'.format(k, v) for (k, v) in stats.items()])
+        ))
 
+    def train(self, num_epochs, stats_interval=5):
+        """Trains a model for a set number of epochs.
 
-class SGDOptimiser(Optimiser):
-    def __init__(self, lr_scheduler,
-                 dp_scheduler=None,
-                 l1_weight=0.0,
-                 l2_weight=0.0):
+        Args:
+            num_epochs: Number of epochs (complete passes through trainin
+                dataset) to train for.
+            stats_interval: Training statistics will be recorded and logged
+                every `stats_interval` epochs.
 
-        super(SGDOptimiser, self).__init__()
-
-        assert isinstance(lr_scheduler, LearningRateScheduler), (
-            "Expected lr_scheduler to be a subclass of 'mlp.schedulers.LearningRateScheduler'"
-            " class but got %s " % type(lr_scheduler)
-        )
-
-        self.lr_scheduler = lr_scheduler
-        self.dp_scheduler = dp_scheduler
-        self.l1_weight = l1_weight
-        self.l2_weight = l2_weight
-
-    def train_epoch(self, model, train_iterator, learning_rate):
-
-        assert isinstance(model, MLP), (
-            "Expected model to be a subclass of 'mlp.layers.MLP'"
-            " class but got %s " % type(model)
-        )
-        assert isinstance(train_iterator, DataProvider), (
-            "Expected iterator to be a subclass of 'mlp.dataset.DataProvider'"
-            " class but got %s " % type(train_iterator)
-        )
-
-        acc_list, nll_list = [], []
-        for x, t in train_iterator:
-
-            # get the prediction
-            if self.dp_scheduler is not None:
-                y = model.fprop_dropout(x, self.dp_scheduler)
-            else:
-                y = model.fprop(x)
-
-            # compute the cost and grad of the cost w.r.t y
-            cost = model.cost.cost(y, t)
-            cost_grad = model.cost.grad(y, t)
-
-            # do backward pass through the model
-            model.bprop(cost_grad, self.dp_scheduler)
-
-            #update the model, here we iterate over layers
-            #and then over each parameter in the layer
-            effective_learning_rate = learning_rate / x.shape[0]
-
-            for i in xrange(0, len(model.layers)):
-                params = model.layers[i].get_params()
-                grads = model.layers[i].pgrads(inputs=model.activations[i],
-                                               deltas=model.deltas[i + 1],
-                                               l1_weight=self.l1_weight,
-                                               l2_weight=self.l2_weight)
-                uparams = []
-                for param, grad in zip(params, grads):
-                    param = param - effective_learning_rate * grad
-                    uparams.append(param)
-                model.layers[i].set_params(uparams)
-
-            nll_list.append(cost)
-            acc_list.append(numpy.mean(self.classification_accuracy(y, t)))
-
-        #compute the prior penalties contribution (parameter dependent only)
-        prior_costs = Optimiser.compute_prior_costs(model, self.l1_weight, self.l2_weight)
-        training_cost = numpy.mean(nll_list) + sum(prior_costs)
-
-        return training_cost, numpy.mean(acc_list)
-
-    def train(self, model, train_iterator, valid_iterator=None):
-
-        converged = False
-        cost_name = model.cost.get_name()
-        tr_stats, valid_stats = [], []
-
-        # do the initial validation
-        train_iterator.reset()
-        tr_nll, tr_acc = self.validate(model, train_iterator, self.l1_weight, self.l2_weight)
-        logger.info('Epoch %i: Training cost (%s) for initial model is %.3f. Accuracy is %.2f%%'
-                    % (self.lr_scheduler.epoch, cost_name, tr_nll, tr_acc * 100.))
-        tr_stats.append((tr_nll, tr_acc))
-
-        if valid_iterator is not None:
-            valid_iterator.reset()
-            valid_nll, valid_acc = self.validate(model, valid_iterator, self.l1_weight, self.l2_weight)
-            logger.info('Epoch %i: Validation cost (%s) for initial model is %.3f. Accuracy is %.2f%%'
-                        % (self.lr_scheduler.epoch, cost_name, valid_nll, valid_acc * 100.))
-            valid_stats.append((valid_nll, valid_acc))
-
-        while not converged:
-            train_iterator.reset()
-
-            tstart = time.clock()
-            tr_nll, tr_acc = self.train_epoch(model=model,
-                                              train_iterator=train_iterator,
-                                              learning_rate=self.lr_scheduler.get_rate())
-            tstop = time.clock()
-            tr_stats.append((tr_nll, tr_acc))
-
-            logger.info('Epoch %i: Training cost (%s) is %.3f. Accuracy is %.2f%%'
-                        % (self.lr_scheduler.epoch + 1, cost_name, tr_nll, tr_acc * 100.))
-
-            vstart = time.clock()
-            if valid_iterator is not None:
-                valid_iterator.reset()
-                valid_nll, valid_acc = self.validate(model, valid_iterator,
-                                                     self.l1_weight, self.l2_weight)
-                logger.info('Epoch %i: Validation cost (%s) is %.3f. Accuracy is %.2f%%'
-                            % (self.lr_scheduler.epoch + 1, cost_name, valid_nll, valid_acc * 100.))
-                self.lr_scheduler.get_next_rate(valid_acc)
-                valid_stats.append((valid_nll, valid_acc))
-            else:
-                self.lr_scheduler.get_next_rate(None)
-            vstop = time.clock()
-
-            train_speed = train_iterator.num_examples_presented() / (tstop - tstart)
-            valid_speed = valid_iterator.num_examples_presented() / (vstop - vstart)
-            tot_time = vstop - tstart
-            #pps = presentations per second
-            logger.info("Epoch %i: Took %.0f seconds. Training speed %.0f pps. "
-                        "Validation speed %.0f pps."
-                        % (self.lr_scheduler.epoch, tot_time, train_speed, valid_speed))
-
-            # we stop training when learning rate, as returned by lr scheduler, is 0
-            # this is implementation dependent and depending on lr schedule could happen,
-            # for example, when max_epochs has been reached or if the progress between
-            # two consecutive epochs is too small, etc.
-            converged = (self.lr_scheduler.get_rate() == 0)
-
-        return tr_stats, valid_stats
+        Returns:
+            Tuple with first value being an array of training run statistics
+            and the second being a dict mapping the labels for the statistics
+            recorded to their column index in the array.
+        """
+        run_stats = []
+        for epoch in range(1, num_epochs + 1):
+            start_time = time.clock()
+            self.do_training_epoch()
+            epoch_time = time.clock() - start_time
+            if epoch % stats_interval == 0:
+                stats = self.get_epoch_stats()
+                self.log_stats(epoch, epoch_time, stats)
+                run_stats.append(stats.values())
+        return np.array(run_stats), {k: i for i, k in enumerate(stats.keys())}
