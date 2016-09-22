@@ -1,6 +1,6 @@
 # Environment set up
 
-*The instructions below intentionally are verbose as they try to explain the reasoning behind our choice of environment set up and to explain what each command we are asking you to run does. If you are already confident using bash, Conda environments and Git you may wish to instead use the much shorter [minimal set-up instructions](#minimal-set-up-instructions-for-dice) at the end which skip the explanations.*
+*The instructions below are intentionally verbose as they try to explain the reasoning behind our choice of environment set up and to explain what each command we are asking you to run does. If you are already confident using bash, Conda environments and Git you may wish to instead use the much shorter [minimal set-up instructions](#minimal-set-up-instructions-for-dice) at the end which skip the explanations.*
 
 In this course we will be using [Python 2.7](https://www.python.org/) for all the labs and coursework assignments. In particular we will be making heavy use of the numerical computing libraries [NumPy](http://www.numpy.org/) and [SciPy](http://www.scipy.org/), and the interactive notebook application [Jupyter](http://jupyter.org/).
 
@@ -300,7 +300,7 @@ By default the notebook interface will show a list of the files in the directory
 
 # Minimal set-up instructions for DICE
 
-Below are instructions for setting up the environment with out additional explanation. These are intentionally terse and if you don't understand what a particlar command is doing you might be better following the more detailed instructions above which explain each step.
+Below are instructions for setting up the environment without additional explanation. These are intentionally terse and if you do not understand what a particular command is doing you might be better following the more detailed instructions above which explain each step.
 
 ---
 
