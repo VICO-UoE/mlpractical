@@ -1,6 +1,6 @@
 # Environment set up
 
-*The instructions below intentionally are verbose as they try to explain the reasoning behind our choice of environment set up and to explain what each command we are asking you to run does. If you are already confident using bash, Conda environments and Git you may wish to instead use the much shorter [minimal set-up instructions](#minimal-set-up) at the end which skip the explanations.*
+*The instructions below intentionally are verbose as they try to explain the reasoning behind our choice of environment set up and to explain what each command we are asking you to run does. If you are already confident using bash, Conda environments and Git you may wish to instead use the much shorter [minimal set-up instructions](#minimal-set-up-instructions-for-dice) at the end which skip the explanations.*
 
 In this course we will be using [Python 2.7](https://www.python.org/) for all the labs and coursework assignments. In particular we will be making heavy use of the numerical computing libraries [NumPy](http://www.numpy.org/) and [SciPy](http://www.scipy.org/), and the interactive notebook application [Jupyter](http://jupyter.org/).
 
@@ -20,7 +20,7 @@ There are several options available for installing Conda on a system. Here we wi
 
 We provide instructions here for getting an environment with all the required dependencies running on computers running the School of Informatics [DICE desktop](http://computing.help.inf.ed.ac.uk/dice-platform). The same instructions should be able to used on other Linux distributions such as Ubuntu and Linux Mint with minimal adjustments.
 
-For those wishing to install on a personal Windows or OSX machine, the initial instructions for setting up Conda will differ slightly - you should instead select the relevant installer for your system from [here](http://conda.pydata.org/miniconda.html) and following the corresponding installation instructions from [here](http://conda.pydata.org/docs/install/quick.html). After Conda is installed the [remaining instructions](#create-conda-env) should be the same across different systems.
+For those wishing to install on a personal Windows or OSX machine, the initial instructions for setting up Conda will differ slightly - you should instead select the relevant installer for your system from [here](http://conda.pydata.org/miniconda.html) and following the corresponding installation instructions from [here](http://conda.pydata.org/docs/install/quick.html). After Conda is installed the [remaining instructions](#reating-the-conda-environment) should be the same across different systems.
 
 *Note: Although we are happy for you to additionally set up an environment on a personal machine, you should still set up a DICE environment now as this will make sure you are able to use shared computing resources later in the course. Also although we have tried to note when the required commands will differ on non-DICE systems, these instructions have only been tested on DICE and we will not be able to offer any support in labs on getting set up on a non-DICE system.*
 
@@ -62,7 +62,7 @@ source .benv
 
 Alternatively we could have just closed the current terminal and started a new one. All future terminal sessions should have the updated `PATH` loaded by default.
 
-## <span id="create-conda-env">Creating the Conda environment</span>
+## Creating the Conda environment
 
 You should now have a working Conda installation. If you run
 
@@ -298,7 +298,7 @@ This will start a notebook server instance in the current terminal (with a serie
 
 By default the notebook interface will show a list of the files in the directory the notebook server was launched from when first loaded. If you click on the `notebooks` directory in this file list, a list of files in this directory should then be displayed. Click the `01_Introduction.ipynb` entry to load the first notebook.
 
-# <span id='minimal-set-up'> Minimal set-up instructions for DICE</span>
+# Minimal set-up instructions for DICE
 
 Below are instructions for setting up the environment with out additional explanation. These are intentionally terse and if you don't understand what a particlar command is doing you might be better following the more detailed instructions above which explain each step.
 
