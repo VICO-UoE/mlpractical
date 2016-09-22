@@ -1,5 +1,7 @@
 # Environment set up
 
+*The instructions below intentionally are verbose as they try to explain the reasoning behind our choice of environment set up and to explain what each command we are asking you to run does. If you are already confident using bash, Conda environments and Git you may wish to instead use the much shorter [minimal set-up instructions](#minimal-set-up) at the end which skip the explanations.*
+
 In this course we will be using [Python 2.7](https://www.python.org/) for all the labs and coursework assignments. In particular we will be making heavy use of the numerical computing libraries [NumPy](http://www.numpy.org/) and [SciPy](http://www.scipy.org/), and the interactive notebook application [Jupyter](http://jupyter.org/).
 
 A common headache in software projects is ensuring the correct versions of all dependencies are available on the current development system. Often you may be working on several distinct projects simultaneously each with its own potentially conflicting dependencies on external libraries. Additionally you may be working across multiple different machines (for example a personal laptop and University computers) with possibly different operating systems. Further, as is the case in Informatics on DICE, you may not have root-level access to a system you are working on and so not be able to install software at a system-wide level and system updates may cause library versions to be changed to incompatible versions.
@@ -20,6 +22,8 @@ We provide instructions here for getting an environment with all the required de
 
 For those wishing to install on a personal Windows or OSX machine, the initial instructions for setting up Conda will differ slightly - you should instead select the relevant installer for your system from [here](http://conda.pydata.org/miniconda.html) and following the corresponding installation instructions from [here](http://conda.pydata.org/docs/install/quick.html). After Conda is installed the [remaining instructions](#create-conda-env) should be the same across different systems.
 
+*Note: Although we are happy for you to additionally set up an environment on a personal machine, you should still set up a DICE environment now as this will make sure you are able to use shared computing resources later in the course. Also although we have tried to note when the required commands will differ on non-DICE systems, these instructions have only been tested on DICE and we will not be able to offer any support in labs on getting set up on a non-DICE system.*
+
 ---
 
 Open a bash terminal (`Applications > Terminal` on DICE).
@@ -38,7 +42,7 @@ Now run the install script:
 bash Miniconda2-latest-Linux-x86_64.sh
 ```
 
-You will first be asked to review the software license agreement. Assuming you choose to agree, you will then be asked to choose an install location for Miniconda. The default is to install in the root of your home directory `~/miniconda`. We recommend going with this default unless you have a particular reason to do otherwise.
+You will first be asked to review the software license agreement. Assuming you choose to agree, you will then be asked to choose an install location for Miniconda. The default is to install in the root of your home directory `~/miniconda2`. We recommend going with this default unless you have a particular reason to do otherwise.
 
 You will then be asked whether to prepend the Miniconda binaries directory to the `PATH` system environment variable definition in `.bashrc`. As the DICE bash start-up mechanism differs from the standard set up ([details here](http://computing.help.inf.ed.ac.uk/dice-bash)), on DICE you should respond `no` here as we will set up the addition to `PATH` manually in the next step. On other Linux distributions you may choose to accept the default.
 
@@ -155,7 +159,7 @@ For the most part this will look much like any other directory, with there being
   * `mlp`: The custom Python package we will use in this course.
   * `notebooks`: The Jupyter notebook files for each lab and coursework.
 
-Additionally there exists a hidden `.git` subdirectory (on Unix systems by default files and directories prepended with a period '.' are hidden). This directory contains the repository history database and various configuration files and references. Unless you are sure you know what you are doing you generally should not edit any of the files in this directory directly. Generally most configuration options can be enacted more safely using a `git config` command. For instance to globally set the user name and email used in commits run:
+Additionally there exists a hidden `.git` subdirectory (on Unix systems by default files and directories prepended with a period '.' are hidden). This directory contai## <span id="create-conda-env">Creating the Conda environment</span>ns the repository history database and various configuration files and references. Unless you are sure you know what you are doing you generally should not edit any of the files in this directory directly. Generally most configuration options can be enacted more safely using a `git config` command. For instance to globally set the user name and email used in commits run:
 
 ```
 git config --global user.name "[your name]"
@@ -218,13 +222,11 @@ git checkout [branch-name]
 
 This will change the code in the working directory to the current state of the checked out branch. Any files added to the staging area and committed will then create a new commit on this branch.
 
-To checkout a new branch from the remote `CSTR-Edinburgh/mlpractical` repository on Github, you can use:
+You should make sure you are on the first lab branch now by running:
 
 ```
-git checkout -b [local-name-for-branch] origin/[remote-branch]
+git checkout mlp2016-7/lab1
 ```
-
-This will create and checkout and new local branch *tracking* the remote branch. We will use this command at the beginning of each lab to checkout the code for that week and create a local branch for you to commit your work to.
 
 ## Installing the `mlp` Python package
 
@@ -295,6 +297,102 @@ jupyter notebook
 This will start a notebook server instance in the current terminal (with a series of status messages being streamed to the terminal output) and launch a browser window which will load the notebook application interface.
 
 By default the notebook interface will show a list of the files in the directory the notebook server was launched from when first loaded. If you click on the `notebooks` directory in this file list, a list of files in this directory should then be displayed. Click the `01_Introduction.ipynb` entry to load the first notebook.
+
+# <span id=minimal-set-up> Minimal set-up instructions for DICE</span>
+
+Below are instructions for setting up the environment with out additional explanation. These are intentionally terse and if you don't understand what a particlar command is doing you might be better following the more detailed instructions above which explain each step.
+
+---
+
+Start a new bash terminal. Download the latest 64-bit Python 2.7 Miniconda install script:
+
+```
+wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
+```
+
+Run the install script:
+
+```
+bash Miniconda2-latest-Linux-x86_64.sh
+```
+
+Review the software license agreement and choose whether to accept. Assuming you accept, you be asked to choose an install location for Miniconda. The default is to install in the root of your home directory `~/miniconda2`. We will assume below you have used this default. If you change you will need to adjust the paths in the commands below to suit.
+
+You will then be asked whether to prepend the Miniconda binaries directory to the `PATH` system environment variable definition in `.bashrc`. You should respond `no` here as we will set up the addition to `PATH` manually in the next step.
+
+Append the Miniconda binaries directory to `PATH` in manually in `~/.benv`:
+```
+echo "export PATH=\""\$PATH":$HOME/miniconda2/bin\"" >> ~/.benv
+```
+
+`source` the updated `~/.benv`:
+
+```
+source .benv
+```
+
+Create a new `mlp` Conda environment:
+
+```
+conda create -n mlp python=2.7
+```
+
+Activate our created environment:
+
+```
+source activate mlp
+```
+
+Install the dependencies for the course into the new environment:
+
+```
+conda install numpy scipy matplotlib jupyter
+```
+
+Clear the package tarballs Conda just downloaded:
+
+```
+conda clean -t
+```
+
+Clone the course repository to your home directory:
+
+```
+git clone https://github.com/CSTR-Edinburgh/mlpractical.git ~/mlpractical
+```
+
+Make sure we are on the first lab branch
+
+```
+git checkout mlp2016-7/lab1
+```
+
+Install the `mlp` package in the environment in develop mode
+
+```
+python ~/mlpractical/setup.py develop
+```
+
+Add an `MLP_DATA_DIR` variable to the environment
+
+```
+cd ~/miniconda2/envs/mlp
+mkdir -p ./etc/conda/activate.d
+mkdir -p ./etc/conda/deactivate.d
+echo -e '#!/bin/sh\n' >> ./etc/conda/activate.d/env_vars.sh
+echo "export MLP_DATA_DIR=$HOME/mlpractical/data" >> ./etc/conda/activate.d/env_vars.sh
+echo -e '#!/bin/sh\n' >> ./etc/conda/deactivate.d/env_vars.sh
+echo 'unset MLP_DATA_DIR' >> ./etc/conda/deactivate.d/env_vars.sh
+```
+
+Environment is now set up. Load the notebook server
+
+```
+jupyter notebook
+```
+
+and then open the first lab notebook from the `notebooks` directory.
+
 
 ---
 
