@@ -294,7 +294,7 @@ jupyter notebook
 
 This will start a notebook server instance in the current terminal (with a series of status messages being streamed to the terminal output) and launch a browser window which will load the notebook application interface.
 
-By default the notebook interface will show a list of the files in the directory the notebook server was launched from when first loaded. If you click on the `notebooks` directory in this file list, a list of files in this directory should then be displayed. Click the `00_Introduction.ipynb` entry to load the first notebook.
+By default the notebook interface will show a list of the files in the directory the notebook server was launched from when first loaded. If you click on the `notebooks` directory in this file list, a list of files in this directory should then be displayed. Click the `01_Introduction.ipynb` entry to load the first notebook.
 
 ---
 
