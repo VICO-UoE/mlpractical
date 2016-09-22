@@ -187,9 +187,9 @@ class MetOfficeDataProvider(DataProvider):
         raw = np.loadtxt(data_path, skiprows=3, usecols=range(2, 32))
         assert window_size > 1, 'window_size must be at least 2.'
         self.window_size = window_size
-        #filter out all missing datapoints and flatten to a vector
+        # filter out all missing datapoints and flatten to a vector
         filtered = raw[raw >= 0].flatten()
-        #normalise data to zero mean, unit standard deviation
+        # normalise data to zero mean, unit standard deviation
         mean = np.mean(filtered)
         std = np.std(filtered)
         normalised = (filtered - mean) / std
