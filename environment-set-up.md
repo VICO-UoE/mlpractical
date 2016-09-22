@@ -298,7 +298,7 @@ This will start a notebook server instance in the current terminal (with a serie
 
 By default the notebook interface will show a list of the files in the directory the notebook server was launched from when first loaded. If you click on the `notebooks` directory in this file list, a list of files in this directory should then be displayed. Click the `01_Introduction.ipynb` entry to load the first notebook.
 
-# <span id=minimal-set-up> Minimal set-up instructions for DICE</span>
+# <span id='minimal-set-up'> Minimal set-up instructions for DICE</span>
 
 Below are instructions for setting up the environment with out additional explanation. These are intentionally terse and if you don't understand what a particlar command is doing you might be better following the more detailed instructions above which explain each step.
 
