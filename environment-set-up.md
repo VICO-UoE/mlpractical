@@ -6,7 +6,7 @@ In this course we will be using [Python 2.7](https://www.python.org/) for all th
 
 A common headache in software projects is ensuring the correct versions of all dependencies are available on the current development system. Often you may be working on several distinct projects simultaneously each with its own potentially conflicting dependencies on external libraries. Additionally you may be working across multiple different machines (for example a personal laptop and University computers) with possibly different operating systems. Further, as is the case in Informatics on DICE, you may not have root-level access to a system you are working on and so not be able to install software at a system-wide level and system updates may cause library versions to be changed to incompatible versions.
 
-One way of overcoming these issues is to use project-specific *virtual environments*. In this context a  virtual environment is an isolated development environment where the external dependencies of a project can be installed and managed independent of the system-wide library versions (and those of the environments of other projects).
+One way of overcoming these issues is to use project-specific *virtual environments*. In this context a virtual environment is an isolated development environment where the external dependencies of a project can be installed and managed independent of the system-wide versions (and those of the environments of other projects).
 
 There are several virtual environment solutions available in the Python eco-system, including the native [pyvenv](https://docs.python.org/3/library/venv.html) in Python 3 and the popular [virtualenv](https://virtualenv.pypa.io/en/stable/). Also related is [pip](https://pip.pypa.io/en/stable/) a Python package manager natively included in Python 2.7.9 and above.
 
@@ -20,7 +20,7 @@ There are several options available for installing Conda on a system. Here we wi
 
 We provide instructions here for getting an environment with all the required dependencies running on computers running the School of Informatics [DICE desktop](http://computing.help.inf.ed.ac.uk/dice-platform). The same instructions should be able to used on other Linux distributions such as Ubuntu and Linux Mint with minimal adjustments.
 
-For those wishing to install on a personal Windows or OSX machine, the initial instructions for setting up Conda will differ slightly - you should instead select the relevant installer for your system from [here](http://conda.pydata.org/miniconda.html) and following the corresponding installation instructions from [here](http://conda.pydata.org/docs/install/quick.html). After Conda is installed the [remaining instructions](#creating-the-conda-environment) should be the same across different systems.
+For those wishing to install on a personal Windows or OSX machine, the initial instructions for setting up Conda will differ slightly - you should instead select the relevant installer for your system from [here](http://conda.pydata.org/miniconda.html) and following the corresponding installation instructions from [here](http://conda.pydata.org/docs/install/quick.html). After Conda is installed the [remaining instructions](#creating-the-conda-environment) should be broadly the same across different systems.
 
 *Note: Although we are happy for you to additionally set up an environment on a personal machine, you should still set up a DICE environment now as this will make sure you are able to use shared computing resources later in the course. Also although we have tried to note when the required commands will differ on non-DICE systems, these instructions have only been tested on DICE and we will not be able to offer any support in labs on getting set up on a non-DICE system.*
 
@@ -103,7 +103,7 @@ We will now install the dependencies for the course into the new environment:
 conda install numpy scipy matplotlib jupyter
 ```
 
-Again you will be given list of the packages to be installed and asked to confirm whether to proceed. Enter `y` then wait for the packages to install (this should take around five minutes). In addition to Jupyter, NumPy and SciPy which we have already mentioned, we are also installing [matplotlib](http://matplotlib.org/) a plotting and visualisation library.
+Again you will be given a list of the packages to be installed and asked to confirm whether to proceed. Enter `y` then wait for the packages to install (this should take around five minutes). In addition to Jupyter, NumPy and SciPy which we have already mentioned, we are also installing [matplotlib](http://matplotlib.org/) a plotting and visualisation library.
 
 Once the installation is finished, to recover some disk space we can clear the package tarballs Conda just downloaded:
 
@@ -132,11 +132,11 @@ We will now go over the process of [cloning](https://www.atlassian.com/git/tutor
 ---
 **Confident Git users only:**
 
-For those who have their own Github account (you can set up a free account easily [here](https://github.com/join)) and are confident Git users, you may wish to consider instead [creating a private fork](http://stackoverflow.com/a/30352360) of the `CSTR-Edinburgh/mlpractical` repository on Github. This is not required for the course, however it will allow you to push your local commits to Github making it easier to for example sync your work between DICE computers and a personal machine.
+For those who have their own Github account and are confident Git users, you may wish to consider instead [creating a private fork](http://stackoverflow.com/a/30352360) of the `CSTR-Edinburgh/mlpractical` repository on Github. This is not required for the course, however it will allow you to push your local commits to Github making it easier to for example sync your work between DICE computers and a personal machine.
 
-**Note we do not recommend creating a public fork using the default forking mechanism on Github as this will make any commits you push to the fork publicly available which creates a risk of plagiarism.**
+**Note you should NOT create a public fork using the default forking mechanism on Github as this will make any commits you push to the fork publicly available which creates a risk of plagiarism.**
 
-If you are already familiar with Git you may wish to skip over the explanatory sections below.
+If you are already familiar with Git you may wish to skip over the explanatory sections below, though you should read [the section on how we will use branches to separate the code for different labs](#branching-explanation).
 
 ---
 
@@ -159,7 +159,7 @@ For the most part this will look much like any other directory, with there being
   * `mlp`: The custom Python package we will use in this course.
   * `notebooks`: The Jupyter notebook files for each lab and coursework.
 
-Additionally there exists a hidden `.git` subdirectory (on Unix systems by default files and directories prepended with a period '.' are hidden). This directory contai## <span id="create-conda-env">Creating the Conda environment</span>ns the repository history database and various configuration files and references. Unless you are sure you know what you are doing you generally should not edit any of the files in this directory directly. Generally most configuration options can be enacted more safely using a `git config` command. For instance to globally set the user name and email used in commits run:
+Additionally there exists a hidden `.git` subdirectory (on Unix systems by default files and directories prepended with a period '.' are hidden). This directory contains the repository history database and various configuration files and references. Unless you are sure you know what you are doing you generally should not edit any of the files in this directory directly. Generally most configuration options can be enacted more safely using a `git config` command. For instance to globally set the user name and email used in commits run:
 
 ```
 git config --global user.name "[your name]"
@@ -183,7 +183,7 @@ A *commit* in Git is a snapshot of the state of the project. The snapshots are r
   2. The files with changes to be committed (including any new files) are added to the *staging area* by running:
 
   ```
-  git add [file1] [file2] ...
+  git add file1 file2 ...
   ```
 
   3. Finally the *staged changes* are used to create a new commit by running
@@ -198,7 +198,7 @@ This writes the staged changes as a new commit in the repository history. We can
 git log
 ```
 
-Although it is not a requirement of the course for you to make regular commits of your work, we strongly recommend you do as it is a good habit to get into.
+Although it is not a requirement of the course for you to make regular commits of your work, we strongly recommend you do as it is a good habit to get into and will make recovery from accidental deletions etc. much easier.
 
 The other key Git concept you will need to know about are *branches*. A branch in Git represents an independent line of development of a project. When a repository is first created it will contain a single branch, named `master` by default. Commits to this branch form a linear series of snapshots of the project.
 
@@ -206,7 +206,7 @@ A new branch is created from a commit on an existing branch. Any commits made to
 
 A typical Git workflow in a software development setting would be to create a new branch whenever making changes to a project, for example to fix a bug or implement a new feature. These changes are then isolated from the main code base allowing regular commits without worrying about making unstable changes to the main code base. Key to this workflow is the ability to *merge* commits from a branch into another branch, e.g. when it is decided a new feature is sufficiently developed to be added to the main code base. Although merging branches is key aspect of using Git in many projects, as dealing with merge conflicts when two branches both make changes to same parts of files can be a somewhat tricky process, we will here generally try to avoid the need for merges.
 
-We will therefore use branches here in a slightly non-standard way. The code for each week's lab and for each of the assignments will be maintained in a separate branch. This will allow us to stage the release of the notebooks and code for each lab and assignment while allowing you to commit the changes you make to the code each week without having to merge those changes when new code is released. Similarly this structure will allow us to release updated notebooks from previous labs with proposed solutions without overwriting your own work.
+<p id='branching-explanation'>We will therefore use branches here in a slightly non-standard way. The code for each week's lab and for each of the assignments will be maintained in a separate branch. This will allow us to stage the release of the notebooks and code for each lab and assignment while allowing you to commit the changes you make to the code each week without having to merge those changes when new code is released. Similarly this structure will allow us to release updated notebooks from previous labs with proposed solutions without overwriting your own work.</p>
 
 To list the branches present in the local repository, run:
 
@@ -214,10 +214,10 @@ To list the branches present in the local repository, run:
 git branch
 ```
 
-This will display a list of branches with a * next to the current branch. To switch to a different existing branch in the local repository  run
+This will display a list of branches with a `*` next to the current branch. To switch to a different existing branch in the local repository run
 
 ```
-git checkout [branch-name]
+git checkout branch-name
 ```
 
 This will change the code in the working directory to the current state of the checked out branch. Any files added to the staging area and committed will then create a new commit on this branch.
@@ -236,7 +236,7 @@ In order to make the modules in this package available in your environment we ne
 
 The standard way to install a Python package using a `setup.py` script is to run `python setup.py install`. This creates a copy of the package in the `site-packages` directory of the currently active Python environment.
 
-As we will be updating the code in the `mlp` package during the course of the labs this would require you to re-run  `python setup.py install` every time a change is made to the package. Instead we therefore recommend you install the package in development mode by running:
+As we will be updating the code in the `mlp` package during the course of the labs this would require you to re-run  `python setup.py install` every time a change is made to the package. Instead therefore you should install the package in development mode by running:
 
 ```
 python setup.py develop
