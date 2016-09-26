@@ -57,7 +57,7 @@ For those who this appears a bit opaque to and want to know what is going on see
 We now need to `source` the updated `~/.benv` so that the `PATH` variable in the current terminal session is updated:
 
 ```
-source .benv
+source ~/.benv
 ```
 
 Alternatively we could have just closed the current terminal and started a new one. All future terminal sessions should have the updated `PATH` loaded by default.
@@ -266,6 +266,7 @@ echo -e '#!/bin/sh\n' >> ./etc/conda/activate.d/env_vars.sh
 echo "export MLP_DATA_DIR=$HOME/mlpractical/data" >> ./etc/conda/activate.d/env_vars.sh
 echo -e '#!/bin/sh\n' >> ./etc/conda/deactivate.d/env_vars.sh
 echo 'unset MLP_DATA_DIR' >> ./etc/conda/deactivate.d/env_vars.sh
+export MLP_DATA_DIR=$HOME/mlpractical/data
 ```
 
 And on Windows systems (replacing the `[]` placeholders with the relevant paths):
@@ -276,6 +277,7 @@ mkdir .\etc\conda\activate.d
 mkdir .\etc\conda\deactivate.d
 @echo "set MLP_DATA_DIR=[path-to-local-repository]\data" >> .\etc\conda\activate.d\env_vars.bat
 @echo "set MLP_DATA_DIR="  >> .\etc\conda\deactivate.d\env_vars.bat
+set MLP_DATA_DIR=[path-to-local-repository]\data
 ```
 
 After running these commands, deactivate then reactivate your environment to define the variable in the current session.
@@ -328,7 +330,7 @@ echo "export PATH=\""\$PATH":$HOME/miniconda2/bin\"" >> ~/.benv
 `source` the updated `~/.benv`:
 
 ```
-source .benv
+source ~/.benv
 ```
 
 Create a new `mlp` Conda environment:
@@ -383,11 +385,13 @@ echo -e '#!/bin/sh\n' >> ./etc/conda/activate.d/env_vars.sh
 echo "export MLP_DATA_DIR=$HOME/mlpractical/data" >> ./etc/conda/activate.d/env_vars.sh
 echo -e '#!/bin/sh\n' >> ./etc/conda/deactivate.d/env_vars.sh
 echo 'unset MLP_DATA_DIR' >> ./etc/conda/deactivate.d/env_vars.sh
+export MLP_DATA_DIR=$HOME/mlpractical/data
 ```
 
-Environment is now set up. Load the notebook server
+Environment is now set up. Load the notebook server from `mlpractical` directory
 
 ```
+cd ~/mlpractical
 jupyter notebook
 ```
 
