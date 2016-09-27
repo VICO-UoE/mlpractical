@@ -1,6 +1,6 @@
 # Exceeded quota problems on DICE
 
-Apologies to those who had issues with having insufficient quota space on DICE in the labs on Monday (26th September). 
+Apologies to those who had issues with having insufficient quota space on DICE in the labs on Monday (26th September).
 
 This was caused by the [dynamic AFS quota system](http://computing.help.inf.ed.ac.uk/dynamic-afs-quotas) which only initially allocates users a subset of their maximum quota and then checks hourly to increase this quota as needed. Unfortunately the amount of disk space needed to store the temporary files used in installing the course dependencies exceeded the current dynamic quota for some people. This meant when running the `conda install ...` command it exited with a quota exceeded error.
 
@@ -8,7 +8,7 @@ Those who experienced that issue should now have sufficient quota space availabl
 
 ```
 source activate mlp
-conda clean --all -y
+conda remove -y numpy scipy matplotlib jupyter
 conda install -y numpy scipy matplotlib jupyter
 conda clean -t -y
 ```
@@ -27,4 +27,3 @@ cd ~/mlpractical  # Change the current directory to mlpractical repository
 git checkout mlp2016-7/lab[...]  # Checkout the branch for this week's lab
 jupyter notebook  # Launch the notebook server
 ```
-
