@@ -60,7 +60,7 @@ We now need to `source` the updated `~/.benv` so that the `PATH` variable in the
 source ~/.benv
 ```
 
-Alternatively we could have just closed the current terminal and started a new one. All future terminal sessions should have the updated `PATH` loaded by default.
+From the next time you log in all future terminal sessions should have the updated `PATH` loaded by default.
 
 ## Creating the Conda environment
 
@@ -121,11 +121,17 @@ https://github.com/CSTR-Edinburgh/mlpractical
 
 [Git](https://git-scm.com/) is a distributed version control system and [Github](https://github.com) a popular site for hosting Git repositories. We will be using Git to distribute the code for all the labs and assignments. We will explain all the necessary `git` commands as we go, though those new to Git may find [this concise guide by Roger Dudler](http://rogerdudler.github.io/git-guide/) or [this slightly longer one from Atlassian](https://www.atlassian.com/git/tutorials/) useful.
 
+---
+
+***Non-DICE systems only:***
+
 Git is installed by default on DICE desktops. If you are running a system which does not have Git installed, you can use Conda to install it in your environment using:
 
 ```
 conda install git
 ```
+
+---
 
 We will now go over the process of [cloning](https://www.atlassian.com/git/tutorials/setting-up-a-repository/git-clone) a local copy of the `mlpractical` repository.
 
@@ -140,7 +146,10 @@ If you are already familiar with Git you may wish to skip over the explanatory s
 
 ---
 
-If necessary, change the current directory in the terminal to the one you wish to clone the code to. By default we will assume you are cloning to your home directory (run `cd ~` to get to this directory) however if you have an existing system for organising your workspace feel free to keep to that. To clone the `mlpractical` code to the current directory run
+If necessary, change the current directory in the terminal to the one you wish to clone the code to. By default we will assume you are cloning to your home directory (run `cd ~` to get to this directory) however if you have an existing system for organising your workspace feel free to keep to that. **If you clone the repository to a path other than `~/mlpractical` you will need to adjust all references to the `~/mlpractical` in the commands below accordingly.**
+
+
+To clone the `mlpractical` code to the current directory run
 
 ```
 git clone https://github.com/CSTR-Edinburgh/mlpractical.git
@@ -159,12 +168,17 @@ For the most part this will look much like any other directory, with there being
   * `mlp`: The custom Python package we will use in this course.
   * `notebooks`: The Jupyter notebook files for each lab and coursework.
 
-Additionally there exists a hidden `.git` subdirectory (on Unix systems by default files and directories prepended with a period '.' are hidden). This directory contains the repository history database and various configuration files and references. Unless you are sure you know what you are doing you generally should not edit any of the files in this directory directly. Generally most configuration options can be enacted more safely using a `git config` command. For instance to globally set the user name and email used in commits run:
+Additionally there exists a hidden `.git` subdirectory (on Unix systems by default files and directories prepended with a period '.' are hidden). This directory contains the repository history database and various configuration files and references. Unless you are sure you know what you are doing you generally should not edit any of the files in this directory directly. Generally most configuration options can be enacted more safely using a `git config` command.
+
+
+For instance to globally set the user name and email used in commits you can run:
 
 ```
 git config --global user.name "[your name]"
 git config --global user.email "[matric-number]@sms.ed.ac.uk"
 ```
+
+*Note this is meant as an example of a `git config` command - you do not need to run this command though there is no harm in doing so.*
 
 From the root `mlpractical` directory if you now run:
 
@@ -244,13 +258,25 @@ python setup.py develop
 
 Instead of copying the package, this will instead create a symbolic link to the copy in the local repository. This means any changes made will be immediately available without the need to reinstall the package.
 
-Note that after the first time a Python module is loaded into an interpreter instance, using for example:
+---
+
+**Aside on importing Python modules:***
+
+Note that after the first time a Python module is loaded **into an interpreter instance**, using for example:
 
 ```
 import mlp
 ```
 
 Running the `import` statement any further times will have no effect even if the underlying module code has been changed. To reload an already imported module we instead need to use the [`reload`](https://docs.python.org/2.7/library/functions.html#reload) function.
+
+**Note: To be clear as this has caused some confusion in previous labs the above `import mlp` statement should NOT be run directly in a bash terminal. It is an example of a Python statement - you could run it in a terminal by first loading a Python interpreter using:**
+
+```
+python
+```
+
+---
 
 ## Adding a data directory variable to the environment
 
@@ -279,8 +305,6 @@ mkdir .\etc\conda\deactivate.d
 @echo "set MLP_DATA_DIR="  >> .\etc\conda\deactivate.d\env_vars.bat
 set MLP_DATA_DIR=[path-to-local-repository]\data
 ```
-
-After running these commands, deactivate then reactivate your environment to define the variable in the current session.
 
 ## Loading the first lab notebook
 
@@ -318,7 +342,7 @@ Run the install script:
 bash Miniconda2-latest-Linux-x86_64.sh
 ```
 
-Review the software license agreement and choose whether to accept. Assuming you accept, you be asked to choose an install location for Miniconda. The default is to install in the root of your home directory `~/miniconda2`. We will assume below you have used this default. If you change you will need to adjust the paths in the commands below to suit.
+Review the software license agreement and choose whether to accept. Assuming you accept, you be asked to choose an install location for Miniconda. The default is to install in the root of your home directory `~/miniconda2`. We will assume below you have used this default. **If you use a different path you will need to adjust the paths in the commands below to suit.**
 
 You will then be asked whether to prepend the Miniconda binaries directory to the `PATH` system environment variable definition in `.bashrc`. You should respond `no` here as we will set up the addition to `PATH` manually in the next step.
 
@@ -366,6 +390,7 @@ git clone https://github.com/CSTR-Edinburgh/mlpractical.git ~/mlpractical
 Make sure we are on the first lab branch
 
 ```
+cd ~/mlpractical
 git checkout mlp2016-7/lab1
 ```
 
