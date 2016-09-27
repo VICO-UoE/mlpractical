@@ -146,19 +146,19 @@ If you are already familiar with Git you may wish to skip over the explanatory s
 
 ---
 
-If necessary, change the current directory in the terminal to the one you wish to clone the code to. By default we will assume you are cloning to your home directory (run `cd ~` to get to this directory) however if you have an existing system for organising your workspace feel free to keep to that. **If you clone the repository to a path other than `~/mlpractical` you will need to adjust all references to the `~/mlpractical` in the commands below accordingly.**
+By default we will assume here you are cloning to your home directory however if you have an existing system for organising your workspace feel free to keep to that. **If you clone the repository to a path other than `~/mlpractical` however you will need to adjust all references to `~/mlpractical` in the commands below accordingly.**
 
 
-To clone the `mlpractical` code to the current directory run
+To clone the `mlpractical` repository to the home directory run
 
 ```
-git clone https://github.com/CSTR-Edinburgh/mlpractical.git
+git clone https://github.com/CSTR-Edinburgh/mlpractical.git ~/mlpractical
 ```
 
 This will create a new `mlpractical` subdirectory with a local copy of the repository in it. Enter the directory and list all its contents, including hidden files, by running:
 
 ```
-cd mlpractical
+cd ~/mlpractical
 ls -a  # Windows equivalent: dir /a
 ```
 
@@ -180,7 +180,7 @@ git config --global user.email "[matric-number]@sms.ed.ac.uk"
 
 *Note this is meant as an example of a `git config` command - you do not need to run this command though there is no harm in doing so.*
 
-From the root `mlpractical` directory if you now run:
+From the  `~/mlpractical` directory if you now run:
 
 `git status`
 
@@ -260,21 +260,27 @@ Instead of copying the package, this will instead create a symbolic link to the 
 
 ---
 
-**Aside on importing Python modules:***
+**Aside on importing/reloading Python modules:**
 
-Note that after the first time a Python module is loaded **into an interpreter instance**, using for example:
+Note that after the first time a Python module is loaded into an interpreter instance, using for example:
 
 ```
 import mlp
 ```
 
-Running the `import` statement any further times will have no effect even if the underlying module code has been changed. To reload an already imported module we instead need to use the [`reload`](https://docs.python.org/2.7/library/functions.html#reload) function.
+Running the `import` statement any further times will have no effect even if the underlying module code has been changed. To reload an already imported module we instead need to use the [`reload`](https://docs.python.org/2.7/library/functions.html#reload) function, e.g.
 
-**Note: To be clear as this has caused some confusion in previous labs the above `import mlp` statement should NOT be run directly in a bash terminal. It is an example of a Python statement - you could run it in a terminal by first loading a Python interpreter using:**
+```
+reload(mlp)
+```
+
+**Note: To be clear as this has caused some confusion in previous labs the above `import ...` / `reload(...)` statements should NOT be run directly in a bash terminal. They are examples Python statements - you could run them in a terminal by first loading a Python interpreter using:**
 
 ```
 python
 ```
+
+**however you do not need to do so now. This is meant as information to help you later when importing modules as there was some confusion last year about the difference between `import` and `reload`.**
 
 ---
 
