@@ -17,30 +17,30 @@ logger = logging.getLogger(__name__)
 class Optimiser(object):
     """Basic model optimiser."""
 
-    def __init__(self, model, cost, learning_rule, train_dataset,
+    def __init__(self, model, error, learning_rule, train_dataset,
                  valid_dataset=None, data_monitors=None):
         """Create a new optimiser instance.
 
         Args:
             model: The model to optimise.
-            cost: The scalar cost function to minimise.
+            error: The scalar error function to minimise.
             learning_rule: Gradient based learning rule to use to minimise
-                cost.
+                error.
             train_dataset: Data provider for training set data batches.
             valid_dataset: Data provider for validation set data batches.
             data_monitors: Dictionary of functions evaluated on targets and
                 model outputs (averaged across both full training and
                 validation data sets) to monitor during training in addition
-                to the cost. Keys should correspond to a string label for
+                to the error. Keys should correspond to a string label for
                 the statistic being evaluated.
         """
         self.model = model
-        self.cost = cost
+        self.error = error
         self.learning_rule = learning_rule
         self.learning_rule.initialise(self.model.params)
         self.train_dataset = train_dataset
         self.valid_dataset = valid_dataset
-        self.data_monitors = OrderedDict([('cost', cost)])
+        self.data_monitors = OrderedDict([('error', error)])
         if data_monitors is not None:
             self.data_monitors.update(data_monitors)
 
@@ -48,13 +48,13 @@ class Optimiser(object):
         """Do a single training epoch.
 
         This iterates through all batches in training dataset, for each
-        calculating the gradient of the estimated loss given the batch with
+        calculating the gradient of the estimated error given the batch with
         respect to all the model parameters and then updates the model
         parameters according to the learning rule.
         """
         for inputs_batch, targets_batch in self.train_dataset:
             activations = self.model.fprop(inputs_batch)
-            grads_wrt_outputs = self.cost.grad(activations[-1], targets_batch)
+            grads_wrt_outputs = self.error.grad(activations[-1], targets_batch)
             grads_wrt_params = self.model.grads_wrt_params(
                 activations, grads_wrt_outputs)
             self.learning_rule.update_params(grads_wrt_params)

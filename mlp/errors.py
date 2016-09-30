@@ -1,20 +1,22 @@
 # -*- coding: utf-8 -*-
-"""Model costs.
+"""Error functions.
 
-This module defines cost functions, with the aim of model training being to
-minimise the cost function given a set of inputs and target outputs. The cost
-functions typically measure some concept of distance between the model outputs
-and target outputs.
+This module defines error functions, with the aim of model training being to
+minimise the error function given a set of inputs and target outputs.
+
+The error functions will typically measure some concept of distance between the
+model outputs and target outputs, averaged over all data points in the data set
+or batch.
 """
 
 import numpy as np
 
 
-class MeanSquaredErrorCost(object):
-    """Mean squared error cost."""
+class SumOfSquaredDiffsError(object):
+    """Sum of squared differences (squared Euclidean distance) error."""
 
     def __call__(self, outputs, targets):
-        """Calculates cost function given a batch of outputs and targets.
+        """Calculates error function given a batch of outputs and targets.
 
         Args:
             outputs: Array of model outputs of shape (batch_size, output_dim).
@@ -26,148 +28,149 @@ class MeanSquaredErrorCost(object):
         return 0.5 * np.mean(np.sum((outputs - targets)**2, axis=1))
 
     def grad(self, outputs, targets):
-        """Calculates gradient of cost function with respect to outputs.
+        """Calculates gradient of error function with respect to outputs.
 
         Args:
             outputs: Array of model outputs of shape (batch_size, output_dim).
             targets: Array of target outputs of shape (batch_size, output_dim).
 
         Returns:
-            Gradient of cost function with respect to outputs.
+            Gradient of error function with respect to outputs.
         """
-        return outputs - targets
+        return (outputs - targets) / outputs.shape[0]
 
     def __repr__(self):
         return 'MeanSquaredErrorCost'
 
 
-class BinaryCrossEntropyCost(object):
-    """Binary cross entropy cost."""
+class BinaryCrossEntropyError(object):
+    """Binary cross entropy error."""
 
     def __call__(self, outputs, targets):
-        """Calculates cost function given a batch of outputs and targets.
+        """Calculates error function given a batch of outputs and targets.
 
         Args:
             outputs: Array of model outputs of shape (batch_size, output_dim).
             targets: Array of target outputs of shape (batch_size, output_dim).
 
         Returns:
-            Scalar cost function value.
+            Scalar error function value.
         """
         return -np.mean(
             targets * np.log(outputs) + (1. - targets) * np.log(1. - ouputs))
 
     def grad(self, outputs, targets):
-        """Calculates gradient of cost function with respect to outputs.
+        """Calculates gradient of error function with respect to outputs.
 
         Args:
             outputs: Array of model outputs of shape (batch_size, output_dim).
             targets: Array of target outputs of shape (batch_size, output_dim).
 
         Returns:
-            Gradient of cost function with respect to outputs.
+            Gradient of error function with respect to outputs.
         """
-        return (1. - targets) / (1. - outputs) - (targets / outputs)
+        return ((1. - targets) / (1. - outputs) -
+                (targets / outputs)) / outputs.shape[0]
 
     def __repr__(self):
-        return 'BinaryCrossEntropyCost'
+        return 'BinaryCrossEntropyError'
 
 
-class BinaryCrossEntropySigmoidCost(object):
-    """Binary cross entropy cost with logistic sigmoid applied to outputs."""
+class BinaryCrossEntropySigmoidError(object):
+    """Binary cross entropy error with logistic sigmoid applied to outputs."""
 
     def __call__(self, outputs, targets):
-        """Calculates cost function given a batch of outputs and targets.
+        """Calculates error function given a batch of outputs and targets.
 
         Args:
             outputs: Array of model outputs of shape (batch_size, output_dim).
             targets: Array of target outputs of shape (batch_size, output_dim).
 
         Returns:
-            Scalar cost function value.
+            Scalar error function value.
         """
         probs = 1. / (1. + np.exp(-outputs))
         return -np.mean(
             targets * np.log(probs) + (1. - targets) * np.log(1. - probs))
 
     def grad(self, outputs, targets):
-        """Calculates gradient of cost function with respect to outputs.
+        """Calculates gradient of error function with respect to outputs.
 
         Args:
             outputs: Array of model outputs of shape (batch_size, output_dim).
             targets: Array of target outputs of shape (batch_size, output_dim).
 
         Returns:
-            Gradient of cost function with respect to outputs.
+            Gradient of error function with respect to outputs.
         """
         probs = 1. / (1. + np.exp(-outputs))
-        return probs - targets
+        return (probs - targets) / outputs.shape[0]
 
     def __repr__(self):
-        return 'BinaryCrossEntropySigmoidCost'
+        return 'BinaryCrossEntropySigmoidError'
 
 
-class CrossEntropyCost(object):
-    """Multi-class cross entropy cost."""
+class CrossEntropyError(object):
+    """Multi-class cross entropy error."""
 
     def __call__(self, outputs, targets):
-        """Calculates cost function given a batch of outputs and targets.
+        """Calculates error function given a batch of outputs and targets.
 
         Args:
             outputs: Array of model outputs of shape (batch_size, output_dim).
             targets: Array of target outputs of shape (batch_size, output_dim).
 
         Returns:
-            Scalar cost function value.
+            Scalar error function value.
         """
         return -np.mean(np.sum(targets * np.log(outputs), axis=1))
 
     def grad(self, outputs, targets):
-        """Calculates gradient of cost function with respect to outputs.
+        """Calculates gradient of error function with respect to outputs.
 
         Args:
             outputs: Array of model outputs of shape (batch_size, output_dim).
             targets: Array of target outputs of shape (batch_size, output_dim).
 
         Returns:
-            Gradient of cost function with respect to outputs.
+            Gradient of error function with respect to outputs.
         """
-        return -targets / outputs
+        return -(targets / outputs) / outputs.shape[0]
 
     def __repr__(self):
-        return 'CrossEntropyCost'
+        return 'CrossEntropyError'
 
 
-class CrossEntropySoftmaxCost(object):
-    """Multi-class cross entropy cost with Softmax applied to outputs."""
+class CrossEntropySoftmaxError(object):
+    """Multi-class cross entropy error with Softmax applied to outputs."""
 
     def __call__(self, outputs, targets):
-        """Calculates cost function given a batch of outputs and targets.
+        """Calculates error function given a batch of outputs and targets.
 
         Args:
             outputs: Array of model outputs of shape (batch_size, output_dim).
             targets: Array of target outputs of shape (batch_size, output_dim).
 
         Returns:
-            Scalar cost function value.
+            Scalar error function value.
         """
         probs = np.exp(outputs)
         probs /= probs.sum(-1)[:, None]
         return -np.mean(np.sum(targets * np.log(probs), axis=1))
 
     def grad(self, outputs, targets):
-        """Calculates gradient of cost function with respect to outputs.
+        """Calculates gradient of error function with respect to outputs.
 
         Args:
             outputs: Array of model outputs of shape (batch_size, output_dim).
             targets: Array of target outputs of shape (batch_size, output_dim).
 
         Returns:
-            Gradient of cost function with respect to outputs.
+            Gradient of error function with respect to outputs.
         """
         probs = np.exp(outputs)
         probs /= probs.sum(-1)[:, None]
-        return probs - targets
+        return (probs - targets) / outputs.shape[0]
 
     def __repr__(self):
-        return 'CrossEntropySoftmaxCost'
+        return 'CrossEntropySoftmaxError'

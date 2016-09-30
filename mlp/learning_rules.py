@@ -10,16 +10,17 @@ import numpy as np
 class GradientDescentLearningRule(object):
     """Simple (stochastic) gradient descent learning rule.
 
-    For a scalar loss function `L(p[0], p_[1] ... )` of some set of potentially
-    multidimensional parameters this attempts to find a local minimum of the
-    loss function by applying updates to each parameter of the form
+    For a scalar error function `E(p[0], p_[1] ... )` of some set of
+    potentially multidimensional parameters this attempts to find a local
+    minimum of the loss function by applying updates to each parameter of the
+    form
 
-        p[i] := p[i] - learning_rate * dL/dp[i]
+        p[i] := p[i] - learning_rate * dE/dp[i]
 
     With `learning_rate` a positive scaling parameter.
 
-    The loss function used in successive applications of these updates may be a
-    stochastic estimator of the true loss function (e.g. when the loss with
+    The error function used in successive applications of these updates may be
+    a stochastic estimator of the true error function (e.g. when the error with
     respect to only a subset of data-points is calculated) in which case this
     will correspond to a stochastic gradient descent learning rule.
     """
