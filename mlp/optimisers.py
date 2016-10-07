@@ -122,7 +122,7 @@ class Optimiser(object):
             and the second being a dict mapping the labels for the statistics
             recorded to their column index in the array.
         """
-        run_stats = []
+        run_stats = [self.get_epoch_stats().values()]
         for epoch in range(1, num_epochs + 1):
             start_time = time.clock()
             self.do_training_epoch()
