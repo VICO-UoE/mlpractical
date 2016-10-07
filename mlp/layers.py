@@ -323,3 +323,46 @@ class TanhLayer(Layer):
 
     def __repr__(self):
         return 'TanhLayer'
+
+
+class SoftmaxLayer(Layer):
+    """Layer implementing a softmax transformation."""
+
+    def fprop(self, inputs):
+        """Forward propagates activations through the layer transformation.
+
+        For inputs `x` and outputs `y` this corresponds to
+
+            `y = exp(x) / sum(exp(x))`.
+
+        Args:
+            inputs: Array of layer inputs of shape (batch_size, input_dim).
+
+        Returns:
+            outputs: Array of layer outputs of shape (batch_size, output_dim).
+        """
+        exp_inputs = np.exp(inputs)
+        return exp_inputs / exp_inputs.sum(-1)[:, None]
+
+    def bprop(self, inputs, outputs, grads_wrt_outputs):
+        """Back propagates gradients through a layer.
+
+        Given gradients with respect to the outputs of the layer calculates the
+        gradients with respect to the layer inputs.
+
+        Args:
+            inputs: Array of layer inputs of shape (batch_size, input_dim).
+            outputs: Array of layer outputs calculated in forward pass of
+                shape (batch_size, output_dim).
+            grads_wrt_outputs: Array of gradients with respect to the layer
+                outputs of shape (batch_size, output_dim).
+
+        Returns:
+            Array of gradients with respect to the layer inputs of shape
+            (batch_size, input_dim).
+        """
+        return (outputs * (grads_wrt_outputs -
+                           (grads_wrt_outputs * outputs).sum(-1)[:, None]))
+
+    def __repr__(self):
+        return 'SoftmaxLayer'
