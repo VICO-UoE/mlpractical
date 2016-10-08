@@ -51,7 +51,7 @@ class GradientDescentLearningRule(object):
         self.params = params
 
     def reset(self):
-        """Resets any additional state variables to their intial values.
+        """Resets any additional state variables to their initial values.
 
         For this learning rule there are no additional state variables so we
         do nothing here.
@@ -138,7 +138,7 @@ class MomentumLearningRule(GradientDescentLearningRule):
             self.moms.append(np.zeros_like(param))
 
     def reset(self):
-        """Resets any additional state variables to their intial values.
+        """Resets any additional state variables to their initial values.
 
         For this learning rule this corresponds to zeroing all the momenta.
         """
