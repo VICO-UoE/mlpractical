@@ -122,11 +122,16 @@ class MultipleLayerModel(object):
         for i, layer in enumerate(self.layers[::-1]):
             inputs = activations[-i - 2]
             outputs = activations[-i - 1]
-            grads_wrt_inputs = layer.bprop(inputs, outputs, grads_wrt_outputs)
             if isinstance(layer, LayerWithParameters):
+                # Gradients are appended in reversed order, going backwards
+                # through layers, so grads_wrt_params can be reversed at end to
+                # give gradients in consistent order with self.params
                 grads_wrt_params += layer.grads_wrt_params(
                     inputs, grads_wrt_outputs)[::-1]
-            grads_wrt_outputs = grads_wrt_inputs
+            # If not at first layer back-propagate gradients
+            if i != len(self.layers) - 1:
+                grads_wrt_outputs = layer.bprop(
+                    inputs, outputs, grads_wrt_outputs)
         return grads_wrt_params[::-1]
 
     def params_cost(self):
