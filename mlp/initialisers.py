@@ -100,7 +100,7 @@ class GlorotUniformInit(object):
 
     def __call__(self, shape):
         assert len(shape) == 2, (
-            'Initialiser should only be used for two dimensional arrays'.)
+            'Initialiser should only be used for two dimensional arrays.')
         std = self.gain * (2. / (shape[0] + shape[1]))**0.5
         half_width = 3.**0.5 * std
         return self.rng.uniform(low=-half_width, high=half_width, size=shape)
