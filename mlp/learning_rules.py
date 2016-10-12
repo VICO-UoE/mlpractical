@@ -142,7 +142,7 @@ class MomentumLearningRule(GradientDescentLearningRule):
 
         For this learning rule this corresponds to zeroing all the momenta.
         """
-        for mom in zip(self.moms):
+        for mom in self.moms:
             mom *= 0.
 
     def update_params(self, grads_wrt_params):
@@ -251,7 +251,7 @@ class NesterovMomentumLearningRule(GradientDescentLearningRule):
 
         For this learning rule this corresponds to zeroing all the momenta.
         """
-        for mom in zip(self.moms):
+        for mom in self.moms:
             mom *= 0.
 
     def update_params(self, grads_wrt_params):
