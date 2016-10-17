@@ -124,7 +124,8 @@ class Optimiser(object):
             recorded to their column index in the array and the final value
             being the total time elapsed in seconds during the training run.
         """
-        run_stats = [self.get_epoch_stats().values()]
+        stats = self.get_epoch_stats()
+        run_stats = [stats.values()]
         run_start_time = time.time()
         for epoch in range(1, num_epochs + 1):
             for scheduler in self.schedulers:
