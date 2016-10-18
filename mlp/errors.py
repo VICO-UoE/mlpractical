@@ -154,7 +154,9 @@ class CrossEntropySoftmaxError(object):
         Returns:
             Scalar error function value.
         """
-        probs = np.exp(outputs)
+        # subtract max inside exponential to improve numerical stability -
+        # when we divide through by sum this term cancels
+        probs = np.exp(outputs - outputs.max(-1)[:, None])
         probs /= probs.sum(-1)[:, None]
         return -np.mean(np.sum(targets * np.log(probs), axis=1))
 
