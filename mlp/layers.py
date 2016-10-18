@@ -426,4 +426,4 @@ class RadialBasisFunctionLayer(Layer):
         ).sum(-1)
 
     def __repr__(self):
-        return 'RadialBasisFunctionLayer(grid_dim={0})'.format(grid_dim)
+        return 'RadialBasisFunctionLayer(grid_dim={0})'.format(self.grid_dim)
