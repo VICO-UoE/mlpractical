@@ -68,10 +68,10 @@ class LayerWithParameters(Layer):
         """
         raise NotImplementedError()
 
-    def params_cost(self):
-        """Returns the parameter dependent cost term for this layer.
+    def params_penalty(self):
+        """Returns the parameter dependent penalty term for this layer.
 
-        If no parameter-dependent cost terms are set this returns zero.
+        If no parameter-dependent penalty terms are set this returns zero.
         """
         raise NotImplementedError()
 
@@ -105,7 +105,7 @@ class AffineLayer(LayerWithParameters):
     def __init__(self, input_dim, output_dim,
                  weights_initialiser=init.UniformInit(-0.1, 0.1),
                  biases_initialiser=init.ConstantInit(0.),
-                 weights_cost=None, biases_cost=None):
+                 weights_penalty=None, biases_penalty=None):
         """Initialises a parameterised affine layer.
 
         Args:
@@ -113,15 +113,17 @@ class AffineLayer(LayerWithParameters):
             output_dim (int): Dimension of the layer outputs.
             weights_initialiser: Initialiser for the weight parameters.
             biases_initialiser: Initialiser for the bias parameters.
-            weights_cost: Weights-dependent cost term.
-            biases_cost: Biases-dependent cost term.
+            weights_penalty: Weights-dependent penalty term (regulariser) or
+                None if no regularisation is to be applied to the weights.
+            biases_penalty: Biases-dependent penalty term (regulariser) or
+                None if no regularisation is to be applied to the biases.
         """
         self.input_dim = input_dim
         self.output_dim = output_dim
         self.weights = weights_initialiser((self.output_dim, self.input_dim))
         self.biases = biases_initialiser(self.output_dim)
-        self.weights_cost = weights_cost
-        self.biases_cost = biases_cost
+        self.weights_penalty = weights_penalty
+        self.biases_penalty = biases_penalty
 
     def fprop(self, inputs):
         """Forward propagates activations through the layer transformation.
@@ -172,25 +174,25 @@ class AffineLayer(LayerWithParameters):
         grads_wrt_weights = np.dot(grads_wrt_outputs.T, inputs)
         grads_wrt_biases = np.sum(grads_wrt_outputs, axis=0)
 
-        if self.weights_cost is not None:
-            grads_wrt_weights += self.weights_cost.grad(self.weights)
+        if self.weights_penalty is not None:
+            grads_wrt_weights += self.weights_penalty.grad(self.weights)
 
-        if self.biases_cost is not None:
-            grads_wrt_biases += self.biases_cost.grads(self.biases)
+        if self.biases_penalty is not None:
+            grads_wrt_biases += self.biases_penalty.grad(self.biases)
 
         return [grads_wrt_weights, grads_wrt_biases]
 
-    def params_cost(self):
-        """Returns the parameter dependent cost term for this layer.
+    def params_penalty(self):
+        """Returns the parameter dependent penalty term for this layer.
 
-        If no parameter-dependent cost terms are set this returns zero.
+        If no parameter-dependent penalty terms are set this returns zero.
         """
-        params_cost = 0
-        if self.weights_cost is not None:
-            params_cost += self.weights_cost(self.weights)
-        if self.biases_cost is not None:
-            params_cost += self.biases_cost(self.biases)
-        return params_cost
+        params_penalty = 0
+        if self.weights_penalty is not None:
+            params_penalty += self.weights_penalty(self.weights)
+        if self.biases_penalty is not None:
+            params_penalty += self.biases_penalty(self.biases)
+        return params_penalty
 
     @property
     def params(self):

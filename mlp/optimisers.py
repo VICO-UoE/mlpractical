@@ -93,7 +93,7 @@ class Optimiser(object):
         if self.valid_dataset is not None:
             epoch_stats.update(self.eval_monitors(
                 self.valid_dataset, '(valid)'))
-        epoch_stats['cost(param)'] = self.model.params_cost()
+        epoch_stats['params_penalty'] = self.model.params_penalty()
         return epoch_stats
 
     def log_stats(self, epoch, epoch_time, stats):
@@ -104,7 +104,7 @@ class Optimiser(object):
             epoch_time: Time taken in seconds for the epoch to complete.
             stats: Monitored stats for the epoch.
         """
-        logger.info('Epoch {0}: {1:.2f}s to complete\n    {2}'.format(
+        logger.info('Epoch {0}: {1:.2f}s to complete\n  {2}'.format(
             epoch, epoch_time,
             ', '.join(['{0}={1:.2e}'.format(k, v) for (k, v) in stats.items()])
         ))
