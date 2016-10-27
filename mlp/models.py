@@ -8,7 +8,7 @@ outputs (and intermediate states) and for calculating gradients of scalar
 functions of the outputs with respect to the model parameters.
 """
 
-from mlp.layers import LayerWithParameters
+from mlp.layers import LayerWithParameters, StochasticLayer
 
 
 class SingleLayerModel(object):
@@ -27,11 +27,13 @@ class SingleLayerModel(object):
         """A list of all of the parameters of the model."""
         return self.layer.params
 
-    def fprop(self, inputs):
+    def fprop(self, inputs, stochastic=True):
         """Calculate the model outputs corresponding to a batch of inputs.
 
         Args:
             inputs: Batch of inputs to the model.
+            stochastic: Whether to use stochastic forward propagation
+                for stochastic layers (True) or deterministic (False).
 
         Returns:
             List which is a concatenation of the model inputs and model
@@ -40,7 +42,10 @@ class SingleLayerModel(object):
             activations through all immediate layers of the model and including
             the inputs and outputs.
         """
-        activations = [inputs, self.layer.fprop(inputs)]
+        outputs = (self.layer.fprop(inputs, stochastic)
+                   if isinstance(self.layer, StochasticLayer) else
+                   self.layer.fprop(inputs))
+        activations = [inputs, outputs]
         return activations
 
     def grads_wrt_params(self, activations, grads_wrt_outputs):
@@ -88,11 +93,13 @@ class MultipleLayerModel(object):
                 params += layer.params
         return params
 
-    def fprop(self, inputs):
+    def fprop(self, inputs, stochastic=True):
         """Forward propagates a batch of inputs through the model.
 
         Args:
             inputs: Batch of inputs to the model.
+            stochastic: Whether to use stochastic forward propagation
+                for stochastic layers (True) or deterministic (False).
 
         Returns:
             List of the activations at the output of all layers of the model
@@ -101,7 +108,11 @@ class MultipleLayerModel(object):
         """
         activations = [inputs]
         for i, layer in enumerate(self.layers):
-            activations.append(self.layers[i].fprop(activations[i]))
+            if isinstance(layer, StochasticLayer):
+                activations.append(self.layers[i].fprop(
+                    activations[i], stochastic=stochastic))
+            else:
+                activations.append(self.layers[i].fprop(activations[i]))
         return activations
 
     def grads_wrt_params(self, activations, grads_wrt_outputs):

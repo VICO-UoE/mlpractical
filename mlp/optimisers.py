@@ -18,7 +18,8 @@ class Optimiser(object):
     """Basic model optimiser."""
 
     def __init__(self, model, error, learning_rule, train_dataset,
-                 valid_dataset=None, data_monitors=None, schedulers=[]):
+                 valid_dataset=None, data_monitors=None, schedulers=[],
+                 use_stochastic_eval=True):
         """Create a new optimiser instance.
 
         Args:
@@ -33,6 +34,10 @@ class Optimiser(object):
                 validation data sets) to monitor during training in addition
                 to the error. Keys should correspond to a string label for
                 the statistic being evaluated.
+            schedulers: List of learning rule scheduler objects for adjusting
+                learning rule hyperparameters over training. Can be empty.
+            use_stochastic_eval: Whether to use `stochastic=True` flag in
+                `model.fprop` for evaluating model performance during training.
         """
         self.model = model
         self.error = error
@@ -44,6 +49,7 @@ class Optimiser(object):
         if data_monitors is not None:
             self.data_monitors.update(data_monitors)
         self.schedulers = schedulers
+        self.use_stochastic_eval = use_stochastic_eval
 
     def do_training_epoch(self):
         """Do a single training epoch.
@@ -73,7 +79,8 @@ class Optimiser(object):
         data_mon_vals = OrderedDict([(key + label, 0.) for key
                                      in self.data_monitors.keys()])
         for inputs_batch, targets_batch in dataset:
-            activations = self.model.fprop(inputs_batch)
+            activations = self.model.fprop(
+                inputs_batch, stochastic=self.use_stochastic_eval)
             for key, data_monitor in self.data_monitors.items():
                 data_mon_vals[key + label] += data_monitor(
                     activations[-1], targets_batch)
@@ -125,6 +132,10 @@ class Optimiser(object):
             being the total time elapsed in seconds during the training run.
         """
         stats = self.get_epoch_stats()
+        logger.info(
+            'Epoch 0:\n  ' +
+            ', '.join(['{0}={1:.2e}'.format(k, v) for (k, v) in stats.items()])
+        )
         run_stats = [stats.values()]
         run_start_time = time.time()
         for epoch in range(1, num_epochs + 1):
