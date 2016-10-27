@@ -23,7 +23,7 @@ class ConstantLearningRateScheduler(object):
     def update_learning_rule(self, learning_rule, epoch_number):
         """Update the hyperparameters of the learning rule.
 
-        Run at the beginning of each epoch.
+        Runs at the beginning of each epoch.
 
         Args:
             learning_rule: Learning rule object being used in training run,
