@@ -261,7 +261,7 @@ class AffineLayer(LayerWithParameters):
             self.input_dim, self.output_dim)
 
 
-class ReshapeLayer(layers.Layer):
+class ReshapeLayer(Layer):
     """Layer which reshapes dimensions of inputs."""
 
     def __init__(self, output_shape=None):
