@@ -84,12 +84,12 @@ class MomentumLearningRule(GradientDescentLearningRule):
     For parameter p[i] and corresponding momentum m[i] the updates for a
     scalar loss function `L` are of the form
 
-        m[i] := mom_coeff * m[i] - learning_rate * dL/dp[i]
+        m[i] := mom_coeff * m[i-1] - learning_rate * dL/dp[i]
         p[i] := p[i] + m[i]
 
     with `learning_rate` a positive scaling parameter for the gradient updates
     and `mom_coeff` a value in [0, 1] that determines how much 'friction' there
-    is the system and so how quickly previous momentum contributions decay.
+    is in the system and so how quickly previous momentum contributions decay.
     """
 
     def __init__(self, learning_rate=1e-3, mom_coeff=0.9):
