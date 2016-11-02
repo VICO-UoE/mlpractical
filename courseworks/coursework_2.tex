@@ -1,0 +1,396 @@
+\documentclass[11pt,]{article}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+    \usepackage{xltxtra,xunicode}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+  \newcommand{\euro}{€}
+\fi
+% use microtype if available
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
+\ifxetex
+  \usepackage[setpagesize=false, % page size defined by xetex
+              unicode=false, % unicode breaks when used with xetex
+              xetex]{hyperref}
+\else
+  \usepackage[unicode=true]{hyperref}
+\fi
+\hypersetup{breaklinks=true,
+            bookmarks=true,
+            pdfauthor={},
+            pdftitle={},
+            colorlinks=true,
+            citecolor=blue,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+\urlstyle{same}  % don't use monospace font for urls
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setcounter{secnumdepth}{0}
+\usepackage{txfonts}
+\usepackage{microtype}
+
+\usepackage[a4paper,body={170mm,250mm},top=25mm,left=25mm]{geometry}
+\usepackage[sf,bf,small]{titlesec}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\lhead{\sffamily MLP Coursework 2}
+\rhead{\sffamily Due: 24 November 2016}
+\cfoot{\sffamily \thepage}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\section{Machine Learning Practical: Coursework
+2}\label{machine-learning-practical-coursework-2}
+
+\textbf{Release date: Wednesday 2nd November 2016}\\\textbf{Due date:
+16:00 Thursday 24th November 2016}
+
+\subsection{Introduction}\label{introduction}
+
+The aim of this coursework is to use a selection of the techniques
+covered in the course so far to train accurate multi-layer networks for
+MNIST classification. It is intended to assess your ability to design,
+implement and run a set of experiments to answer specific research
+questions about the models and methods covered in the course.
+
+You should choose \textbf{three} different topics to research. Our
+recommendation is to choose one simpler question and two which require
+more in-depth implementations and/or experiments.
+
+Examples of what might consititute a simpler question include
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  How effective are early stopping methods at reducing overfitting?
+\item
+  Does combining L1 and L2 regularisation offer any advantage over using
+  either individually?
+\item
+  How does training and validation set performance vary with the number
+  of model layers?
+\item
+  How does the choice of the non-linear transformation used between
+  affine layers (e.g.~logistic sigmoid, hyperbolic tangent, rectified
+  linear) affect training set performance?
+\item
+  Does applying a whitening preprocessing to the input images help
+  increase the rate at which we can improve training set performance?
+\end{itemize}
+
+Similarly some ideas of more complex topics you could investigate are
+(there are various questions you could pose on these topics - we leave
+choosing appropriate ones up to you)
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  data augmentation (beyond the random rotations covered in lab 5),
+\item
+  models with convolutional layers (lectures 7 and 8),
+\item
+  models with `skip connections' between layers (such as residual
+  networks / deep residual learning, mentioned at the end of lecture 8)
+\item
+  batch normalisation (lecture 6).
+\end{itemize}
+
+You are welcome to come up with and investigate your own ideas, these
+are just meant as a starting point.
+
+\textbf{Note that it is in your interest to start running the
+experiments for this coursework as early as possible. Some of the
+experiments may take significant compute time.}
+
+\subsection{Mechanics}\label{mechanics}
+
+\textbf{Marks:} This assignment will be assessed out of 100 marks and
+forms 25\% of your final grade for the course.
+
+\textbf{Academic conduct:} Assessed work is subject to University
+regulations on academic
+conduct:\\\url{http://web.inf.ed.ac.uk/infweb/admin/policies/academic-misconduct}
+
+\textbf{Late submissions:} The School of Informatics policy is that late
+coursework normally gets a mark of zero. See
+{\small\url{http://web.inf.ed.ac.uk/infweb/student-services/ito/admin/coursework-projects/late-coursework-extension-requests}}
+for exceptions to this rule. Any requests for extensions should go to
+the Informatics Teaching Office (ITO), either directly or via your
+Personal Tutor.
+
+\subsection{Report}\label{report}
+
+The main component of your coursework submission, on which you will be
+assessed, will be a report. This should follow a typical experimental
+report structure, in particular covering the following for each of the
+three topics investigated
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  a clear statement of the research question being investigated,
+\item
+  a description of the methods used and algorithms implemented,
+\item
+  a motivation for each experiment completed (e.g.~initial pilot runs,
+  further investigation of observations from previous experiments)
+\item
+  quantitative results for the experiments you carried out including
+  relevant graphs,
+\item
+  discussion of the results of your experiments and any conclusions you
+  have drawn.
+\end{itemize}
+
+The report should be submitted in PDF. You are welcome to use what ever
+document preparation tool you prefer working with to write the report
+providing it can produce a PDF output and can meet the required
+presentation standards for the report.
+
+Of the total 100 marks for the coursework, 20 marks have been allocated
+for the quality of presentation and clarity of the report. A good
+report, will clear, precise, and concise. It will contain enough
+information for someone else to reproduce your work (with the exception
+that you do not have to include the values to which the parameters were
+randomly initialised).
+
+You will need to include experimental results plotted as graphs in the
+report. You are advised (but not required) to use \texttt{matplotlib} to
+produce these plots, and you may reuse code plotting (and other) code
+given in the lab notebooks as a starting point.
+
+Each plot should have all axes labelled and if multiple plots are
+included on the same set of axes a legend should be included to make
+clear what each line represents. Within the report all figures should be
+numbered (and you should use these numbers to refer to the figures in
+the main text) and have a descriptive caption stating what they show.
+
+Ideally all figures should be included in your report file as
+\href{https://en.wikipedia.org/wiki/Vector_graphics}{vector graphics}
+rather than \href{https://en.wikipedia.org/wiki/Raster_graphics}{raster
+files} as this will make sure all detail in the plot is visible.
+Matplotlib supports saving high quality figures in a wide range of
+common image formats using the
+\href{http://matplotlib.org/api/pyplot_api.html\#matplotlib.pyplot.savefig}{\texttt{savefig}}
+function. \textbf{You should use \texttt{savefig} rather than copying
+the screen-resolution raster images outputted in the notebook.}
+
+Figures saved as a PDF file using \texttt{fig.savefig('file-name.pdf')}
+can be included as graphics in
+\href{https://en.wikibooks.org/wiki/LaTeX/Importing_Graphics}{LaTeX}
+compiled with \texttt{pdflatex} and in Apple Pages and
+\href{https://support.office.com/en-us/article/Add-a-PDF-to-your-Office-file-74819342-8f00-4ab4-bcbe-0f3df15ab0dc}{Microsoft
+Word} documents. If you are using Libre/OpenOffice you should use
+Scalable Vector Format plots instead using
+\texttt{fig.savefig('file-name.svg')}. If the document editor you are
+using for the report does not support including either PDF or SVG
+graphics you can instead output high-resolution raster images using
+\texttt{fig.savefig('file-name.png', dpi=200)} however note these files
+will generally be larger than either SVG or PDF formatted graphics.
+
+If you make use of any any books, articles, web pages or other resources
+you should appropriately cite these in your report. You do not need to
+cite material from the course lecture slides or lab notebooks.
+
+\subsection{Code}\label{code}
+
+You should run all of the experiments for the coursework inside the
+Conda environment
+\href{https://github.com/CSTR-Edinburgh/mlpractical/blob/mlp2016-7/master/environment-set-up.md}{you
+set up in the first lab}.
+
+A branch \texttt{mlp2016-7/coursework2} intended to be a starting point
+for your code for the second coursework is available on the course
+\href{https://github.com/CSTR-Edinburgh/mlpractical/}{Github repository}
+on a branch \texttt{mlp2016-7/coursework2}. To create a local working
+copy of this branch in your local repository you need to do the
+following.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Make sure all modified files on the branch you are currently on have
+  been committed
+  (\href{https://github.com/CSTR-Edinburgh/mlpractical/blob/mlp2016-7/master/getting-started-in-a-lab.md}{see
+  details here} if you are unsure how to do this).
+\item
+  Fetch changes to the upstream \texttt{origin} repository by running\\
+  \texttt{git fetch origin}
+\item
+  Checkout a new local branch from the fetched branch using\\
+  \texttt{git checkout -b coursework2 origin/mlp2016-7/coursework2}
+\end{enumerate}
+
+You will now have a new branch \texttt{coursework2} in your local
+repository.
+
+The only additional code in this branch beyond that already released
+with the sixth lab notebook is:
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  A notebook \texttt{Convolutional layer tests} which includes a
+  skeleton class definition for a convolutional layer and associated
+  test functions to check the implementations of the layer
+  \texttt{fprop}, \texttt{bprop} and \texttt{grads\_wrt\_params}
+  methods. This is provided as a starting point for those who decide to
+  experiment with convolutional models - those who choose to investigate
+  other topics may not need to use this notebook.
+\item
+  A new \texttt{ReshapeLayer} class in the \texttt{mlp.layers} module.
+  When included in a a multiple layer model, this allows the output of
+  the previous layer to be reshaped before being forward propagated to
+  the next layer.
+\end{itemize}
+
+\subsection{Submission}\label{submission}
+
+Your coursework submission should be done electronically using the
+\href{http://computing.help.inf.ed.ac.uk/submit}{\texttt{submit}}
+command available on DICE machines.
+
+Your submission should include
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  your completed course report as a PDF file,
+\item
+  the notebook (\texttt{.ipynb}) file(s) you use to run the experiments
+  in
+\item
+  and your local version of the \texttt{mlp} package including any
+  changes you make to the modules (\texttt{.py} files).
+\end{itemize}
+
+Please do NOT include a copy of the other files in your
+\texttt{mlpractical} directory as including the data files and lab
+notebooks makes the submission files unnecessarily large.
+
+There is no need to hand in a paper copy of the report, since the pdf
+will be included in your submission.
+
+You should EITHER (1) package all of these files into a single archive
+file using
+\href{http://linuxcommand.org/man_pages/tar1.html}{\texttt{tar}} or
+\href{http://linuxcommand.org/man_pages/zip1.html}{\texttt{zip}}, e.g.
+
+{\small
+\begin{verbatim}
+tar -zcf coursework2.tar.gz notebooks/Coursework_2.ipynb mlp/*.py reports/coursework2.pdf
+\end{verbatim}
+}
+
+and then submit this archive using
+
+\begin{verbatim}
+submit mlp 2 coursework2.tar.gz
+\end{verbatim}
+
+OR (2) copy all of the files to a single directory \texttt{coursework2}
+directory, e.g.
+
+\begin{verbatim}
+mkdir coursework2
+cp notebooks/Coursework_2.ipynb mlp/*.py reports/coursework2.pdf coursework2
+\end{verbatim}
+
+and then submit this directory using
+
+\begin{verbatim}
+submit mlp 2 coursework2
+\end{verbatim}
+
+The \texttt{submit} command will prompt you with the details of the
+submission including the name of the files / directories you are
+submitting and the name of the course and exercise you are submitting
+for and ask you to check if these details are correct. You should check
+these carefully and reply \texttt{y} to submit if you are sure the files
+are correct and \texttt{n} otherwise.
+
+You can amend an existing submission by rerunning the \texttt{submit}
+command any time up to the deadline. It is therefore a good idea
+(particularly if this is your first time using the DICE submit
+mechanism) to do an initial run of the \texttt{submit} command early on
+and then rerun the command if you make any further updates to your
+submisison rather than leaving submission to the last minute.
+
+\subsection{Backing up your work}\label{backing-up-your-work}
+
+It is \textbf{strongly recommended} you use some method for backing up
+your work. Those working in their AFS homespace on DICE will have their
+work automatically backed up as part of the
+\href{http://computing.help.inf.ed.ac.uk/backups-and-mirrors}{routine
+backup} of all user homespaces. If you are working on a personal
+computer you should have your own backup method in place (e.g.~saving
+additional copies to an external drive, syncing to a cloud service or
+pushing commits to your local Git repository to a private repository on
+Github). \textbf{Loss of work through failure to back up
+\href{http://tinyurl.com/edinflate}{does not consitute a good reason for
+late submission}}.
+
+You may \emph{additionally} wish to keep your coursework under version
+control in your local Git repository on the \texttt{coursework2} branch.
+This does not need to be limited to the coursework notebook and
+\texttt{mlp} Python modules - you can also add your report document to
+the repository.
+
+If you make regular commits of your work on the coursework this will
+allow you to better keep track of the changes you have made and if
+necessary revert to previous versions of files and/or restore
+accidentally deleted work. This is not however required and you should
+note that keeping your work under version control is a distinct issue
+from backing up to guard against hard drive failure. If you are working
+on a personal computer you should still keep an additional back up of
+your work as described above.
+
+\subsection{Marking Scheme}\label{marking-scheme}
+
+\begin{itemize}
+\item
+  Experiment 1 (20 marks). Marks awarded for experimental hypothesis /
+  motivation, completeness of implementation, experimental methodology,
+  experimental results, discussion and conclusions.
+\item
+  Experiment 2 (25 marks). Marks awarded for experimental hypothesis /
+  motivation, completeness of implementation, experimental methodology,
+  experimental results, discussion and conclusions. Weighted by
+  difficulty of task.
+\item
+  Experiment 3 (25 marks). Marks awarded for experimental hypothesis /
+  motivation, completeness of implementation, experimental methodology,
+  experimental results, discussion and conclusions. Weighted by
+  difficulty of task.
+\item
+  Presentation and clarity of report (20 marks). Marks awarded for
+  overall structure, clear and concise presentation, providing enough
+  information to enable work to be reproduced, clear and concise
+  presentation of results, informative discussion and conclusions.
+\item
+  Additional Excellence (10 marks). Marks awarded for significant
+  personal insight, creativity, originality, and/or extra depth and
+  academic maturity.
+\end{itemize}
+
+\end{document}
