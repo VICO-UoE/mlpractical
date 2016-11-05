@@ -539,3 +539,128 @@ class RadialBasisFunctionLayer(Layer):
 
     def __repr__(self):
         return 'RadialBasisFunctionLayer(grid_dim={0})'.format(self.grid_dim)
+
+
+class DropoutLayer(StochasticLayer):
+    """Layer which stochastically drops input dimensions in its output."""
+
+    def __init__(self, rng=None, incl_prob=0.5, share_across_batch=True):
+        """Construct a new dropout layer.
+
+        Args:
+            rng (RandomState): Seeded random number generator.
+            incl_prob: Scalar value in (0, 1] specifying the probability of
+                each input dimension being included in the output.
+            share_across_batch: Whether to use same dropout mask across
+                all inputs in a batch or use per input masks.
+        """
+        super(DropoutLayer, self).__init__(rng)
+        assert incl_prob > 0. and incl_prob <= 1.
+        self.incl_prob = incl_prob
+        self.share_across_batch = share_across_batch
+
+    def fprop(self, inputs, stochastic=True):
+        """Forward propagates activations through the layer transformation.
+
+        Args:
+            inputs: Array of layer inputs of shape (batch_size, input_dim).
+            stochastic: Flag allowing different deterministic
+                forward-propagation mode in addition to default stochastic
+                forward-propagation e.g. for use at test time. If False
+                a deterministic forward-propagation transformation
+                corresponding to the expected output of the stochastic
+                forward-propagation is applied.
+
+        Returns:
+            outputs: Array of layer outputs of shape (batch_size, output_dim).
+        """
+        if stochastic:
+            mask_shape = ((1,) + inputs.shape[1:] if self.share_across_batch
+                          else inputs.shape)
+            self._mask = (rng.uniform(size=mask_shape) < self.incl_prob)
+            return inputs * self._mask
+        else:
+            return inputs * self.incl_prob
+
+    def bprop(self, inputs, outputs, grads_wrt_outputs):
+        """Back propagates gradients through a layer.
+
+        Given gradients with respect to the outputs of the layer calculates the
+        gradients with respect to the layer inputs. This should correspond to
+        default stochastic forward-propagation.
+
+        Args:
+            inputs: Array of layer inputs of shape (batch_size, input_dim).
+            outputs: Array of layer outputs calculated in forward pass of
+                shape (batch_size, output_dim).
+            grads_wrt_outputs: Array of gradients with respect to the layer
+                outputs of shape (batch_size, output_dim).
+
+        Returns:
+            Array of gradients with respect to the layer inputs of shape
+            (batch_size, input_dim).
+        """
+        return grads_wrt_outputs * self._mask
+
+    def __repr__(self):
+        return 'DropoutLayer(incl_prob={0:.1f})'.format(self.incl_prob)
+
+
+class MaxPoolingLayer(Layer):
+    """Layer outputting the maximum of non-overlapping 1D pools of inputs."""
+
+    def __init__(self, pool_size=2):
+        """Construct a new max-pooling layer.
+
+        Args:
+            pool_size: Positive integer specifying size of pools over
+               which to take maximum value. The outputs of the layer
+               feeding in to this layer must have a dimension which
+               is a multiple of this pool size such that the outputs
+               can be split in to pools with no dimensions left over.
+        """
+        self.pool_size = pool_size
+
+    def fprop(self, inputs):
+        """Forward propagates activations through the layer transformation.
+
+        This corresponds to taking the maximum over non-overlapping pools of
+        inputs of a fixed size `pool_size`.
+
+        Args:
+            inputs: Array of layer inputs of shape (batch_size, input_dim).
+
+        Returns:
+            outputs: Array of layer outputs of shape (batch_size, output_dim).
+        """
+        assert inputs.shape[-1] % self.pool_size == 0, (
+            'Last dimension of inputs must be multiple of pool size')
+        pooled_inputs = inputs.reshape(
+            inputs.shape[:-1] +
+            (inputs.shape[-1] // self.pool_size, self.pool_size))
+        pool_maxes = pooled_inputs.max(-1)
+        self._mask = pooled_inputs == pool_maxes[..., None]
+        return pool_maxes
+
+    def bprop(self, inputs, outputs, grads_wrt_outputs):
+        """Back propagates gradients through a layer.
+
+        Given gradients with respect to the outputs of the layer calculates the
+        gradients with respect to the layer inputs.
+
+        Args:
+            inputs: Array of layer inputs of shape (batch_size, input_dim).
+            outputs: Array of layer outputs calculated in forward pass of
+                shape (batch_size, output_dim).
+            grads_wrt_outputs: Array of gradients with respect to the layer
+                outputs of shape (batch_size, output_dim).
+
+        Returns:
+            Array of gradients with respect to the layer inputs of shape
+            (batch_size, input_dim).
+        """
+        return (
+            self._mask * grads_wrt_outputs[..., None]).reshape(inputs.shape)
+
+    def __repr__(self):
+        return 'MaxPoolingLayer(pool_size={0})'.format(self.pool_size)
