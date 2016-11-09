@@ -19,7 +19,7 @@ class Optimiser(object):
 
     def __init__(self, model, error, learning_rule, train_dataset,
                  valid_dataset=None, data_monitors=None, schedulers=[],
-                 use_stochastic_eval=True):
+                 use_stochastic_eval=False):
         """Create a new optimiser instance.
 
         Args:
