@@ -69,7 +69,7 @@ class SingleLayerModel(object):
         return self.layer.params_penalty()
 
     def __repr__(self):
-        return 'SingleLayerModel(' + str(layer) + ')'
+        return 'SingleLayerModel(' + str(self.layer) + ')'
 
 
 class MultipleLayerModel(object):
