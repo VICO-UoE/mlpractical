@@ -1,6 +1,6 @@
 # Running jobs on the compute cluster
 
-There is a compute cluster now available for submitting jobs to for your MLP assignments. Jobs on the cluster are scheduled using an open source variant of [Oracle Grid Engine](https://en.wikipedia.org/wiki/Oracle_Grid_Engine) which manages allocation of resources to jobs.
+There is a [compute cluster](http://computing.help.inf.ed.ac.uk/msc-teaching-cluster) now available for submitting jobs to for your MLP assignments. Jobs on the cluster are scheduled using an open source variant of [Oracle Grid Engine](https://en.wikipedia.org/wiki/Oracle_Grid_Engine) which manages allocation of resources to jobs.
 
 ## Accessing the cluster
 
@@ -87,19 +87,19 @@ The script writes all outputted files (model checkpoints, train and validation s
 
 The complete series of commands you would need to run in a DICE terminal to submit the example script as a job on the compute cluster are as follows:
 
-  1. Log in to the head node by running
+  1. Log in to the head node by running  
      ```
      ssh [username]@msccluster
      ```
-  2. Download the script file from Github to your cluster homespace
+  2. Download the script file from Github to your cluster homespace  
      ```
-     wget
+     wget  https://raw.githubusercontent.com/CSTR-Edinburgh/mlpractical/mlp2016-7/master/scripts/example-tf-mnist-train-job.py
      ```
-  3. Create an `experiments` directory
+  3. Create an `experiments` directory  
      ```
      mkdir experiments
      ```
-  4. Submit the job to the cluster
+  4. Submit the job to the cluster  
      ```
      qsub -v MLP_DATA_DIR='/disk/scratch/mlp/data',OUTPUT_DIR='$HOME/experiments' example-tf-mnist-train-job.py
      ``` 
