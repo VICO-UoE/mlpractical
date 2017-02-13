@@ -34,7 +34,7 @@ The data files for the course (i.e. all of the files available at `/afs/inf.ed.a
 
 To submit a job to the cluster from the head node you need to use the `qsub` command. This has many optional arguments - we will only cover the most basic usage here. To see a full description you can view the manual page for the command by running `man qsub` or search for tutorials on line for `grid engine qsub`.
 
-The main argument to `qsub` needs to be a script that can executed directly in a shell. One option is to create a wrapper `.sh` shell script which set ups the requisite environment variables and then executes a second Python script using the Python binary in `/disk/scratch/mlp/miniconda2/bin`. For example this could be done by creating a file `mlp_job.sh` in your home directory on the cluster file system with the following contents
+The main argument to `qsub` needs to be a script that can executed directly in a shell. One option is to create a wrapper `.sh` shell script which set ups the requisite environment variables and then executes a second Python script using the Python binary in `/disk/scratch/mlp/miniconda2/bin`. For example this could be done by creating a file `mlp-job.sh` in your home directory on the cluster file system with the following contents
 
 ```
 #!/bin/sh
@@ -46,10 +46,10 @@ MLP_DATA_DIR='/disk/scratch/mlp/data'
 where `[path-to-python-script]` is the path to the Python script you wish to submit as a job e.g. `$HOME/train-model.py`. The script can then be submitted to the cluster using
 
 ```
-qsub -q cpu $HOME/mlp_job.sh
+qsub -q cpu $HOME/mlp-job.sh
 ```
 
-assuming the `mlp_job.sh` script is in your home directory on the cluster file system. The `-q` option specifies which queue list to submit the job to; for MLP you should run jobs on the `cpu` queue.
+assuming the `mlp-job.sh` script is in your home directory on the cluster file system. The `-q` option specifies which queue list to submit the job to; for MLP you should run jobs on the `cpu` queue.
 
 The scheduler will allocate the job to one of the CPU nodes. You can check on the status of submitted jobs using `qsub` - again `man qsub` can be used to give details of the output of this command and various optional arguments.
 
@@ -110,7 +110,9 @@ If the job is successfully submitted you should see a message
 Your job [job-id] ("example-tf-mnist-train-job.py") has been submitted
 ```
 
-printed to the terminal, where `[job-id]` is an integer ID which identifies the job to the scheduler (this can be used for example to delete one of your running jobs using `qdel [job-id]`). You can use `qstat` to view the status of all of your currently submitted jobs. Typically straight after a job is submitted it will show its state as `qw` which means the job is waiting in the queue to be run. Once the job is in progress on one of the nodes this will change to `r` which indicates job is runnning. An `E` in the job state indicates there has been an error.
+printed to the terminal, where `[job-id]` is an integer ID which identifies the job to the scheduler (this can be used for example to delete one of your running jobs using `qdel [job-id]`). You can use `qstat` to view the status of all of your currently submitted jobs. Typically straight after a job is submitted it will show its state as `qw` which means the job is waiting in the queue to be run. Once the job is in progress on one of the nodes this will change to `r` which indicates job is runnning. 
+
+An `E` in the job state indicates there has been an error. Running `qstat -j [job-id] | grep error` may help diagnose the issue. You should also `qdel [job-id]` after you have read the error message if any.
 
 By default the stdout and sterr output from your script will be written to files `example-tf-mnist-train-job.py.o[job-id]` and `example-tf-mnist-train-job.py.e[job-id]` respectively in your cluster home directory while the job is running (this default behaviour can be changed using the optional `-o` and `-e` options in `qsub`). If you display the contents of the `example-tf-mnist-train-job.py.o[job-id]` file by running e.g.
 
