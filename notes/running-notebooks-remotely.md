@@ -4,11 +4,11 @@ Below is a guide for how to start a Jupyter notebook server remotely on one of t
 
 ## Securing your notebook server
 
-Before running a Jupyter notebook server instance on one of the shared compute servers you **must** make sure you have secured your server by configuring it to use a password and to communicate that password between the browser client and server by secure HTTP. This can be done on by running the `secure-notebook-server.sh` bash script provided in the `mlpractical` repository. You can either do this when logged on to DICE in one of the labs or after connecting to DICE remotely over SSH as described below.
+Before running a Jupyter notebook server instance on one of the shared compute servers you **must** make sure you have secured your server by configuring it to use a password and to communicate that password between the browser client and server by secure HTTP. This can be done on by running the `secure-notebook-server.sh` bash script provided in the `scripts` directory of the `mlpractical` repository. You can either do this when logged on to DICE in one of the labs or after connecting to DICE remotely over SSH as described below.
 
 To run the script, in a DICE terminal enter the `mlpractical` repository directory and run
 ```
-bash secure-notebook-server.sh
+bash scripts/secure-notebook-server.sh
 ```
 As this script creates a self-signed certificate to set up the secure HTTP encrypted communication between the browser and server, you will be shown a security warning when you load up the URL the notebooks are being served on.
 
