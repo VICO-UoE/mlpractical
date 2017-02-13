@@ -43,15 +43,15 @@ MLP_DATA_DIR='/disk/scratch/mlp/data'
 /disk/scratch/mlp/miniconda2/bin/python [path-to-python-script]
 ```
 
-where `[path-to-python-script]` is the path to the Python script you wish to submit as a job e.g. `$HOME/example_mnist_train.py`. The script can then be submitted to the cluster using
+where `[path-to-python-script]` is the path to the Python script you wish to submit as a job e.g. `$HOME/train-model.py`. The script can then be submitted to the cluster using
 
 ```
-qsub $HOME/mlp_job.sh
+qsub -q cpu $HOME/mlp_job.sh
 ```
 
-assuming the `mlp_job.sh` script is in your home directory on the cluster file system.
+assuming the `mlp_job.sh` script is in your home directory on the cluster file system. The `-q` option specifies which queue list to submit the job to; for MLP you should run jobs on the `cpu` queue.
 
-The scheduler will allocate the job to one of the nodes. You can check on the status of submitted jobs using `qsub` - again `man qsub` can be used to give details of the output of this command and various optional arguments.
+The scheduler will allocate the job to one of the CPU nodes. You can check on the status of submitted jobs using `qsub` - again `man qsub` can be used to give details of the output of this command and various optional arguments.
 
 An alternative to creating a separate bash script file to run the job is to make your Python script directly executable by adding an appropriate [`shebang`](https://en.wikipedia.org/wiki/Shebang_(Unix)) as the first line in the script. The shebang indicates which interpreter to use to run a script file. If the following line is added to the top of a Python script
 
@@ -64,7 +64,7 @@ then if the script is directly executed in a shell it will be run using the Pyth
 The resulting script can then be submitted to the cluster by running
 
 ```
-qsub -v MLP_DATA_DIR='/disk/scratch/mlp/data' [path-to-python-script]
+qsub -q cpu -v MLP_DATA_DIR='/disk/scratch/mlp/data' [path-to-python-script]
 ```
 
 where here `[path-to-python-script]` is the path to the Python script *with shebang line* you wish to run. The optional `-v` argument to `qsub` here is used to set an environment variable `MLP_DATA_DIR` on the compute node the job is run on that will be accessible to the Python script.
@@ -75,9 +75,9 @@ To give you an example of how you might structure a Python script for running a 
 
 ### Saving model output
 
-To enable you to analyse any model you train on the cluster, you will probably want to save the model state during training to allow you to restore the model for example in Jupyter notebook running on a DICE or personal computer. You could optionally have your Python script also do all the model analysis and just the save the numeric results (e.g. final training / validation set performance) and any generated plot outputs (e.g. training curves) to the cluster file system while the job is running, however even in this case it will usually be worthwhile when running longer jobs to checkpoint your model state during training to allow you to restore from the last saved state in run which you manually abort or errors out due to an exception or job timeout.
+To enable you to analyse any model you train on the cluster, you will probably want to save the model state during training to allow you to restore the model for example in Jupyter notebook running on a DICE or personal computer. You could optionally have your Python script also do all the model analysis and just the save the numeric results (e.g. final training / validation set performance) and any generated plot outputs (e.g. training curves) to the cluster file system while the job is running, however even in this case it will usually be worthwhile when running longer jobs to checkpoint your model state during training. This allows you to restore from the last saved state in runs which you manually abort or error out due to an exception or job timeout.
 
-The easiest option for saving model state is to use the in-built [`Saver`](https://www.tensorflow.org/api_docs/python/state_ops/saving_and_restoring_variables#Saver) class in TensorFlow, which allows the variables which define a model's state to be checkpointed to a file on disk during training. The `example_tf_mnist_train_job.py` script gives an example of setting up a `Saver` instance and using it to checkpoint the model after every training epoch.
+The easiest option for saving a model state is to use the in-built [`Saver`](https://www.tensorflow.org/api_docs/python/state_ops/saving_and_restoring_variables#Saver) class in TensorFlow, which allows the values of variables which define a model's state to be checkpointed to a file on disk during training. The `example-tf-mnist-train-job.py` script gives an example of setting up a `Saver` instance and using it to checkpoint the model after every training epoch.
 
 The example script also uses the `SummaryWriter` class described in the [`08_Introduction_to_TensorFlow`](../notebooks/08_Introduction_to_TensorFlow.ipynb) notebook to log summaries of the training and validation set accuracy and error values to log files which can be loaded in TensorBoard to visualise training runs. The script also gives an example of manually accumulating these statistics into NumPy arrays and saving these to a `.npz` file which may be useful if you wish to create plots from these values using Matplotlib.
 
@@ -101,7 +101,7 @@ The complete series of commands you would need to run in a DICE terminal to subm
      ```
   4. Submit the job to the cluster  
      ```
-     qsub -v MLP_DATA_DIR='/disk/scratch/mlp/data',OUTPUT_DIR='$HOME/experiments' example-tf-mnist-train-job.py
+     qsub -q cpu -v MLP_DATA_DIR='/disk/scratch/mlp/data',OUTPUT_DIR='$HOME/experiments' example-tf-mnist-train-job.py
      ``` 
      
 If the job is successfully submitted you should see a message
@@ -128,7 +128,7 @@ If you wished to load the final checkpoint of the trained model in to Jupyter no
 cp experiments/2017-02-10_12-30-00 /afs/inf.ed.ac.uk/user/s12/s123456/experiments
 ```
 
-and then run the following in a Python interpreter / Jupyter notebook cell *on a DICE computer* (i.e. not on your session logged in to the cluster head node)
+(replacing the timestamp and directories appropriately) and then run the following in a Python interpreter / Jupyter notebook cell *on a DICE computer* (i.e. not on your session logged in to the cluster head node)
 
 ```python
 import os
@@ -141,5 +141,7 @@ saver = tf.train.import_meta_graph(
     os.path.join(ckpt_dir, 'model.ckpt-5000.meta'))
 saver.restore(sess, os.path.join(ckpt_dir, 'model.ckpt-5000'))
 ```
+
+again replacing the example timestamp with the appropriate value.
 
 The TensorFlow session `sess` will then contain a restored version of the checkpointed graph and the associated states of the variables (e.g. model parameters) in the graph at the point the model was checkpointed in training.
