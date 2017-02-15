@@ -4,10 +4,16 @@ There is a [compute cluster](http://computing.help.inf.ed.ac.uk/msc-teaching-clu
 
 ## Accessing the cluster
 
-Jobs are submitted to a cluster and manged via one or more *head nodes*. The *head node(s)* interface with a cluster of *compute nodes* where the actual jobs are run. The *head node* of the cluster you will be using has the alias `msccluster` - from within the `inf.ed.ac.uk` domain you can log in to the head node by running
+Jobs are submitted to a cluster and managed via one or more *head nodes*. The *head nodes* interface with a cluster of *compute nodes* where the actual jobs are run. The *head nodes* of the cluster you will be using have the aliases `msccluster` and `msccluster1` - from within the `inf.ed.ac.uk` domain you can log in to the head node by running
 
 ```
 ssh [username]@msccluster
+```
+
+or 
+
+```
+ssh [username]@msccluster1
 ```
 
 were `[username]` is your DICE username (student number).
