@@ -57,7 +57,7 @@ qsub -q cpu $HOME/mlp-job.sh
 
 assuming the `mlp-job.sh` script is in your home directory on the cluster file system. The `-q` option specifies which queue list to submit the job to; for MLP you should run jobs on the `cpu` queue.
 
-The scheduler will allocate the job to one of the CPU nodes. You can check on the status of submitted jobs using `qsub` - again `man qsub` can be used to give details of the output of this command and various optional arguments.
+The scheduler will allocate the job to one of the CPU nodes. You can check on the status of submitted jobs using `qstat` - again `man qstat` can be used to give details of the output of this command and various optional arguments.
 
 An alternative to creating a separate bash script file to run the job is to make your Python script directly executable by adding an appropriate [`shebang`](https://en.wikipedia.org/wiki/Shebang_(Unix)) as the first line in the script. The shebang indicates which interpreter to use to run a script file. If the following line is added to the top of a Python script
 
