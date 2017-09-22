@@ -47,7 +47,7 @@ bash Miniconda3-latest-Linux-x86_64.sh
 
 You will first be asked to review the software license agreement. Assuming you choose to agree, you will then be asked 
 to choose an install location for Miniconda. The default is to install in the root of your home directory 
-`~/miniconda2`. We recommend going with this default unless you have a particular reason to do otherwise.
+`~/miniconda3`. We recommend going with this default unless you have a particular reason to do otherwise.
 
 You will then be asked whether to prepend the Miniconda binaries directory to the `PATH` system environment variable 
 definition in `.bashrc`. As the DICE bash start-up mechanism differs from the standard set up 
@@ -355,7 +355,7 @@ Run the install script:
 bash Miniconda3-latest-Linux-x86_64.sh
 ```
 
-Review the software license agreement and choose whether to accept. Assuming you accept, you be asked to choose an install location for Miniconda. The default is to install in the root of your home directory `~/miniconda2`. We will assume below you have used this default. **If you use a different path you will need to adjust the paths in the commands below to suit.**
+Review the software license agreement and choose whether to accept. Assuming you accept, you be asked to choose an install location for Miniconda. The default is to install in the root of your home directory `~/miniconda3`. We will assume below you have used this default. **If you use a different path you will need to adjust the paths in the commands below to suit.**
 
 You will then be asked whether to prepend the Miniconda binaries directory to the `PATH` system environment variable definition in `.bashrc`. You should respond `no` here as we will set up the addition to `PATH` manually in the next step.
 
