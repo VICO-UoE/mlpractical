@@ -2,7 +2,7 @@
 
 *The instructions below are intentionally verbose as they try to explain the reasoning behind our choice of environment set up and to explain what each command we are asking you to run does. If you are already confident using bash, Conda environments and Git you may wish to instead use the much shorter [minimal set-up instructions](#minimal-set-up-instructions-for-dice) at the end which skip the explanations.*
 
-In this course we will be using [Python 2.7](https://www.python.org/) for all the labs and coursework assignments. In particular we will be making heavy use of the numerical computing libraries [NumPy](http://www.numpy.org/) and [SciPy](http://www.scipy.org/), and the interactive notebook application [Jupyter](http://jupyter.org/).
+In this course we will be using [Python 3](https://www.python.org/) for all the labs and coursework assignments. In particular we will be making heavy use of the numerical computing libraries [NumPy](http://www.numpy.org/) and [SciPy](http://www.scipy.org/), and the interactive notebook application [Jupyter](http://jupyter.org/).
 
 A common headache in software projects is ensuring the correct versions of all dependencies are available on the current development system. Often you may be working on several distinct projects simultaneously each with its own potentially conflicting dependencies on external libraries. Additionally you may be working across multiple different machines (for example a personal laptop and University computers) with possibly different operating systems. Further, as is the case in Informatics on DICE, you may not have root-level access to a system you are working on and so not be able to install software at a system-wide level and system updates may cause library versions to be changed to incompatible versions.
 
@@ -14,13 +14,16 @@ Here we will instead use the environment capabilities of the [Conda](http://cond
 
 Conda can handle installation of the Python libraries we will be using and all their external dependencies, in particular allowing easy installation of [optimised numerical computing libraries](https://docs.continuum.io/mkl-optimizations/). Further Conda can easily be installed on Linux, OSX and Windows systems meaning if you wish to set up an environment on a personal machine as well this should be easy to do whatever your operating system of choice is.
 
-There are several options available for installing Conda on a system. Here we will use the Python 2.7 version of [Miniconda](http://conda.pydata.org/miniconda.html), which installs just Conda and its dependencies. An alternative is to install the [Anaconda Python distribution](https://docs.continuum.io/anaconda/), which installs Conda and a large selection of popular Python packages. As we will require only a small subset of these packages we will use the more barebones Miniconda to avoid eating into your DICE disk quota too much, however if installing on a personal machine you may wish to consider Anaconda if you want to explore other Python packages.
+There are several options available for installing Conda on a system. Here we will use the Python 3 version of [Miniconda](http://conda.pydata.org/miniconda.html), which installs just Conda and its dependencies. An alternative is to install the [Anaconda Python distribution](https://docs.continuum.io/anaconda/), which installs Conda and a large selection of popular Python packages. As we will require only a small subset of these packages we will use the more barebones Miniconda to avoid eating into your DICE disk quota too much, however if installing on a personal machine you may wish to consider Anaconda if you want to explore other Python packages.
 
 ## Installing Miniconda
 
-We provide instructions here for getting an environment with all the required dependencies running on computers running the School of Informatics [DICE desktop](http://computing.help.inf.ed.ac.uk/dice-platform). The same instructions should be able to used on other Linux distributions such as Ubuntu and Linux Mint with minimal adjustments.
+We provide instructions here for getting an environment with all the required dependencies running on computers running 
+the School of Informatics [DICE desktop](http://computing.help.inf.ed.ac.uk/dice-platform). The same instructions 
+should be able to used on other Linux distributions such as Ubuntu and Linux Mint with minimal adjustments.
 
-For those wishing to install on a personal Windows or OSX machine, the initial instructions for setting up Conda will differ slightly - you should instead select the relevant installer for your system from [here](http://conda.pydata.org/miniconda.html) and following the corresponding installation instructions from [here](http://conda.pydata.org/docs/install/quick.html). After Conda is installed the [remaining instructions](#creating-the-conda-environment) should be broadly the same across different systems.
+For those wishing to install on a personal Windows or OSX machine, the initial instructions for setting up Conda will 
+differ slightly - you should instead select the relevant installer for your system from [here](http://conda.pydata.org/miniconda.html) and following the corresponding installation instructions from [here](http://conda.pydata.org/docs/install/quick.html). After Conda is installed the [remaining instructions](#creating-the-conda-environment) should be broadly the same across different systems.
 
 *Note: Although we are happy for you to additionally set up an environment on a personal machine, you should still set up a DICE environment now as this will make sure you are able to use shared computing resources later in the course. Also although we have tried to note when the required commands will differ on non-DICE systems, these instructions have only been tested on DICE and we will not be able to offer any support in labs on getting set up on a non-DICE system.*
 
@@ -28,10 +31,10 @@ For those wishing to install on a personal Windows or OSX machine, the initial i
 
 Open a bash terminal (`Applications > Terminal` on DICE).
 
-We first need to download the latest 64-bit Python 2.7 Miniconda install script:
+We first need to download the latest 64-bit Python 3 Miniconda install script:
 
 ```
-wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
+wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 ```
 
 This uses `wget` a command-line tool for downloading files.
@@ -39,17 +42,21 @@ This uses `wget` a command-line tool for downloading files.
 Now run the install script:
 
 ```
-bash Miniconda2-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
 ```
 
-You will first be asked to review the software license agreement. Assuming you choose to agree, you will then be asked to choose an install location for Miniconda. The default is to install in the root of your home directory `~/miniconda2`. We recommend going with this default unless you have a particular reason to do otherwise.
+You will first be asked to review the software license agreement. Assuming you choose to agree, you will then be asked 
+to choose an install location for Miniconda. The default is to install in the root of your home directory 
+`~/miniconda2`. We recommend going with this default unless you have a particular reason to do otherwise.
 
-You will then be asked whether to prepend the Miniconda binaries directory to the `PATH` system environment variable definition in `.bashrc`. As the DICE bash start-up mechanism differs from the standard set up ([details here](http://computing.help.inf.ed.ac.uk/dice-bash)), on DICE you should respond `no` here as we will set up the addition to `PATH` manually in the next step. On other Linux distributions you may choose to accept the default.
+You will then be asked whether to prepend the Miniconda binaries directory to the `PATH` system environment variable 
+definition in `.bashrc`. As the DICE bash start-up mechanism differs from the standard set up 
+([details here](http://computing.help.inf.ed.ac.uk/dice-bash)), on DICE you should respond `no` here as we will set up the addition to `PATH` manually in the next step. On other Linux distributions you may choose to accept the default.
 
 On DICE, append the Miniconda binaries directory to `PATH` in manually in `~/.benv` using
 
 ```
-echo "export PATH=\""\$PATH":$HOME/miniconda2/bin\"" >> ~/.benv
+echo "export PATH=\""\$PATH":$HOME/miniconda3/bin\"" >> ~/.benv
 ```
 
 For those who this appears a bit opaque to and want to know what is going on see here <sup id="a1">[1](#f1)</sup>.
@@ -74,10 +81,10 @@ from a terminal you should see the Conda help page displayed. If you get a `No c
 Assuming Conda is working, we will now create our Conda environment:
 
 ```
-conda create -n mlp python=2.7
+conda create -n mlp python=3
 ```
 
-This bootstraps a new Conda environment named `mlp` with a minimal Python 2.7 install. You will be presented with a 'package plan' listing the packages to be installed and asked whether to proceed: type `y` then enter.
+This bootstraps a new Conda environment named `mlp` with a minimal Python 3 install. You will be presented with a 'package plan' listing the packages to be installed and asked whether to proceed: type `y` then enter.
 
 We will now *activate* our created environment:
 
@@ -239,7 +246,7 @@ This will change the code in the working directory to the current state of the c
 You should make sure you are on the first lab branch now by running:
 
 ```
-git checkout mlp2016-7/lab1
+git checkout mlp2017-8/lab1
 ```
 
 ## Installing the `mlp` Python package
@@ -291,7 +298,7 @@ We observed previously the presence of a `data` subdirectory in the local reposi
 Assuming you used the recommended Miniconda install location and cloned the `mlpractical` repository to your home directory, this variable can be automatically defined when activating the environment by running the following commands (on non-Windows systems):
 
 ```
-cd ~/miniconda2/envs/mlp
+cd ~/miniconda3/envs/mlp
 mkdir -p ./etc/conda/activate.d
 mkdir -p ./etc/conda/deactivate.d
 echo -e '#!/bin/sh\n' >> ./etc/conda/activate.d/env_vars.sh
@@ -339,13 +346,13 @@ Below are instructions for setting up the environment without additional explana
 Start a new bash terminal. Download the latest 64-bit Python 2.7 Miniconda install script:
 
 ```
-wget https://repo.continuum.io/miniconda/Miniconda2-latest-Linux-x86_64.sh
+wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
 ```
 
 Run the install script:
 
 ```
-bash Miniconda2-latest-Linux-x86_64.sh
+bash Miniconda3-latest-Linux-x86_64.sh
 ```
 
 Review the software license agreement and choose whether to accept. Assuming you accept, you be asked to choose an install location for Miniconda. The default is to install in the root of your home directory `~/miniconda2`. We will assume below you have used this default. **If you use a different path you will need to adjust the paths in the commands below to suit.**
@@ -354,7 +361,7 @@ You will then be asked whether to prepend the Miniconda binaries directory to th
 
 Append the Miniconda binaries directory to `PATH` in manually in `~/.benv`:
 ```
-echo "export PATH=\""\$PATH":$HOME/miniconda2/bin\"" >> ~/.benv
+echo "export PATH=\""\$PATH":$HOME/miniconda3/bin\"" >> ~/.benv
 ```
 
 `source` the updated `~/.benv`:
@@ -366,7 +373,7 @@ source ~/.benv
 Create a new `mlp` Conda environment:
 
 ```
-conda create -n mlp python=2.7
+conda create -n mlp python=3
 ```
 
 Activate our created environment:
@@ -397,7 +404,7 @@ Make sure we are on the first lab branch
 
 ```
 cd ~/mlpractical
-git checkout mlp2016-7/lab1
+git checkout mlp2017-8/lab1
 ```
 
 Install the `mlp` package in the environment in develop mode
@@ -409,7 +416,7 @@ python ~/mlpractical/setup.py develop
 Add an `MLP_DATA_DIR` variable to the environment
 
 ```
-cd ~/miniconda2/envs/mlp
+cd ~/miniconda3/envs/mlp
 mkdir -p ./etc/conda/activate.d
 mkdir -p ./etc/conda/deactivate.d
 echo -e '#!/bin/sh\n' >> ./etc/conda/activate.d/env_vars.sh
