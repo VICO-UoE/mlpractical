@@ -202,3 +202,5 @@ class MetOfficeDataProvider(DataProvider):
         # initialise base class with inputs and targets arrays
         # super(MetOfficeDataProvider, self).__init__(
         #     inputs, targets, batch_size, max_num_batches, shuffle_order, rng)
+    def __next__(self):
+            return self.next()
