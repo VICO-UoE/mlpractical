@@ -11,4 +11,4 @@ The code in this repository is split into:
 
 ## Getting set up
 
-Detailed instructions for setting up a development environment for the course are given in [this file](environment-set-up.md). Students doing the course will spend part of the first lab getting their own environment set up.
+Detailed instructions for setting up a development environment for the course are given in [this file](notes/environment-set-up.md). Students doing the course will spend part of the first lab getting their own environment set up.
