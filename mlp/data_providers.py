@@ -101,7 +101,7 @@ class DataProvider(object):
             self.shuffle()
 
     def __next__(self):
-        self.next()
+        return self.next()
 
     def reset(self):
         """Resets the provider to the initial state."""
