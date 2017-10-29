@@ -14,6 +14,7 @@ respect to the layer parameters.
 
 import numpy as np
 import mlp.initialisers as init
+from mlp import DEFAULT_SEED
 
 
 class Layer(object):
@@ -92,6 +93,57 @@ class LayerWithParameters(Layer):
         Args:
             values: List of values to set parameters to. This list should be
                 in the corresponding order to what is returned by `get_params`.
+        """
+        raise NotImplementedError()
+
+
+class StochasticLayer(Layer):
+    """Specialised layer which uses a stochastic forward propagation."""
+
+    def __init__(self, rng=None):
+        """Constructs a new StochasticLayer object.
+
+        Args:
+            rng (RandomState): Seeded random number generator object.
+        """
+        if rng is None:
+            rng = np.random.RandomState(DEFAULT_SEED)
+        self.rng = rng
+
+    def fprop(self, inputs, stochastic=True):
+        """Forward propagates activations through the layer transformation.
+
+        Args:
+            inputs: Array of layer inputs of shape (batch_size, input_dim).
+            stochastic: Flag allowing different deterministic
+                forward-propagation mode in addition to default stochastic
+                forward-propagation e.g. for use at test time. If False
+                a deterministic forward-propagation transformation
+                corresponding to the expected output of the stochastic
+                forward-propagation is applied.
+
+        Returns:
+            outputs: Array of layer outputs of shape (batch_size, output_dim).
+        """
+        raise NotImplementedError()
+
+    def bprop(self, inputs, outputs, grads_wrt_outputs):
+        """Back propagates gradients through a layer.
+
+        Given gradients with respect to the outputs of the layer calculates the
+        gradients with respect to the layer inputs. This should correspond to
+        default stochastic forward-propagation.
+
+        Args:
+            inputs: Array of layer inputs of shape (batch_size, input_dim).
+            outputs: Array of layer outputs calculated in forward pass of
+                shape (batch_size, output_dim).
+            grads_wrt_outputs: Array of gradients with respect to the layer
+                outputs of shape (batch_size, output_dim).
+
+        Returns:
+            Array of gradients with respect to the layer inputs of shape
+            (batch_size, input_dim).
         """
         raise NotImplementedError()
 
@@ -247,6 +299,84 @@ class SigmoidLayer(Layer):
 
     def __repr__(self):
         return 'SigmoidLayer'
+
+
+class ReluLayer(Layer):
+    """Layer implementing an element-wise rectified linear transformation."""
+
+    def fprop(self, inputs):
+        """Forward propagates activations through the layer transformation.
+
+        For inputs `x` and outputs `y` this corresponds to `y = max(0, x)`.
+
+        Args:
+            inputs: Array of layer inputs of shape (batch_size, input_dim).
+
+        Returns:
+            outputs: Array of layer outputs of shape (batch_size, output_dim).
+        """
+        return np.maximum(inputs, 0.)
+
+    def bprop(self, inputs, outputs, grads_wrt_outputs):
+        """Back propagates gradients through a layer.
+
+        Given gradients with respect to the outputs of the layer calculates the
+        gradients with respect to the layer inputs.
+
+        Args:
+            inputs: Array of layer inputs of shape (batch_size, input_dim).
+            outputs: Array of layer outputs calculated in forward pass of
+                shape (batch_size, output_dim).
+            grads_wrt_outputs: Array of gradients with respect to the layer
+                outputs of shape (batch_size, output_dim).
+
+        Returns:
+            Array of gradients with respect to the layer inputs of shape
+            (batch_size, input_dim).
+        """
+        return (outputs > 0) * grads_wrt_outputs
+
+    def __repr__(self):
+        return 'ReluLayer'
+
+
+class TanhLayer(Layer):
+    """Layer implementing an element-wise hyperbolic tangent transformation."""
+
+    def fprop(self, inputs):
+        """Forward propagates activations through the layer transformation.
+
+        For inputs `x` and outputs `y` this corresponds to `y = tanh(x)`.
+
+        Args:
+            inputs: Array of layer inputs of shape (batch_size, input_dim).
+
+        Returns:
+            outputs: Array of layer outputs of shape (batch_size, output_dim).
+        """
+        return np.tanh(inputs)
+
+    def bprop(self, inputs, outputs, grads_wrt_outputs):
+        """Back propagates gradients through a layer.
+
+        Given gradients with respect to the outputs of the layer calculates the
+        gradients with respect to the layer inputs.
+
+        Args:
+            inputs: Array of layer inputs of shape (batch_size, input_dim).
+            outputs: Array of layer outputs calculated in forward pass of
+                shape (batch_size, output_dim).
+            grads_wrt_outputs: Array of gradients with respect to the layer
+                outputs of shape (batch_size, output_dim).
+
+        Returns:
+            Array of gradients with respect to the layer inputs of shape
+            (batch_size, input_dim).
+        """
+        return (1. - outputs**2) * grads_wrt_outputs
+
+    def __repr__(self):
+        return 'TanhLayer'
 
 
 class SoftmaxLayer(Layer):
