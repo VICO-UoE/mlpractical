@@ -138,32 +138,32 @@ code necessary for the coursework in it.
 This branch includes the following additions to your setup:
 
 \begin{itemize}
-\itemsep1pt\parskip0pt\parsep0pt
-\item
-  A notebook \verb+BatchNormalizationLayer_tests+ which includes 
-  test functions to check the implementations of the BatchNorm layer
-  \texttt{fprop}, \texttt{bprop} and \texttt{grads\_wrt\_params}
-  methods. The BatchNormalizationLayer skeleton code can be found in mlp.layers. 
-  The tests use the mlp.layers implementation so be sure to reload your notebook
-  when you update your mlp.layers code.
-\item
-  A notebook \verb+Convolutional_layer_tests+ which includes
-  test functions to check the implementations of the Convolutional layer
-  \texttt{fprop}, \texttt{bprop} and \texttt{grads\_wrt\_params}
-  methods. The ConvolutionalLayer skeleton code can be found in mlp.layers. 
-  The tests use the mlp.layers implementation so be sure to reload your notebook
-  when you update your mlp.layers code.
-\item
-  A new \texttt{ReshapeLayer} class in the \verb+mlp.layers+ module.
-  When included in a a multiple layer model, this allows the output of
-  the previous layer to be reshaped before being forward propagated to
-  the next layer.
-\item
-  A new \texttt{EMNISTDataProvider} class in the \verb+mlp.data_providers+ module.
-  This class is a small change to the \texttt{MNISTDataProvider} class, linking to the Balanced EMNIST data, and setting the number of classes to 47.
-\item
-  Training, validation, and test sets for the \texttt{EMNIST Balanced} dataset that
-  you will use in this coursework
+	\itemsep1pt\parskip0pt\parsep0pt
+	\item
+	A notebook \verb+BatchNormalizationLayer_tests+ which includes 
+	test functions to check the implementations of the BatchNorm layer
+	\texttt{fprop}, \texttt{bprop} and \texttt{grads\_wrt\_params}
+	methods. The BatchNormalizationLayer skeleton code can be found in mlp.layers. 
+	The tests use the mlp.layers implementation so be sure to reload your notebook
+	when you update your mlp.layers code.
+	\item
+	A notebook \verb+Convolutional_layer_tests+ which includes
+	test functions to check the implementations of the Convolutional layer
+	\texttt{fprop}, \texttt{bprop} and \texttt{grads\_wrt\_params}
+	methods. The ConvolutionalLayer skeleton code can be found in mlp.layers. 
+	The tests use the mlp.layers implementation so be sure to reload your notebook
+	when you update your mlp.layers code.
+	\item
+	A new \texttt{ReshapeLayer} class in the \verb+mlp.layers+ module.
+	When included in a a multiple layer model, this allows the output of
+	the previous layer to be reshaped before being forward propagated to
+	the next layer.
+	\item
+	A new \texttt{EMNISTDataProvider} class in the \verb+mlp.data_providers+ module.
+	This class is a small change to the \texttt{MNISTDataProvider} class, linking to the Balanced EMNIST data, and setting the number of classes to 47.
+	\item
+	Training, validation, and test sets for the \texttt{EMNIST Balanced} dataset that
+	you will use in this coursework
 \end{itemize}
 
 
@@ -186,9 +186,9 @@ In part A of the coursework you will focus on using deep neural networks on EMNI
   \item Perform baseline experiments using DNNs trained on EMNIST.  Obviously there are a lot things that could be explored including hidden unit activation functions, network architectures, training hyperparameters, and the use of regularisation and dropout.   You cannot explore everything and is best to carefully investigate a few things in depth.
   \item Implement the RMSProp \citep{tieleman2012rmsprop} and Adam \citep{kingma2015adam} learning rules, by defining new classes inheriting from \texttt{GradientDescendLearningRule} in the \texttt{mlp/learning\_rules.py} module. The \texttt{MomentumLearningRule} class is an example of how to define  a learning rules which uses an additional state variable to calculate the updates to the parameters.
   \item Perform experiments to compare stochastic gradient descent, RMSProp, and Adam for deep neural network training on EMNIST, building on your earlier baseline experiments.  
-  \item Implement batch normalisation \citep{ioffe2015batch} as a class \verb+BatchNormLayer+.  You need to implement \texttt{fprop}, \texttt{bprop} and \texttt{grads\_wrt\_params} methods for this class. 
-  \item Verify the correctness of your implementation using the supplied unit tests in \verb+Batchnorm_tests.ipynb+.
-  \item Automatically create a test file \verb+sXXXXXXX_batchnorm_test.txt+, by running the provided program \verb+generate_conv_test.py+ which uses your \verb+BatchnormLayer+ class methods on a unique test vector generated using your student ID number.
+  \item Implement batch normalisation \citep{ioffe2015batch} as a class \verb+BatchNormalizationLayer+.  You need to implement \texttt{fprop}, \texttt{bprop} and \texttt{grads\_wrt\_params} methods for this class. 
+  \item Verify the correctness of your implementation using the supplied unit tests in\\\verb+BatchNormalizationLayer_tests.ipynb+.
+  \item Automatically create a test file \verb+sXXXXXXX_batchnorm_test.txt+, by running the provided program \verb+generate_batchnorm_test.py+ which uses your \verb+BatchNormalizationLayer+ class methods on a unique test vector generated using your student ID number.
   \item Perform experiments on EMNIST to investigate the impact of using batch normalisation in deep neural networks, building on your earlier experiments.  
 \end{enumerate}
 In the above experiments you should use the validation set to assess accuracy.  Use the test set at the end to assess the accuracy of the deep neural network architecture and training setup that you judge to be the best.
@@ -199,7 +199,7 @@ In the above experiments you should use the validation set to assess accuracy.  
 In part B of the coursework you should implement convolutional  and max-pooling layers, and carry out experiments using a convolutional networks with one and two convolutional layers.  
 \begin{enumerate}
   \item Implement a convolutional layer as a class \verb+ConvolutionalLayer+.  You need to implement \texttt{fprop}, \texttt{bprop} and \texttt{grads\_wrt\_params} methods for this class. 
-  \item Verify the correctness of your implementation using the supplied unit tests in \verb+Convolutional_layer_tests.ipynb+.
+  \item Verify the correctness of your implementation using the supplied unit tests in\\\verb+ConvolutionalLayer_tests.ipynb+.
   \item Automatically create a test file \verb+sXXXXXXX_conv_test.txt+, by running the provided program \verb+generate_conv_test.py+ which uses your \verb+ConvolutionalLayer+ class methods on a unique test vector generated using your student ID number.
   \item Implement a max-pooling layer. Non-overlapping pooling (which was assumed in the lecture presentation) is required. You may also implement a more generic solution with striding as well. 
   \item Construct and train networks containing one and two convolutional layers, and max-pooling layers, using the Balanced EMNIST data, reporting your experimental results.  As a default use convolutional kernels of dimension 5x5 (stride 1) and pooling regions of 2x2 (stride 2, hence non-overlapping).  As a default convolutional networks with two convolutional layers,  investigate a network with two convolutional+maxpooling layers with 5 feature maps in the first convolutional layer, and 10 feature maps in the second convolutional layer. 
