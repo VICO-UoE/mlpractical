@@ -80,7 +80,7 @@ class Optimiser(object):
         data_mon_vals = OrderedDict([(key + label, 0.) for key
                                      in self.data_monitors.keys()])
         for inputs_batch, targets_batch in dataset:
-            activations = self.model.fprop(inputs_batch)
+            activations = self.model.fprop(inputs_batch, evaluation=True)
             for key, data_monitor in self.data_monitors.items():
                 data_mon_vals[key + label] += data_monitor(
                     activations[-1], targets_batch)
