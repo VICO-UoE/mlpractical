@@ -154,7 +154,7 @@ class CrossEntropySoftmaxError(object):
         Returns:
             Scalar error function value.
         """
-        probs = np.exp(outputs)
+        probs = np.exp(outputs - outputs.max(-1)[:, None])
         probs /= probs.sum(-1)[:, None]
         return -np.mean(np.sum(targets * np.log(probs), axis=1))
 
@@ -168,7 +168,7 @@ class CrossEntropySoftmaxError(object):
         Returns:
             Gradient of error function with respect to outputs.
         """
-        probs = np.exp(outputs)
+        probs = np.exp(outputs - outputs.max(-1)[:, None])
         probs /= probs.sum(-1)[:, None]
         return (probs - targets) / outputs.shape[0]
 
