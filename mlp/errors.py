@@ -155,7 +155,7 @@ class CrossEntropySoftmaxError(object):
             Scalar error function value.
         """
         normOutputs = outputs - outputs.max(-1)[:, None]
-        logProb = normOutputs - np.log(np.sum(np.exp(normOutputs))(-1)[:, None])
+        logProb = normOutputs - np.log(np.sum(np.exp(normOutputs)))
         return -np.mean(np.sum(targets * logProb, axis=1))
 
     def grad(self, outputs, targets):
