@@ -8,7 +8,7 @@ outputs (and intermediate states) and for calculating gradients of scalar
 functions of the outputs with respect to the model parameters.
 """
 
-from mlp.layers import LayerWithParameters
+from mlp.layers import LayerWithParameters, StochasticLayer, StochasticLayerWithParameters
 
 
 class SingleLayerModel(object):
@@ -60,7 +60,7 @@ class SingleLayerModel(object):
         return self.layer.grads_wrt_params(activations[0], grads_wrt_outputs)
 
     def __repr__(self):
-        return 'SingleLayerModel(' + str(layer) + ')'
+        return 'SingleLayerModel(' + str(self.layer) + ')'
 
 
 class MultipleLayerModel(object):
@@ -84,7 +84,7 @@ class MultipleLayerModel(object):
                 params += layer.params
         return params
 
-    def fprop(self, inputs):
+    def fprop(self, inputs, evaluation=False):
         """Forward propagates a batch of inputs through the model.
 
         Args:
@@ -97,7 +97,19 @@ class MultipleLayerModel(object):
         """
         activations = [inputs]
         for i, layer in enumerate(self.layers):
-            activations.append(self.layers[i].fprop(activations[i]))
+            if evaluation:
+                if issubclass(type(self.layers[i]), StochasticLayer) or issubclass(type(self.layers[i]),
+                                                                                   StochasticLayerWithParameters):
+                    current_activations = self.layers[i].fprop(activations[i], stochastic=False)
+                else:
+                    current_activations = self.layers[i].fprop(activations[i])
+            else:
+                if issubclass(type(self.layers[i]), StochasticLayer) or issubclass(type(self.layers[i]),
+                                                                                   StochasticLayerWithParameters):
+                    current_activations = self.layers[i].fprop(activations[i], stochastic=True)
+                else:
+                    current_activations = self.layers[i].fprop(activations[i])
+            activations.append(current_activations)
         return activations
 
     def grads_wrt_params(self, activations, grads_wrt_outputs):

@@ -1,0 +1,408 @@
+\documentclass[11pt,]{article}
+\usepackage[T1]{fontenc}
+\usepackage{amssymb,amsmath}
+\usepackage{txfonts}
+\usepackage{microtype}
+\usepackage{amssymb,amsmath}
+\usepackage{graphicx}
+\usepackage{subfigure} 
+\usepackage{natbib}
+\usepackage{paralist}
+\usepackage{hyperref}
+\usepackage{url}
+\urlstyle{same}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+\newcommand{\RegionMarkerTok}[1]{{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\NormalTok}[1]{{#1}}
+
+\hypersetup{breaklinks=true,
+            pdfauthor={},
+            pdftitle={},
+            colorlinks=true,
+            citecolor=blue,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setcounter{secnumdepth}{1}
+
+\usepackage[a4paper,body={170mm,250mm},top=25mm,left=25mm]{geometry}
+\usepackage[sf,bf,small]{titlesec}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\lhead{\sffamily MLP Coursework 2}
+\rhead{\sffamily Due: 28 November 2017}
+\cfoot{\sffamily \thepage}
+
+\author{}
+\date{}
+
+\DeclareMathOperator{\softmax}{softmax}
+\DeclareMathOperator{\sigmoid}{sigmoid}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\relu}{relu}
+\DeclareMathOperator{\lrelu}{lrelu}
+\DeclareMathOperator{\elu}{elu}
+\DeclareMathOperator{\selu}{selu}
+\DeclareMathOperator{\maxout}{maxout}
+
+\begin{document}
+
+\begin{center}
+\textsf{\textbf{\Large Machine Learning Practical: Coursework 2}}
+
+\bigskip
+\textbf{Release date: Monday 6th November 2017}
+
+\textbf{Due date: 16:00 Tuesday 28th November 2017}
+\end{center}
+
+\section{Introduction}
+\label{sec:introduction}
+% This coursework is concerned with training multi-layer networks to
+% address the MNIST digit classification problem. It builds on the
+% material covered in the first three lab notebooks and the first four
+% lectures. \textbf{You should complete the first three lab
+% notebooks before starting the coursework.} The aim of the coursework is
+% to investigate variants of the ReLU activation function for hidden units 
+% in multi-layer networks, with respect to the validation set accuracies 
+% achieved by the trained models.
+
+The aim of this coursework is to further explore the classification of images of handwritten digits using neural networks.  We'll be using an extended version of the MNIST database, the EMNIST Balanced dataset, described in Section~\ref{sec:emnist}. Part A of the coursework will consist of building baseline deep neural networks for the EMNIST classification task, implementation  and experimentation of the Adam and RMSProp learning rules, and  implementation  and experimentation of Batch Normalisation.  Part B will concern implementation and experimentation of convolutional networks.  As with the previous coursework, you will need to hand in test files generated from your code, and a report.
+
+\section{Dataset}
+\label{sec:emnist}
+In this coursework we shall use the  EMNIST  (Extended MNIST) Balanced dataset, \url{https://www.nist.gov/itl/iad/image-group/emnist-dataset} \citep{cohen2017emnist}.  EMNIST extends MNIST by including images of handwritten letters (upper and lower case) as well as handwritten digits.  Both EMNIST and MNIST are extracted from the same underlying dataset, referred to as NIST Special Database 19.  Both use the same conversion process resulting in centred images of dimension 28$\times$28.  
+
+Although there are 62 potential classes for EMNIST (10 digits, 26 lower case letters, and 26 upper case letters) we shall use a reduced label set of 47 different labels.  This is because of confusions which arise when trying to discriminate upper-case and lower-case versions of the same letter, following the data conversion process.  In the 47 label set, upper- and lower-case labels are merged for the following letters: C, I, J, K, L, M, O, P, S, U, V, W, X, Y and Z.  
+
+The training set for Balanced EMNIST has about twice the number of examples as MNIST, thus you should expect the run-time of your experiments to be about twice as long.  The expected accuracy rates are lower for EMNIST than for MNIST (as EMNIST has more classes, and more confusable examples), and differences in accuracy between different systems should be larger.  See \citet{cohen2017emnist} for some baseline results on EMNIST, as well as a description of the dataset.
+
+You don't need to download the EMNIST database from the NIST website, it will be part of the \verb+coursework_2+ branch from the \verb+mlpractical+ Github repository, discussed in Section~\ref{sec:code} below.
+
+
+
+
+\section{Code}
+\label{sec:code}
+
+You should run all of the experiments for the coursework inside the
+Conda environment you set up in the first labs.  The code for the coursework 
+is available on the course
+\href{https://github.com/CSTR-Edinburgh/mlpractical/}{Github repository}
+on a branch \verb+mlp2017-8/coursework_2+. To create a local working
+copy of this branch in your local repository you need to do the
+following.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Make sure all modified files on the branch you are currently have been
+  committed
+  (\href{https://github.com/CSTR-Edinburgh/mlpractical/blob/mlp2017-8/master/notes/getting-started-in-a-lab.md}{see
+  details here} if you are unsure how to do this).
+\item
+  Fetch changes to the upstream \texttt{origin} repository by running\\
+  \texttt{git fetch origin}
+\item
+  Checkout a new local branch from the fetched branch using\\
+  \verb+git checkout -b coursework_2 origin/mlp2017-8/coursework_2+
+\end{enumerate}
+
+You will now have a new branch in your local repository with all the
+code necessary for the coursework in it.   
+
+This branch includes the following additions to your setup:
+
+\begin{itemize}
+	\itemsep1pt\parskip0pt\parsep0pt
+	\item
+	A notebook \verb+BatchNormalizationLayer_tests.ipynb+ which includes 
+	test functions to check the implementations of the BatchNorm layer
+	\texttt{fprop}, \texttt{bprop} and \texttt{grads\_wrt\_params}
+	methods. The BatchNormalizationLayer skeleton code can be found in mlp.layers. 
+	The tests use the mlp.layers implementation so be sure to reload your notebook
+	when you update your mlp.layers code.
+	\item
+	A notebook \verb+ConvolutionalLayer_tests.ipynb+ which includes
+	test functions to check the implementations of the Convolutional layer
+	\texttt{fprop}, \texttt{bprop} and \texttt{grads\_wrt\_params}
+	methods. The ConvolutionalLayer skeleton code can be found in mlp.layers. 
+	The tests use the mlp.layers implementation so be sure to reload your notebook
+	when you update your mlp.layers code.
+	\item
+	A new \texttt{ReshapeLayer} class in the \verb+mlp.layers+ module.
+	When included in a a multiple layer model, this allows the output of
+	the previous layer to be reshaped before being forward propagated to
+	the next layer.
+	\item
+	A new \texttt{EMNISTDataProvider} class in the \verb+mlp.data_providers+ module.
+	This class is a small change to the \texttt{MNISTDataProvider} class, linking to the Balanced EMNIST data, and setting the number of classes to 47.
+	\item
+	Training, validation, and test sets for the \texttt{EMNIST Balanced} dataset that
+	you will use in this coursework
+\end{itemize}
+
+
+% In the \texttt{notebooks}
+% directory there is a notebook \verb+Coursework_1.ipynb+ which is
+% intended as a starting point for structuring the code for your
+% experiments. You will probably want to add additional code cells to this
+% as you go along and run new experiments (e.g.~doing each new training
+% run in a new cell). You may also wish to use Markdown cells to keep
+% notes on the results of experiments.
+
+There will also be a \verb+coursework_2/report+ directory which contains the LaTeX template and style files for the report.  You should copy all these files into the directory which will contain your report.
+
+
+\section{Tasks}
+
+\subsection*{Part A: Deep Neural Networks}
+In part A of the coursework you will focus on using deep neural networks on EMNIST, and you should implement the Adam and RMSProp learning rules, and Batch Normalisation.
+\begin{enumerate}
+  \item Perform baseline experiments using DNNs trained on EMNIST.  Obviously there are a lot things that could be explored including hidden unit activation functions, network architectures, training hyperparameters, and the use of regularisation and dropout.   You cannot explore everything and is best to carefully investigate a few things in depth.
+  \item Implement the RMSProp \citep{tieleman2012rmsprop} and Adam \citep{kingma2015adam} learning rules, by defining new classes inheriting from \texttt{GradientDescendLearningRule} in the \texttt{mlp/learning\_rules.py} module. The \texttt{MomentumLearningRule} class is an example of how to define  a learning rules which uses an additional state variable to calculate the updates to the parameters.
+  \item Perform experiments to compare stochastic gradient descent, RMSProp, and Adam for deep neural network training on EMNIST, building on your earlier baseline experiments.  
+  \item Implement batch normalisation \citep{ioffe2015batch} as a class \verb+BatchNormalizationLayer+.  You need to implement \texttt{fprop}, \texttt{bprop} and \texttt{grads\_wrt\_params} methods for this class. 
+  \item Verify the correctness of your implementation using the supplied unit tests in\\\verb+BatchNormalizationLayer_tests.ipynb+.
+  \item Automatically create a test file \verb+sXXXXXXX_batchnorm_test.txt+, by running the provided program \verb+generate_batchnorm_test.py+ which uses your \verb+BatchNormalizationLayer+ class methods on a unique test vector generated using your student ID number.
+  \item Perform experiments on EMNIST to investigate the impact of using batch normalisation in deep neural networks, building on your earlier experiments.  
+\end{enumerate}
+In the above experiments you should use the validation set to assess accuracy.  Use the test set at the end to assess the accuracy of the deep neural network architecture and training setup that you judge to be the best.
+
+
+
+\subsection*{Part B: Convolutional Networks}
+In part B of the coursework you should implement convolutional  and max-pooling layers, and carry out experiments using a convolutional networks with one and two convolutional layers.  
+\begin{enumerate}
+  \item Implement a convolutional layer as a class \verb+ConvolutionalLayer+.  You need to implement \texttt{fprop}, \texttt{bprop} and \texttt{grads\_wrt\_params} methods for this class. 
+  \item Verify the correctness of your implementation using the supplied unit tests in\\\verb+ConvolutionalLayer_tests.ipynb+.
+  \item Automatically create a test file \verb+sXXXXXXX_conv_test.txt+, by running the provided program \verb+generate_conv_test.py+ which uses your \verb+ConvolutionalLayer+ class methods on a unique test vector generated using your student ID number.
+  \item Implement a max-pooling layer. Non-overlapping pooling (which was assumed in the lecture presentation) is required. You may also implement a more generic solution with striding as well. 
+  \item Construct and train networks containing one and two convolutional layers, and max-pooling layers, using the Balanced EMNIST data, reporting your experimental results.  As a default use convolutional kernels of dimension 5x5 (stride 1) and pooling regions of 2x2 (stride 2, hence non-overlapping).  As a default convolutional networks with two convolutional layers,  investigate a network with two convolutional+maxpooling layers with 5 feature maps in the first convolutional layer, and 10 feature maps in the second convolutional layer. 
+\end{enumerate}
+As before you should mainly use the validation set to assess accuracy, using the test set to assess the accuracy of the convolutional network you judge to be the best.
+
+
+
+
+
+
+\section{Unit Tests}
+\label{sec:tests}
+Part one of your coursework submission will be the test files generated for batch normalisation (\verb+sXXXXXXX_batchnorm_test.txt+) and for the convolutional layer (\verb+sXXXXXXX_conv_test.txt+), as described above.  Please do not change the names of these files as they will be automatically verified.
+
+\section{Report}
+\label{sec:report}
+Part two of your coursework submission, worth 70 marks will be a report. The directory
+\verb+coursework_2/report+ contains a template for your report (\verb+mlp-cw2-template.txt+);  the generated pdf file (\verb+mlp-cw2-template.pdf+) is also provided, and you should read this file carefully as it contains information about the required structure and experimentation. The template is written in LaTeX, and we strongly recommend that you write your own report using LaTeX, using the supplied document style \verb+mlp2017+ (as in the template).
+
+You should copy the files in the \verb+report+ directory to the directory containing the LaTeX file of your report, as \verb+pdflatex+ will need to access these files when building the pdf document from the LaTeX source file.
+
+Your report should be in a 2-column format, based on the document format used for the ICML conference. The report should be a \textbf{maximum of 7 pages long}, with a further page for references.  We will not read or assess any parts of the report beyond the allowed 7+1 pages.  
+
+As before, all figures should be included in your report file as vector graphics;
+please see the section in \verb+coursework1.pdf+ about how to do this.
+
+If you make use of any any books, articles, web pages or other resources
+you should appropriately cite these in your report. You do not need to
+cite material from the course lecture slides or lab notebooks.
+
+To create a pdf file \verb+mlp-cw2-template.pdf+ from a LaTeX source file (\verb+mlp-cw2-template.tex+), you can run the following in a terminal:
+\begin{verbatim}
+pdflatex mlp-cw2-template
+bibtex mlp-cw2-template
+pdflatex mlp-cw2-template
+pdflatex mlp-cw2-template
+\end{verbatim}
+(Yes, you have to run pdflatex multiple times, in order  for latex to construct the internal document references.)
+
+An alternative, simpler approach uses the \verb+latexmk+ program:
+\begin{verbatim}
+latexmk -pdf mlp-cw2-template
+\end{verbatim}
+
+It is worth learning how to use LaTeX effectively, as it is particularly powerful for mathematical and academic writing.  There are many tutorials on the web.
+
+
+\section{Mechanics}
+\label{sec:mechanics}
+
+\textbf{Marks:} 
+This assignment will be assessed out of 100 marks and
+forms 25\% of your final grade for the course.
+
+\textbf{Academic conduct:} 
+Assessed work is subject to University
+regulations on academic
+conduct:\\\url{http://web.inf.ed.ac.uk/infweb/admin/policies/academic-misconduct}
+
+\textbf{Submission:} 
+You can submit more than once up until the submission deadline. All
+submissions are timestamped automatically. Identically named files
+will overwrite earlier submitted versions, so we will mark the latest
+submission that comes in before the deadline.
+
+If you submit anything before the deadline, you may not resubmit
+afterward. (This policy allows us to begin marking submissions
+immediately after the deadline, without having to worry that some may
+need to be re-marked).
+
+If you do not submit anything before the deadline, you may submit {\em
+exactly once} after the deadline, and a late penalty will be applied
+to this submission unless you have received an approved extension.
+Please be aware that late submissions may receive lower priority for
+marking, and marks may not be returned within the same timeframe as
+for on-time submissions.
+
+{\em Warning:} Unfortunately the \verb+submit+ command will technically
+allow you to submit late even if you submitted before the deadline
+(i.e.\ it does not enforce the above policy). Don't do this! We will
+mark the version that we retrieve just after the deadline, and (even
+worse) you may still be penalized for submitting late because the
+timestamp will update.
+
+For additional information about late penalties and extension
+requests, see the School web page below. Do {\bf not} email any course
+staff directly about extension requests; you must follow the
+instructions on the web page.
+
+\url{http://web.inf.ed.ac.uk/infweb/student-services/ito/admin/coursework-projects/late-coursework-extension-requests}
+
+\textbf{Late submission penalty:}  
+Following the University guidelines, 
+late coursework submitted without an authorised extension will be
+recorded as late and the following penalties will apply: 5
+percentage points will be deducted for every calendar day or part
+thereof it is late, up to a maximum of 7 calendar days. After this
+time a mark of zero will be recorded.
+
+\section{Backing up your work}
+\label{sec:backing-up-your-work}
+
+It is \textbf{strongly recommended} you use some method for backing up
+your work. Those working in their AFS homespace on DICE will have their
+work automatically backed up as part of the
+\href{http://computing.help.inf.ed.ac.uk/backups-and-mirrors}{routine
+backup} of all user homespaces. If you are working on a personal
+computer you should have your own backup method in place (e.g.~saving
+additional copies to an external drive, syncing to a cloud service or
+pushing commits to your local Git repository to a private repository on
+Github). \textbf{Loss of work through failure to back up
+\href{http://tinyurl.com/edinflate}{does not consitute a good reason for
+late submission}}.
+
+You may \emph{additionally} wish to keep your coursework under version
+control in your local Git repository on the \verb+coursework_2+ branch.
+
+If you make regular commits of your work on the coursework this will
+allow you to better keep track of the changes you have made and if
+necessary revert to previous versions of files and/or restore
+accidentally deleted work. This is not however required and you should
+note that keeping your work under version control is a distinct issue
+from backing up to guard against hard drive failure. If you are working
+on a personal computer you should still keep an additional back up of
+your work as described above.
+
+
+
+\section{Submission}
+\label{sec:submission}
+
+Your coursework submission should be done electronically using the
+\href{http://computing.help.inf.ed.ac.uk/submit}{\texttt{submit}}
+command available on DICE machines.
+
+Your submission should include
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  the unit test files generated for part 1, \verb+sXXXXXXX_batchnorm_test.txt+ and \verb+sXXXXXXX_conv_test.txt+, where your student number replaces \verb+sXXXXXXX+.  Please do not 
+  change the names of these files.
+\item
+  your completed report as a PDF file, using the provided template
+\item
+  any notebook (\verb+.ipynb+) files you used to run the experiments in
+\item
+  and your local version of the \texttt{mlp} code including any changes
+  you made to the modules (\texttt{.py} files).
+\end{itemize}
+Please do not submit anything else (e.g. log files).
+
+You should copy all of the files to a single directory, \verb+coursework2+, e.g.
+
+\begin{verbatim}
+mkdir coursework2
+cp reports/coursework2.pdf sXXXXXXX_batchnorm_test.txt sXXXXXXX_conv_test.txt coursework2
+\end{verbatim}
+
+
+and then submit this directory using
+
+\begin{verbatim}
+submit mlp cw2 coursework2
+\end{verbatim}
+
+Please submit the directory, not a zip file, not a tar file.
+
+The \texttt{submit} command will prompt you with the details of the
+submission including the name of the files / directories you are
+submitting and the name of the course and exercise you are submitting
+for and ask you to check if these details are correct. You should check
+these carefully and reply \texttt{y} to submit if you are sure the files
+are correct and \texttt{n} otherwise.
+
+You can amend an existing submission by rerunning the \texttt{submit}
+command any time up to the deadline. It is therefore a good idea
+(particularly if this is your first time using the DICE submit
+mechanism) to do an initial run of the \texttt{submit} command early on
+and then rerun the command if you make any further updates to your
+submisison rather than leaving submission to the last minute.
+
+
+\section{Marking Scheme}
+\label{sec:marking-scheme}
+
+\begin{itemize}
+\item
+  Part 1, Unit tests (30 marks).
+\item
+  Part 2, Report (70 marks).  The following aspects will contribute to the mark for your report:
+  \begin{itemize}
+    \item Abstract - how clear is it? does it cover what is reported in the document
+    \item Introduction - do you clearly outline and motivate the paper, and describe the research questions investigated?
+    \item Methods -- have you carefully described the approaches you have used?
+    \item Experiments -- did you carry out the experiments correctly?  are the results clearly presented and described?  
+    \item Interpretation and discussion of results
+    \item Conclusions
+    \item Presentation and clarity of report 
+  \end{itemize}
+\end{itemize}
+
+\bibliographystyle{plainnat}
+\bibliography{cw2-references}
+\end{document}

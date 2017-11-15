@@ -1,0 +1,493 @@
+\documentclass[11pt,]{article}
+\usepackage[T1]{fontenc}
+\usepackage{amssymb,amsmath}
+\usepackage{txfonts}
+\usepackage{microtype}
+\usepackage{amssymb,amsmath}
+\usepackage{graphicx}
+\usepackage{subfigure} 
+\usepackage{natbib}
+\usepackage{paralist}
+\usepackage{hyperref}
+\usepackage{url}
+\urlstyle{same}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+\newcommand{\RegionMarkerTok}[1]{{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+\newcommand{\NormalTok}[1]{{#1}}
+
+\hypersetup{breaklinks=true,
+            pdfauthor={},
+            pdftitle={},
+            colorlinks=true,
+            citecolor=blue,
+            urlcolor=blue,
+            linkcolor=magenta,
+            pdfborder={0 0 0}}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\setcounter{secnumdepth}{0}
+
+\usepackage[a4paper,body={170mm,250mm},top=25mm,left=25mm]{geometry}
+\usepackage[sf,bf,small]{titlesec}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\lhead{\sffamily MLP Coursework 1}
+\rhead{\sffamily Due: 30 October 2017}
+\cfoot{\sffamily \thepage}
+
+\author{}
+\date{}
+
+\DeclareMathOperator{\softmax}{softmax}
+\DeclareMathOperator{\sigmoid}{sigmoid}
+\DeclareMathOperator{\sgn}{sgn}
+\DeclareMathOperator{\relu}{relu}
+\DeclareMathOperator{\lrelu}{lrelu}
+\DeclareMathOperator{\elu}{elu}
+\DeclareMathOperator{\selu}{selu}
+\DeclareMathOperator{\maxout}{maxout}
+
+\begin{document}
+
+\section{Machine Learning Practical: Coursework
+1}
+\label{sec:machine-learning-practical-coursework-1}
+
+\textbf{Release date: Monday 16th October 2017}\\
+\textbf{Due date: 16:00 Monday 30th October 2017}
+
+\subsection{Introduction}
+\label{sec:introduction}
+This coursework is concerned with training multi-layer networks to
+address the MNIST digit classification problem. It builds on the
+material covered in the first three lab notebooks and the first four
+lectures. \textbf{You should complete the first three lab
+notebooks before starting the coursework.} The aim of the coursework is
+to investigate variants of the ReLU activation function for hidden units 
+in multi-layer networks, with respect to the validation set accuracies 
+achieved by the trained models.
+
+
+ 
+
+
+\subsection{Code}
+\label{sec:code}
+
+You should run all of the experiments for the coursework inside the
+Conda environment you set up in first labs.  The code for the coursework is available on the course
+\href{https://github.com/CSTR-Edinburgh/mlpractical/}{Github repository}
+on a branch \texttt{mlp2017-8/coursework1}. To create a local working
+copy of this branch in your local repository you need to do the
+following.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  Make sure all modified files on the branch you are currently have been
+  committed
+  (\href{https://github.com/CSTR-Edinburgh/mlpractical/blob/mlp2017-8/master/notes/getting-started-in-a-lab.md}{see
+  details here} if you are unsure how to do this).
+\item
+  Fetch changes to the upstream \texttt{origin} repository by running\\
+  \texttt{git fetch origin}
+\item
+  Checkout a new local branch from the fetched branch using\\
+  \texttt{git checkout -b coursework1 origin/mlp2017-8/coursework1}
+\end{enumerate}
+
+You will now have a new branch in your local repository with all the
+code necessary for the coursework in it. In the \texttt{notebooks}
+directory there is a notebook \texttt{Coursework\_1.ipynb} which is
+intended as a starting point for structuring the code for your
+experiments. You will probably want to add additional code cells to this
+as you go along and run new experiments (e.g.~doing each new training
+run in a new cell). You may also wish to use Markdown cells to keep
+notes on the results of experiments.
+
+There will also be a \verb+report+ directory which contains the LaTeX template and style files for the report.  You should copy all these files into the directory which will contain your report.
+
+
+\subsection{Standard network
+architecture}
+\label{sec:standard-network-architecture}
+
+To make the results of your experiments more easily comparable, you
+should try to keep as many of the free choices in the specification of
+the model and learning problem the same across different experiments. If
+you vary only a small number of aspects of the problem at a time this
+will make it easier to interpret the effect of those changes.
+
+In these experiments you should use a multi-layer network with two hidden layers 
+(corresponding to three affine transformations) and a softmax output layer.  The initial baseline
+should use a sigmoid activation function for the hidden layer;   other experiments will explore
+different nonlinear activation functions.  The hidden layers should each contain 100 hidden units.  
+The baseline network can this be defined with the following code (which should be familiar to you from Lab 3):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CharTok{import} \NormalTok{numpy }\CharTok{as} \NormalTok{np}
+\CharTok{from} \NormalTok{mlp.layers }\CharTok{import} \NormalTok{AffineLayer, SoftmaxLayer, SigmoidLayer}
+\CharTok{from} \NormalTok{mlp.errors }\CharTok{import} \NormalTok{CrossEntropySoftmaxError}
+\CharTok{from} \NormalTok{mlp.models }\CharTok{import} \NormalTok{MultipleLayerModel}
+\CharTok{from} \NormalTok{mlp.initialisers }\CharTok{import} \NormalTok{ConstantInit, GlorotUniformInit}
+
+\NormalTok{seed = }\DecValTok{10102016}
+\NormalTok{rng = np.random.RandomState(seed)}
+
+\NormalTok{input_dim, output_dim, hidden_dim = }\DecValTok{784}\NormalTok{, }\DecValTok{10}\NormalTok{, }\DecValTok{100}
+
+\NormalTok{weights_init = GlorotUniformInit(rng=rng)}
+\NormalTok{biases_init = ConstantInit(}\DecValTok{0}\NormalTok{.)}
+
+\NormalTok{model = MultipleLayerModel([}
+    \NormalTok{AffineLayer(input_dim, hidden_dim, weights_init, biases_init),}
+    \NormalTok{SigmoidLayer(),}
+    \NormalTok{AffineLayer(hidden_dim, hidden_dim, weights_init, biases_init),}
+    \NormalTok{SigmoidLayer(),}
+    \NormalTok{AffineLayer(hidden_dim, output_dim, weights_init, biases_init)}
+\NormalTok{])}
+
+\NormalTok{error = CrossEntropySoftmaxError()}
+\end{Highlighting}
+\end{Shaded}
+
+Here we are using the Glorot initialisation scheme, discussed in lecture 4.  In part 2B of this coursework you will explore the effect of different initialisation schemes.
+
+The above code creates a network using sigmoid hidden layers; you should modify it to also create a network using ReLU activation functions (see Lab 3).  These two networks will form your baseline systems.
+
+As well as standardising the network architecture, you should also fix
+the hyperparameters of the training procedure not being investigated to
+be the same across different runs. In particular for all experiments you
+should use a \textbf{batch size of 50 and train for a total of 100
+epochs} for all reported runs. You may of course use a smaller number of
+epochs for initial pilot runs.
+
+\subsection{Part 1: Implementing Activation Functions}
+\label{sec:actfns}
+
+In the first part of the assignment you will implement three further 
+activation functions, each of which is related to ReLU \citep{nair2010rectified}:  Leaky ReLU, ELU (Exponential Linear Unit), and SELU (Scaled Exponential Linear Unit).   Each of these units defines an activation function for which $f(x) = x$ when $x>0$, as for ReLU, but avoid having a zero gradient when $x<0$.
+
+\textbf{Leaky ReLU} ($\lrelu(x)$) \citep{maas2013rectifier} has the following form:
+\begin{equation}
+  \lrelu(x) =
+     \begin{cases} 
+      \alpha x     & \quad \text{if } x \leq  0 \\
+      x       & \quad \text{if } x > 0 \\
+    \end{cases} 
+\end{equation}
+Where $\alpha$ is a constant;  typically $\alpha=0.01$, and you can use this value in this coursework.  Note that $\alpha$ can be taken to be a parameter which is learned by back-propagation along with the weights and biases -- this is called Parametric ReLU (PReLU).  
+
+\textbf{ELU} ($\elu(x)$) \citep{clevert2015fast} has the following form:
+\begin{equation}
+  \elu(x) =
+     \begin{cases} 
+      \alpha (\exp(x) - 1)     & \quad \text{if } x \leq  0 \\
+      x       & \quad \text{if } x > 0 \\
+    \end{cases} 
+\end{equation}
+Again $\alpha$ can be taken as a constant or a tunable parameter.  Typically $\alpha=1$, which results in a smooth function, and you can use this value in this coursework.
+
+\textbf{SELU} ($\selu(x)$) \citep{klambauer2017self} has the following form:
+\begin{equation}
+  \selu(x) =
+     \lambda \begin{cases} 
+      \alpha (\exp(x) - 1)     & \quad \text{if } x \leq  0 \\
+      x       & \quad \text{if } x > 0 \\
+    \end{cases} 
+\end{equation}
+In the case of SELU, there is a theoretical argument for optimal values of the two parameters: $\alpha \approx 1.6733$ and $\lambda \approx 1.0507$, and you can use these values in this coursework.
+
+\begin{enumerate}
+  \item Implement each of these activations function as classes \verb+LeakyReluLayer+, \verb+EluLayer+ and \verb+SeluLayer+.  You need to implement \verb+fprop+ and \verb+bprop+ methods for each class.
+  \item Verify the correctness of your implementation using the supplied unit tests in \verb+Activation\_Tests.ipynb+
+  \item Automatically create a test file \verb+sXXXXXXX_test_file.txt+, by running the provided program \verb+generate_inputs.py+ which uses your code for  \verb+LeakyReluLayer+, \verb+EluLayer+ and \verb+SeluLayer+ to run your fprop and bprop methods for each layer on a unique test vector generated using your student ID number.
+\end{enumerate}
+
+For Part 1 of the coursework you need to submit the test file \verb+sXXXXXXX_test_file.txt+ (where sXXXXXXX is replaced with your student number) created in step 3 above.
+
+\subsection{Part 2: MNIST Experiments}
+\label{sec:expts}
+In  Part 2 of the coursework you will experiment with \verb+LeakyReluLayer+, \verb+EluLayer+ and \verb+SeluLayer+ in multi-layer networks trained on MNIST.
+
+\subsubsection{2A:  Comparing activation functions}
+In this sub-part you should compare the behaviour of Leaky ReLU, ELU, and SELU activation functions on the MNIST task.  Carry out all experiments using 2 hidden layers, with 100 units per hidden layer.  You should compare the results with baseline systems of the same architecture using sigmoid units and using ReLU units.  
+
+\subsubsection{2B: Deep neural network experiments}
+In this subpart you will explore the behaviour of deeper networks.  Based on the results of Part 2A, choose one activation function, and compare networks with 2--8 hidden layers, using 100 hidden units per hidden layer.  
+
+Also compare the effect of different initialisation strategies, as discussed in lecture 4.  First look at the effect of weight initialisation based on
+\begin{compactitem}
+\item Fan-in: $w_i \sim U(-\sqrt{3/n_{in}}, \sqrt{3/n_{in}}$
+\item Fan-out: $w_i \sim U(-\sqrt{3/n_{out}}, \sqrt{3/n_{out}}$
+\item Fan-in and Fan-out: $w_i \sim U \left(-\sqrt{6/(n_{in}+n_{out})}, \sqrt{6/(n_{in}+n_{out})}\right)$
+\end{compactitem}
+where $U$ is the uniform distribution.   The first of these corresponds to constraining the estimated variance of a unit to be independent of the number of incoming connections ($n_{in}$);  the second to  constraining the estimated variance of a unit's gradient to be independent of the number of outgoing connections ($n_{out}$);  the third corresponds to Glorot and Bengio's combined initialisation.  
+
+Additionally you could also explore the effect of drawing from a Gaussian distribution compared with a uniform distribution.  In particular you might like to explore initialising a SELU layer drawing from a Gaussian with mean 0 and variance $1/n_{out}$ as recommended by \cite{klambauer2017self}.
+
+For Part 2 of the coursework you need to write and submit a report, using the template provided, in the directory \verb+report+.  Please read the template document \verb+mlp-cw1-template.pdf+ very carefully, as it provides advice and instructions on writing your report.  You can use the LaTeX source file \verb+mlp-cw1-template.tex+ as a template for your report (see below, in the section 'Report').
+
+It is highly recommended that you use LaTeX for your report.  If you have not used LaTeX previously, now is a good time to learn how to use it!
+
+\subsection{Backing up your work}
+\label{sec:backing-up-your-work}
+
+It is \textbf{strongly recommended} you use some method for backing up
+your work. Those working in their AFS homespace on DICE will have their
+work automatically backed up as part of the
+\href{http://computing.help.inf.ed.ac.uk/backups-and-mirrors}{routine
+backup} of all user homespaces. If you are working on a personal
+computer you should have your own backup method in place (e.g.~saving
+additional copies to an external drive, syncing to a cloud service or
+pushing commits to your local Git repository to a private repository on
+Github). \textbf{Loss of work through failure to back up
+\href{http://tinyurl.com/edinflate}{does not consitute a good reason for
+late submission}}.
+
+You may \emph{additionally} wish to keep your coursework under version
+control in your local Git repository on the \texttt{coursework1} branch.
+% This does not need to be limited to the coursework notebook and
+% \texttt{mlp} Python modules - you can also add your report document to
+% the repository.
+
+If you make regular commits of your work on the coursework this will
+allow you to better keep track of the changes you have made and if
+necessary revert to previous versions of files and/or restore
+accidentally deleted work. This is not however required and you should
+note that keeping your work under version control is a distinct issue
+from backing up to guard against hard drive failure. If you are working
+on a personal computer you should still keep an additional back up of
+your work as described above.
+
+\subsection{Report}
+\label{sec:report}
+
+Part two of your coursework submission, worth 70 marks will be a report. The directory
+\verb+coursework1/report+ contains a template for your report (\verb+mlp-cw1-template.txt+);  the generated pdf file (\verb+mlp-cw1-template.pdf+) is also provided, and you should read this file carefully as it contains information about the required structure and experimentation. The template is written in LaTeX, and we strongly recommend that you write your own report using LaTeX, using the supplied document style \verb+mlp2017+ (as in the template).
+
+You should copy the files in the \verb+report+ directory to the directory containing the LaTeX file of your report, as \verb+pdflatex+ will need to access these files when building the pdf document from the LaTeX source file.
+
+Your report should be in a 2-column format, based on the document format used for the ICML conference. The report should be a \textbf{maximum of 6 pages long}, with a further page for references.  We will not read or assess any parts of the report beyond the allowed 6+1 pages.  
+
+Ideally, all figures should be included in your report file as
+\href{https://en.wikipedia.org/wiki/Vector_graphics}{vector graphics}
+rather than \href{https://en.wikipedia.org/wiki/Raster_graphics}{raster
+files} as this will make sure all detail in the plot is visible.
+Matplotlib supports saving high quality figures in a wide range of
+common image formats using the
+\href{http://matplotlib.org/api/pyplot_api.html\#matplotlib.pyplot.savefig}{\texttt{savefig}}
+function. \textbf{You should use \texttt{savefig} rather than copying
+the screen-resolution raster images outputted in the notebook.} An
+example of using \texttt{savefig} to save a figure as a PDF file (which
+can be included as graphics in
+\href{https://en.wikibooks.org/wiki/LaTeX/Importing_Graphics}{LaTeX}
+compiled with \texttt{pdflatex} and in Apple Pages and
+\href{https://support.office.com/en-us/article/Add-a-PDF-to-your-Office-file-74819342-8f00-4ab4-bcbe-0f3df15ab0dc}{Microsoft
+Word} documents) is given below.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CharTok{import} \NormalTok{matplotlib.pyplot }\CharTok{as} \NormalTok{plt}
+\CharTok{import} \NormalTok{numpy }\CharTok{as} \NormalTok{np}
+\CommentTok{# Generate some example data to plot}
+\NormalTok{x = np.linspace(}\DecValTok{0}\NormalTok{., }\DecValTok{1}\NormalTok{., }\DecValTok{100}\NormalTok{)}
+\NormalTok{y1 = np.sin(}\DecValTok{2}\NormalTok{. * np.pi * x)}
+\NormalTok{y2 = np.cos(}\DecValTok{2}\NormalTok{. * np.pi * x)}
+\NormalTok{fig_size = (}\DecValTok{6}\NormalTok{, }\DecValTok{3}\NormalTok{)  }\CommentTok{# Set figure size in inches (width, height)}
+\NormalTok{fig = plt.figure(figsize=fig_size)  }\CommentTok{# Create a new figure object}
+\NormalTok{ax = fig.add_subplot(}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{)  }\CommentTok{# Add a single axes to the figure}
+\CommentTok{# Plot lines giving each a label for the legend and setting line width to 2}
+\NormalTok{ax.plot(x, y1, linewidth=}\DecValTok{2}\NormalTok{, label=}\StringTok{'$y = \textbackslash{}sin(2\textbackslash{}pi x)$'}\NormalTok{)}
+\NormalTok{ax.plot(x, y2, linewidth=}\DecValTok{2}\NormalTok{, label=}\StringTok{'$y = \textbackslash{}cos(2\textbackslash{}pi x)$'}\NormalTok{)}
+\CommentTok{# Set the axes labels. Can use LaTeX in labels within $...$ delimiters.}
+\NormalTok{ax.set_xlabel(}\StringTok{'$x$'}\NormalTok{, fontsize=}\DecValTok{12}\NormalTok{)}
+\NormalTok{ax.set_ylabel(}\StringTok{'$y$'}\NormalTok{, fontsize=}\DecValTok{12}\NormalTok{)}
+\NormalTok{ax.grid(}\StringTok{'on'}\NormalTok{)  }\CommentTok{# Turn axes grid on}
+\NormalTok{ax.legend(loc=}\StringTok{'best'}\NormalTok{, fontsize=}\DecValTok{11}\NormalTok{)  }\CommentTok{# Add a legend}
+\NormalTok{fig.tight_layout()  }\CommentTok{# This minimises whitespace around the axes.}
+\NormalTok{fig.savefig(}\StringTok{'file-name.pdf'}\NormalTok{) }\CommentTok{# Save figure to current directory in PDF format}
+\end{Highlighting}
+\end{Shaded}
+
+(If you are using Libre/OpenOffice you should use Scalable Vector Format
+plots instead using \\
+\texttt{fig.savefig('file-name.svg')}. If the
+document editor you are using for the report does not support including
+either PDF or SVG graphics you can instead output high-resolution raster
+images using \texttt{fig.savefig('file-name.png', dpi=200)} however note
+these files will generally be larger than either SVG or PDF formatted
+graphics.)
+
+However to emphasise again: \textbf{It is highly recommended that you use LaTeX.}
+
+If you make use of any any books, articles, web pages or other resources
+you should appropriately cite these in your report. You do not need to
+cite material from the course lecture slides or lab notebooks.
+
+To create a pdf file \verb+mlp-cw1-template.pdf+ from a LaTeX source file (\verb+mlp-cw1-template.tex+), you can run the following in a terminal:
+\begin{verbatim}
+pdflatex mlp-cw1-template
+bibtex mlp-cw1-template
+pdflatex mlp-cw1-template
+pdflatex mlp-cw1-template
+\end{verbatim}
+(Yes, you have to run pdflatex multiple times, in order  for latex to construct the internal document references.)
+
+An alternative, simpler approach uses the \verb+latexmk+ program:
+\begin{verbatim}
+latexmk -pdf mlp-cw1-template
+\end{verbatim}
+
+It is worth learning how to use LaTeX effectively, as it is particularly powerful for mathematical and academic writing.  There are many tutorials on the web.
+
+
+\subsection{Mechanics}
+\label{sec:mechanics}
+
+\textbf{Marks:} 
+This assignment will be assessed out of 100 marks and
+forms 10\% of your final grade for the course.
+
+\textbf{Academic conduct:} 
+Assessed work is subject to University
+regulations on academic
+conduct:\\\url{http://web.inf.ed.ac.uk/infweb/admin/policies/academic-misconduct}
+
+\textbf{Submission:} 
+You can submit more than once up until the submission deadline. All
+submissions are timestamped automatically. Identically named files
+will overwrite earlier submitted versions, so we will mark the latest
+submission that comes in before the deadline.
+
+If you submit anything before the deadline, you may not resubmit
+afterward. (This policy allows us to begin marking submissions
+immediately after the deadline, without having to worry that some may
+need to be re-marked).
+
+If you do not submit anything before the deadline, you may submit {\em
+exactly once} after the deadline, and a late penalty will be applied
+to this submission unless you have received an approved extension.
+Please be aware that late submissions may receive lower priority for
+marking, and marks may not be returned within the same timeframe as
+for on-time submissions.
+
+{\em Warning:} Unfortunately the \verb+submit+ command will technically
+allow you to submit late even if you submitted before the deadline
+(i.e.\ it does not enforce the above policy). Don't do this! We will
+mark the version that we retrieve just after the deadline, and (even
+worse) you may still be penalized for submitting late because the
+timestamp will update.
+
+For additional information about late penalties and extension
+requests, see the School web page below. Do {\bf not} email any course
+staff directly about extension requests; you must follow the
+instructions on the web page.
+
+\url{http://web.inf.ed.ac.uk/infweb/student-services/ito/admin/coursework-projects/late-coursework-extension-requests}
+
+\textbf{Late submission penalty:}  
+Following the University guidelines, 
+late coursework submitted without an authorised extension will be
+recorded as late and the following penalties will apply: 5
+percentage points will be deducted for every calendar day or part
+thereof it is late, up to a maximum of 7 calendar days. After this
+time a mark of zero will be recorded.
+
+\subsection{Submission}
+\label{sec:submission}
+
+Your coursework submission should be done electronically using the
+\href{http://computing.help.inf.ed.ac.uk/submit}{\texttt{submit}}
+command available on DICE machines.
+
+Your submission should include
+
+\begin{itemize}
+\itemsep1pt\parskip0pt\parsep0pt
+\item
+  the unit test file generated in part 1, \verb+sXXXXXXX_test_file.txt+, where your student number replaces \verb+sXXXXXXX+
+\item
+  your completed report as a PDF file, using the provided template
+\item
+  the notebook (\verb+.ipynb+) file you used to run the experiments in
+\item
+  and your local version of the \texttt{mlp} code including any changes
+  you made to the modules (\texttt{.py} files).
+\end{itemize}
+
+You should copy all of the files to a single directory, \verb+coursework1+, e.g.
+
+\begin{verbatim}
+mkdir coursework1
+cp notebooks/Coursework_1.ipynb mlp/*.py coursework1
+cp reports/coursework1.pdf reports/sXXXXXXX_test_file.txt coursework1
+\end{verbatim}
+
+
+and then submit this directory using
+
+\begin{verbatim}
+submit mlp cw1 coursework1
+\end{verbatim}
+
+The \texttt{submit} command will prompt you with the details of the
+submission including the name of the files / directories you are
+submitting and the name of the course and exercise you are submitting
+for and ask you to check if these details are correct. You should check
+these carefully and reply \texttt{y} to submit if you are sure the files
+are correct and \texttt{n} otherwise.
+
+You can amend an existing submission by rerunning the \texttt{submit}
+command any time up to the deadline. It is therefore a good idea
+(particularly if this is your first time using the DICE submit
+mechanism) to do an initial run of the \texttt{submit} command early on
+and then rerun the command if you make any further updates to your
+submisison rather than leaving submission to the last minute.
+
+
+\subsection{Marking Scheme}
+\label{sec:marking-scheme}
+
+\begin{itemize}
+\item
+  Part 1, Activation function implementation (30 marks). Based on your submitted test file.
+\item
+  Part 2, Report (70 marks).  The following aspects will contribute to the mark for your report:
+  \begin{itemize}
+    \item Abstract - how clear is it? does it cover what is reported in the document
+    \item Introduction - do you clear outline and motivate the paper, and describe the research questions investigated?
+    \item Description of activation functions -- is it clear and correct?
+    \item Experiments -- did you carry out the experiments correctly?  are the results clearly presented and described?  
+    \item Interpretation and discussion of results
+    \item Conclusions
+    \item Presentation and clarity of report 
+  \end{itemize}
+\end{itemize}
+
+\bibliographystyle{plainnat}
+\bibliography{cw1-references}
+\end{document}
