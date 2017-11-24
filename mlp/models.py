@@ -80,7 +80,7 @@ class MultipleLayerModel(object):
         """A list of all of the parameters of the model."""
         params = []
         for layer in self.layers:
-            if isinstance(layer, LayerWithParameters):
+            if isinstance(layer, LayerWithParameters) or isinstance(layer, StochasticLayerWithParameters):
                 params += layer.params
         return params
 
