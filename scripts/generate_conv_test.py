@@ -19,8 +19,6 @@ def generate_inputs(student_id):
     tests[0, 1, :, :] = float(student_number[7]) / 10 - 5
     return tests
 
-
-
 test_inputs = generate_inputs(student_id)
 test_grads_wrt_outputs = np.arange(-20, 16).reshape((2, 2, 3, 3))
 inputs = np.arange(96).reshape((2, 3, 4, 4))
@@ -36,11 +34,26 @@ conv_bprop = activation_layer.bprop(
     test_inputs, conv_fprop, test_grads_wrt_outputs)
 conv_grads_wrt_params = activation_layer.grads_wrt_params(test_inputs,
                                                           test_grads_wrt_outputs)
-
 test_output = "ConvolutionalLayer:\nFprop: {}\nBprop: {}\n" \
               "Grads_wrt_params: {}\n".format(conv_fprop,
             conv_bprop,
             conv_grads_wrt_params)
 
+cross_correlation_kernels = kernels[:, :, ::-1, ::-1]
+activation_layer = ConvolutionalLayer(num_input_channels=3, num_output_channels=2, input_dim_1=4, input_dim_2=4,
+                                      kernel_dim_1=2, kernel_dim_2=2)
+activation_layer.params = [cross_correlation_kernels, biases]
+conv_fprop = activation_layer.fprop(test_inputs)
+conv_bprop = activation_layer.bprop(
+    test_inputs, conv_fprop, test_grads_wrt_outputs)
+conv_grads_wrt_params = activation_layer.grads_wrt_params(test_inputs,
+                                                          test_grads_wrt_outputs)
+
+test_cross_correlation_output = "Cross_Correlation_ConvolutionalLayer:\nFprop: {}\nBprop: {}\n" \
+              "Grads_wrt_params: {}\n".format(conv_fprop,
+            conv_bprop,
+            conv_grads_wrt_params)
+
+test_output = test_output + "\n" + test_cross_correlation_output
 with open("{}_conv_test_file.txt".format(student_id), "w+") as out_file:
     out_file.write(test_output)
