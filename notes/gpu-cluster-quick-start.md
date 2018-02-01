@@ -72,7 +72,7 @@ export MLP_DATA_DIR=$HOME/mlpractical/data
 13. This includes all of the required installations. Proceed to the next section outlining how to use the slurm cluster
  management software. Please remember to clean your setup files using ```conda clean -t```
  
-###Using Slurm
+### Using Slurm
 Slurm provides us with some commands that can be used to submit, delete, view, explore current jobs, nodes and resources among others.
 To submit a job one needs to use ```sbatch script.sh``` which will automatically find available nodes and pass the job,
  resources and restrictions required. The script.sh is the bash script containing the job that we want to run. Since we will be using the NVIDIA CUDA and CUDNN libraries 
