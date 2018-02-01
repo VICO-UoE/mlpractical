@@ -54,7 +54,7 @@ git config --global user.name "[your name]"
 git config --global user.email "[matric-number]@sms.ed.ac.uk"
 ```
 9. Now clone the mlpractical repo using ```git clone https://github.com/CSTR-Edinburgh/mlpractical.git```.
-10. Checkout the mlp_tf_tutorial branch using ```git checkout mlp2017-8/mlp_tf_tutorial```.
+10. Checkout the mlp_tf_tutorial branch using ```git checkout mlp2017-8/semester_2_materials```.
 11. ```cd mlpractical``` and then install the required packages using ```pip install -r requirements_gpu.txt```.
 12. Once this is done you will need to setup the MLP_DATA path using the following block of commands:
 ```bash
@@ -86,7 +86,7 @@ To submit a job one needs to use ```sbatch script.sh``` which will automatically
 #SBATCH --mem=16000  # memory in Mb
 #SBATCH -o outfile  # send stdout to outfile
 #SBATCH -e errfile  # send stderr to errfile
-#SBATCH -t 0:01:00  # time requested in hour:minute:seconds
+#SBATCH -t 1:00:00  # time requested in hour:minute:seconds
 
 # Setup CUDA and CUDNN related paths
 export CUDA_HOME=/opt/cuda-8.0.44
