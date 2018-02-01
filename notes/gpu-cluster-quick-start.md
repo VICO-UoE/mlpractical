@@ -161,6 +161,6 @@ cp ~/output /afs/inf.ed.ac.uk/u/s/<studentUUN>
 
 This should directly copy the files to AFS. Furthermore one can use rsync as shown before.
 
-##Additional Help
+## Additional Help
 
 If you require additional help as usual please post on piazza or ask in the tech support helpdesk.
