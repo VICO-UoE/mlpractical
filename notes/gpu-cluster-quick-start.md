@@ -1,4 +1,4 @@
-#GPU Cluster Quick-Start Guide
+# GPU Cluster Quick-Start Guide
 
 This guide is intended to guide students into the basics of using the mlp1/mlp2 GPU clusters. It is not intended to be
 an exhaustive guide that goes deep into micro-details of the Slurm ecosystem. For an exhaustive guide please visit 
