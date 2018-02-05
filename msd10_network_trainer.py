@@ -78,7 +78,6 @@ with tf.Session() as sess:
     val_saver = tf.train.Saver()
     #  training or inference
 
-    continue_from_epoch = -1
 
     if continue_from_epoch != -1:
         train_saver.restore(sess, "{}/{}_{}.ckpt".format(saved_models_filepath, experiment_name,
