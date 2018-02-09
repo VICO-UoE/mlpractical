@@ -138,7 +138,7 @@ class MNISTDataProvider(DataProvider):
     """Data provider for MNIST handwritten digit images."""
 
     def __init__(self, which_set='train', batch_size=100, max_num_batches=-1,
-                 random_sampling=True, rng=None):
+                 random_sampling=False, rng=None):
         """Create a new MNIST data provider object.
 
         Args:

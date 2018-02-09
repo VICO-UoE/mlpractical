@@ -23,7 +23,7 @@ experiment_name = "experiment_{}_batch_size_{}_bn_{}_mp_{}".format(experiment_pr
 
 rng = np.random.RandomState(seed=seed)  # set seed
 
-train_data = EMNISTDataProvider(which_set="train", batch_size=batch_size, rng=rng)
+train_data = EMNISTDataProvider(which_set="train", batch_size=batch_size, rng=rng, random_sampling=True)
 val_data = EMNISTDataProvider(which_set="valid", batch_size=batch_size, rng=rng)
 test_data = EMNISTDataProvider(which_set="test", batch_size=batch_size, rng=rng)
 #  setup our data providers
