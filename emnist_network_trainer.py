@@ -83,7 +83,7 @@ with tf.Session() as sess:
                                                    continue_from_epoch))  # restore previous graph to continue operations
 
     best_val_accuracy = 0.
-    with tqdm.tqdm(total=epochs) as epoch_pbar:
+    with tqdm.tqdm(total=epochs - start_epoch) as epoch_pbar:
         for e in range(start_epoch, epochs):
             total_c_loss = 0.
             total_accuracy = 0.
