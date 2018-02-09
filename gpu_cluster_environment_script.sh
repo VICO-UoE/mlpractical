@@ -1,4 +1,5 @@
 #!/bin/sh
+#To be used before srun so that interactive sessions are run with gpu support
 export CUDA_HOME=/opt/cuda-8.0.44
 
 export CUDNN_HOME=/opt/cuDNN-6.0_8.0
