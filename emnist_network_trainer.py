@@ -44,7 +44,7 @@ dropout_rate = tf.placeholder(tf.float32, name='dropout-prob')
 
 classifier_network = ClassifierNetworkGraph(input_x=data_inputs, target_placeholder=data_targets,
                                             dropout_rate=dropout_rate, batch_size=batch_size,
-                                            num_channels=train_data.inputs.shape[2], n_classes=train_data.num_classes,
+                                            n_classes=train_data.num_classes,
                                             is_training=training_phase, augment_rotate_flag=rotate_data,
                                             strided_dim_reduction=strided_dim_reduction,
                                             use_batch_normalization=batch_norm)  # initialize our computational graph

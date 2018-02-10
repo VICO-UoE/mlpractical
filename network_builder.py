@@ -1,11 +1,10 @@
 import tensorflow as tf
-
 from network_architectures import VGGClassifier, FCCLayerClassifier
 
 
 class ClassifierNetworkGraph:
     def __init__(self, input_x, target_placeholder, dropout_rate,
-                 batch_size=100, num_channels=1, n_classes=100, is_training=True, augment_rotate_flag=True,
+                 batch_size=100, n_classes=100, is_training=True, augment_rotate_flag=True,
                  tensorboard_use=False, use_batch_normalization=False, strided_dim_reduction=True,
                  network_name='VGG_classifier'):
 
@@ -30,14 +29,12 @@ class ClassifierNetworkGraph:
         self.batch_size = batch_size
         if network_name == "VGG_classifier":
             self.c = VGGClassifier(self.batch_size, name="classifier_neural_network",
-                                   batch_norm_use=use_batch_normalization, num_channels=num_channels,
-                                   num_classes=n_classes, layer_stage_sizes=[64, 128, 256],
-                                   strided_dim_reduction=strided_dim_reduction)
+                                   batch_norm_use=use_batch_normalization, num_classes=n_classes,
+                                   layer_stage_sizes=[64, 128, 256], strided_dim_reduction=strided_dim_reduction)
         elif network_name == "FCCClassifier":
             self.c = FCCLayerClassifier(self.batch_size, name="classifier_neural_network",
-                                   batch_norm_use=use_batch_normalization, num_channels=num_channels,
-                                   num_classes=n_classes, layer_stage_sizes=[64, 128, 256],
-                                   strided_dim_reduction=strided_dim_reduction)
+                                   batch_norm_use=use_batch_normalization,  num_classes=n_classes,
+                                   layer_stage_sizes=[64, 128, 256], strided_dim_reduction=strided_dim_reduction)
 
         self.input_x = input_x
         self.dropout_rate = dropout_rate

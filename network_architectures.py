@@ -6,7 +6,7 @@ from utils.network_summary import count_parameters
 
 
 class VGGClassifier:
-    def __init__(self, batch_size, layer_stage_sizes, name, num_classes, num_channels=1, batch_norm_use=False,
+    def __init__(self, batch_size, layer_stage_sizes, name, num_classes, batch_norm_use=False,
                  inner_layer_depth=2, strided_dim_reduction=True):
 
         """
@@ -28,7 +28,6 @@ class VGGClassifier:
         """
         self.reuse = False
         self.batch_size = batch_size
-        self.num_channels = num_channels
         self.layer_stage_sizes = layer_stage_sizes
         self.name = name
         self.num_classes = num_classes
@@ -89,7 +88,7 @@ class VGGClassifier:
 
 
 class FCCLayerClassifier:
-    def __init__(self, batch_size, layer_stage_sizes, name, num_classes, num_channels=1, batch_norm_use=False,
+    def __init__(self, batch_size, layer_stage_sizes, name, num_classes, batch_norm_use=False,
                  inner_layer_depth=2, strided_dim_reduction=True):
 
         """
@@ -111,7 +110,6 @@ class FCCLayerClassifier:
         """
         self.reuse = False
         self.batch_size = batch_size
-        self.num_channels = num_channels
         self.layer_stage_sizes = layer_stage_sizes
         self.name = name
         self.num_classes = num_classes
