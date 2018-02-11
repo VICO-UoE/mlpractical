@@ -161,7 +161,7 @@ with tf.Session() as sess:
         total_test_accuracy = 0.
         # computer test loss and accuracy and save
         with tqdm.tqdm(total=total_test_batches) as pbar_test:
-            for batch_id, (x_batch, y_batch) in enumerate(test_data):
+            for batch_idx, (x_batch, y_batch) in enumerate(test_data):
                 c_loss_value, acc = sess.run(
                     [losses_ops["crossentropy_losses"], losses_ops["accuracy"]],
                     feed_dict={dropout_rate: dropout_rate_value, data_inputs: x_batch,
