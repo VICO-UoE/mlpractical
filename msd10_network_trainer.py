@@ -169,7 +169,7 @@ with tf.Session() as sess:
                 total_test_c_loss += c_loss_value
                 total_test_accuracy += acc
                 iter_out = "test_loss: {}, test_accuracy: {}".format(total_test_c_loss / (batch_idx + 1),
-                                                                     acc / (batch_idx + 1))
+                                                                     total_test_accuracy / (batch_idx + 1))
                 pbar_test.set_description(iter_out)
                 pbar_test.update(1)
 
