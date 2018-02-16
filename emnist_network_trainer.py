@@ -5,7 +5,7 @@ import tqdm
 from data_providers import EMNISTDataProvider
 from network_builder import ClassifierNetworkGraph
 from utils.parser_utils import ParserClass
-from utils.storage import build_experiment_folder, save_statistics
+from utils.storage import build_experiment_folder, save_statistics, get_best_validation_model_statistics
 
 tf.reset_default_graph()  # resets any previous graphs to clear memory
 parser = argparse.ArgumentParser(description='Welcome to CNN experiments script')  # generates an argument parser
@@ -64,8 +64,6 @@ total_train_batches = train_data.num_batches
 total_val_batches = val_data.num_batches
 total_test_batches = test_data.num_batches
 
-best_epoch = 0
-
 if tensorboard_enable:
     print("saved tensorboard file at", logs_filepath)
     writer = tf.summary.FileWriter(logs_filepath, graph=tf.get_default_graph())
@@ -76,13 +74,16 @@ with tf.Session() as sess:
     sess.run(init)  # actually running the initialization op
     train_saver = tf.train.Saver()  # saver object that will save our graph so we can reload it later for continuation of
     val_saver = tf.train.Saver()
+    best_val_accuracy = 0.
+    best_epoch = 0
     #  training or inference
 
     if continue_from_epoch != -1:
         train_saver.restore(sess, "{}/{}_{}.ckpt".format(saved_models_filepath, experiment_name,
-                                                   continue_from_epoch))  # restore previous graph to continue operations
+                                                         continue_from_epoch))  # restore previous graph to continue operations
+        best_val_accuracy, best_epoch = get_best_validation_model_statistics(logs_filepath, "result_summary_statistics")
+        print(best_val_accuracy, best_epoch)
 
-    best_val_accuracy = 0.
     with tqdm.tqdm(total=epochs - start_epoch) as epoch_pbar:
         for e in range(start_epoch, epochs):
             total_c_loss = 0.

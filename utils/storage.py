@@ -1,5 +1,5 @@
 import csv
-
+import numpy as np
 
 def save_statistics(log_dir, statistics_file_name, list_of_statistics, create=False):
     """
@@ -41,6 +41,20 @@ def load_statistics(log_dir, statistics_file_name):
                 if item not in data_labels:
                     data_dict[key].append(item)
     return data_dict
+
+def get_best_validation_model_statistics(log_dir, statistics_file_name):
+    """
+    Returns the best val epoch and val accuracy from a log csv file
+    :param log_dir: The log directory the file is saved in
+    :param statistics_file_name: The log file name
+    :return: The best validation accuracy and the epoch at which it is produced
+    """
+    log_file_dict = load_statistics(statistics_file_name=statistics_file_name, log_dir=log_dir)
+    val_acc = np.array(log_file_dict['val_c_accuracy'], dtype=np.float32)
+    best_val_acc = np.max(val_acc)
+    best_val_epoch = np.argmax(val_acc)
+
+    return best_val_acc, best_val_epoch
 
 
 def build_experiment_folder(experiment_name, log_path):
