@@ -92,21 +92,7 @@ class FCCLayerClassifier:
                  inner_layer_depth=2, strided_dim_reduction=True):
 
         """
-        Initializes a VGG Classifier architecture
-        :param batch_size: The size of the data batch
-        :param layer_stage_sizes: A list containing the filters for each layer stage, where layer stage is a series of
-        convolutional layers with stride=1 and no max pooling followed by a dimensionality reducing stage which is
-        either a convolution with stride=1 followed by max pooling or a convolution with stride=2
-        (i.e. strided convolution). So if we pass a list [64, 128, 256] it means that if we have inner_layer_depth=2
-        then stage 0 will have 2 layers with stride=1 and filter size=64 and another dimensionality reducing convolution
-        with either stride=1 and max pooling or stride=2 to dimensionality reduce. Similarly for the other stages.
-        :param name: Name of the network
-        :param num_classes: Number of classes we will need to classify
-        :param num_channels: Number of channels of our image data.
-        :param batch_norm_use: Whether to use batch norm between layers or not.
-        :param inner_layer_depth: The amount of extra layers on top of the dimensionality reducing stage to have per
-        layer stage.
-        :param strided_dim_reduction: Whether to use strided convolutions instead of max pooling.
+        Initializes a FCC Classifier architecture
         """
         self.reuse = False
         self.batch_size = batch_size
