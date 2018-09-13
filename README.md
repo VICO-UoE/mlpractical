@@ -5,31 +5,53 @@ This repository contains the code for the University of Edinburgh [School of Inf
 This assignment-based course is focused on the implementation and evaluation of machine learning systems. Students who do this course will have experience in the design, implementation, training, and evaluation of machine learning systems.
 
 The code in this repository is split into:
-
-  *  a Python package `mlp`, a [NumPy](http://www.numpy.org/) based neural network package designed specifically for the course that students will implement parts of and extend during the course labs and assignments,
-  *  a series of [Jupyter](http://jupyter.org/) notebooks in the `notebooks` directory containing explanatory material and coding exercises to be completed during the course labs.
-
+1. notebooks: 
+    1. Introduction_to_tensorflow: Introduces students to the basics of tensorflow and lower level operations.
+    2. Introduction_to_tf_mlp_repo: Introduces students to the high level functionality of this repo and how one 
+    could run an experiment. The code is full of comments and documentation so you should spend more time 
+    reading and understanding the code by running simple experiments and changing pieces of code to see the impact 
+    on the system.
+2. utils: 
+    1. network_summary: Provides utilities with which one can get network summaries, such as the number of parameters and names of layers.
+    2. parser_utils which are used to parse arguments passed to the training scripts.
+    3. storage, which is responsible for storing network statistics.
+3. data_providers.py : Provides the data providers for training, validation and testing.
+4. network_architectures.py: Defines the network architectures. We provide VGGNet as an example.
+5. network_builder.py: Builds the tensorflow computation graph. In more detail, it builds the losses, tensorflow summaries and training operations.
+6. network_trainer.py: Runs an experiment, composed of training, validation and testing. It is setup to use arguments such that one can easily write multiple bash scripts with different hyperparameters and run experiments very quickly with minimal code changes.
+    
+    
 ## Getting set up
 
 Detailed instructions for setting up a development environment for the course are given in [this file](notes/environment-set-up.md). Students doing the course will spend part of the first lab getting their own environment set up.
-
-## Frequent Issues/Solutions
-
-Don’t forget that from your /mlpractica/l folder you should first do 
+Once you have setup the basic environment then to install the requirements for the tf_mlp repo simply run:
 ```
-git status #to check whether there are any changes in your local branch. If there are, you need to do: 
-git add “path /to/file”
-git commit -m “some message”
+pip install -r requirements.txt
+```
+For CPU tensorflow and
+```
+pip install -r requirements_gpu.txt
+```
+for GPU tensorflow.
+
+If you install the wrong version of tensorflow simply run
+
+```
+pip uninstall $tensorflow_to_uninstall
+```
+replacing $tensorflow_to_uninstall with the tensorflow you want to install and then install the correct one 
+using pip install as normally done.
+
+## Additional Packages
+
+For the tf_mlp you are required to install either the tensorflow-1.4.1 package for CPU users or the tensorflow_gpu-1.4.1 for GPU users. Both of these can easily be installed via pip using:
+
+```
+pip install tensorflow
 ```
 
-Only if this is OK, you can run 
-```
-git checkout mlp2017-8/lab[n]
-```
-Related to MLP module not found error:
-Another thing is to make sure you have you MLP_DATA_DIR path correctly set. You can check this by typing 
-```echo $MLP_DATA_DIR```
-in the command line. If this is not set up, you need to follow the instructions on the set-up-environment to get going. 
+or 
 
-Finally, please make sure you have run 
-```python setup.py develop```
+```
+pip install tensorflow_gpu
+```
