@@ -246,7 +246,7 @@ This will change the code in the working directory to the current state of the c
 You should make sure you are on the first lab branch now by running:
 
 ```
-git checkout mlp2017-8/lab1
+git checkout mlp2018-9/lab1
 ```
 
 ## Installing the `mlp` Python package
