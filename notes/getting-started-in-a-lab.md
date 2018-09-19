@@ -39,10 +39,10 @@ This should display a message indicate a new branch has been found and fetched, 
 We now need to create and checkout a new local branch from the remote branch fetched above. This can be done by running
 
 ```
-git checkout -b lab[n] origin/mlp2017-8/lab[n]
+git checkout -b lab[n] origin/mlp2018-9/lab[n]
 ```
 
-where again `lab[n]` corresponds to the relevant lab number fetched above e.g. `lab2`. This command creates a new local branch named `lab[n]` from the fetched branch on the remote repository `origin/mlp2017-8/lab[n]`.
+where again `lab[n]` corresponds to the relevant lab number fetched above e.g. `lab2`. This command creates a new local branch named `lab[n]` from the fetched branch on the remote repository `origin/mlp2018-9/lab[n]`.
 
 Inside the `notebooks` directory there should new be a new notebook for today's lab. The notebook for the previous lab will now also have proposed solutions filled in.
 
