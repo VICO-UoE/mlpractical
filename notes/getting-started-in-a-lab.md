@@ -34,7 +34,7 @@ We are now ready to fetch any updated code from the remote repository on Github.
 git fetch origin
 ```
 
-This should display a message indicate a new branch has been found and fetched, named `origin/mlp2017-8/lab[n]` where `[n]` is the relevant lab number e.g. `origin/mlp2017-8/lab2` for the second lab.
+This should display a message indicate a new branch has been found and fetched, named `origin/mlp2018-9/lab[n]` where `[n]` is the relevant lab number e.g. `origin/mlp2018-9/lab2` for the second lab.
 
 We now need to create and checkout a new local branch from the remote branch fetched above. This can be done by running
 
