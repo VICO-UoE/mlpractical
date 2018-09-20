@@ -404,7 +404,7 @@ Make sure we are on the first lab branch
 
 ```
 cd ~/mlpractical
-git checkout mlp2017-8/lab1
+git checkout mlp2018-9/lab1
 ```
 
 Install the `mlp` package in the environment in develop mode
