@@ -1,4 +1,4 @@
-# Environment set up
+# 1. Environment set up
 
 *The instructions below are intentionally verbose as they try to explain the reasoning behind our choice of environment set up and to explain what each command we are asking you to run does. If you are already confident using bash, Conda environments and Git you may wish to instead use the much shorter [minimal set-up instructions](#minimal-set-up-instructions-for-dice) at the end which skip the explanations.*
 
@@ -16,7 +16,42 @@ Conda can handle installation of the Python libraries we will be using and all t
 
 There are several options available for installing Conda on a system. Here we will use the Python 3 version of [Miniconda](http://conda.pydata.org/miniconda.html), which installs just Conda and its dependencies. An alternative is to install the [Anaconda Python distribution](https://docs.continuum.io/anaconda/), which installs Conda and a large selection of popular Python packages. As we will require only a small subset of these packages we will use the more barebones Miniconda to avoid eating into your DICE disk quota too much, however if installing on a personal machine you may wish to consider Anaconda if you want to explore other Python packages.
 
-## Installing Miniconda
+# Choosing how to access conda:
+
+To proceed please choose either step 2 or 3. Do not execute both steps. Choose the one that best works with your course selections / machine setup.
+
+Choose step 2 if:
+
+1. You are taking ANLP or IAML in addition to the MLP course or
+2. Are using a DICE machine and would rather skip manual installation of conda
+
+Choose step 3 if:
+
+1. You are NOT taking ANLP or IAML along with MLP and
+1. You are using your own PC or laptop and want to do a manual conda installation or
+2. You are curious and want to learn how to install miniconda on your own (highly recommended) or
+
+Again, choose 2 OR 3, NOT BOTH.
+
+## 2. Accessing conda via remote installation - SHOULD BE DONE BY ALL STUDENTS TAKING ANLP and IAML (along with MLP) courses
+
+Instead of having to install conda via miniconda from scratch, one can also access conda via a remote installation that we have made for all students. This is especially important for those taking ANLP and IAML. This step is vital if you want to be able to access the modules from those courses.
+
+```
+nano ~/.bashrc
+```
+This opens the .bashrc file that is sourced whenever one starts a terminal.
+
+Append at the end
+```
+source /group/teaching/conda/etc/profile.d/conda.sh
+```
+This should be enough to enable conda and give you access to your packages. Please continue from the 'Creating the Conda environment section' if you have taken this path.
+
+
+
+## 3. Installing Miniconda From Scratch - Only do this step if you have chosen not to do step 2
+
 
 We provide instructions here for getting an environment with all the required dependencies running on computers running 
 the School of Informatics [DICE desktop](http://computing.help.inf.ed.ac.uk/dice-platform). The same instructions 
@@ -69,7 +104,20 @@ source ~/.benv
 
 From the next time you log in all future terminal sessions should have the updated `PATH` loaded by default.
 
-## Creating the Conda environment
+To make sure that your conda installation will be available even from an ssh entry from a remote laptop please also do:
+
+```
+nano ~/.bashrc
+```
+This opens the .bashrc file that is sourced whenever one starts a terminal.
+
+Append at the end
+
+```
+source ~/.benv
+```
+
+## 4. Creating the Conda environment
 
 You should now have a working Conda installation. If you run
 
@@ -120,7 +168,7 @@ conda clean -t
 
 These tarballs are usually cached to allow quicker installation into additional environments however we will only be using a single environment here so there is no need to keep them on disk.
 
-## Getting the course code and a short introduction to Git
+## 5. Getting the course code and a short introduction to Git
 
 The next step in getting our environment set up will be to download the course code. This is available in a Git repository on Github:
 
@@ -249,7 +297,7 @@ You should make sure you are on the first lab branch now by running:
 git checkout mlp2018-9/lab1
 ```
 
-## Installing the `mlp` Python package
+## 6. Installing the `mlp` Python package
 
 In your local repository we noted above the presence of a `mlp` subdirectory. This contains the custom Python package implementing the NumPy based neural network framework we will be using in this course.
 
@@ -291,7 +339,7 @@ python
 
 ---
 
-## Adding a data directory variable to the environment
+## 7. Adding a data directory variable to the environment
 
 We observed previously the presence of a `data` subdirectory in the local repository. This directory holds the data files that will be used in the course. To enable the data loaders in the `mlp` package to locate these data files we need to set a `MLP_DATA_DIR` environment variable pointing to this directory.
 
@@ -319,7 +367,7 @@ mkdir .\etc\conda\deactivate.d
 set MLP_DATA_DIR=[path-to-local-repository]\data
 ```
 
-## Loading the first lab notebook
+## 8. Loading the first lab notebook
 
 Your environment is now all set up so you can move on to the introductory exercises in the first lab notebook.
 
