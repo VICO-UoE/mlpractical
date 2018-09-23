@@ -29,7 +29,7 @@ Choose step 3 if:
 
 1. You are NOT taking ANLP or IAML along with MLP and
 1. You are using your own PC or laptop and want to do a manual conda installation or
-2. You are curious and want to learn how to install miniconda on your own (highly recommended) or
+2. You are curious and want to learn how to install miniconda on your own (highly recommended)
 
 Again, choose 2 OR 3, NOT BOTH.
 
