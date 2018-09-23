@@ -1,4 +1,4 @@
-# Environment set up
+# 1. Environment set up
 
 *The instructions below are intentionally verbose as they try to explain the reasoning behind our choice of environment set up and to explain what each command we are asking you to run does. If you are already confident using bash, Conda environments and Git you may wish to instead use the much shorter [minimal set-up instructions](#minimal-set-up-instructions-for-dice) at the end which skip the explanations.*
 
@@ -16,7 +16,40 @@ Conda can handle installation of the Python libraries we will be using and all t
 
 There are several options available for installing Conda on a system. Here we will use the Python 3 version of [Miniconda](http://conda.pydata.org/miniconda.html), which installs just Conda and its dependencies. An alternative is to install the [Anaconda Python distribution](https://docs.continuum.io/anaconda/), which installs Conda and a large selection of popular Python packages. As we will require only a small subset of these packages we will use the more barebones Miniconda to avoid eating into your DICE disk quota too much, however if installing on a personal machine you may wish to consider Anaconda if you want to explore other Python packages.
 
-## Installing Miniconda
+To proceed please choose either step 2 or 3. Do not execute both steps. Choose the one that best works with your course selections / machine setup.
+
+Choose step 2 if:
+
+1. You are taking ANLP or IAML in addition to the MLP course or
+2. Are using a DICE machine and would rather skip manual installation of conda
+
+Choose step 3 if:
+
+1. You are NOT taking ANLP or IAML along with MLP and
+1. You are using your own PC or laptop and want to do a manual conda installation or
+2. You are curious and want to learn how to install miniconda on your own (highly recommended) or
+
+Again, choose 2 OR 3, NOT BOTH.
+
+## 2. Accessing conda via remote installation - SHOULD BE DONE BY ALL STUDENTS TAKING ANLP and IAML (along with MLP) courses
+
+Instead of having to install conda via miniconda from scratch, one can also access conda via a remote installation that we have made for all students. This is especially important for those taking ANLP and IAML. This step is vital if you want to be able to access the modules from those courses.
+
+```
+nano ~/.bashrc
+```
+This opens the .bashrc file that is sourced whenever one starts a terminal.
+
+Append at the end
+```
+source /group/teaching/conda/etc/profile.d/conda.sh
+```
+This should be enough to enable conda and give you access to your packages. Please continue from the 'Creating the Conda environment section' if you have taken this path.
+
+
+
+## 3. Installing Miniconda From Scratch - Only do this step if you 
+
 
 We provide instructions here for getting an environment with all the required dependencies running on computers running 
 the School of Informatics [DICE desktop](http://computing.help.inf.ed.ac.uk/dice-platform). The same instructions 
@@ -68,6 +101,19 @@ source ~/.benv
 ```
 
 From the next time you log in all future terminal sessions should have the updated `PATH` loaded by default.
+
+To make sure that your conda installation will be available even from an ssh entry from a remote laptop please also do:
+
+```
+nano ~/.bashrc
+```
+This opens the .bashrc file that is sourced whenever one starts a terminal.
+
+Append at the end
+
+```
+source ~/.benv
+```
 
 ## Creating the Conda environment
 
