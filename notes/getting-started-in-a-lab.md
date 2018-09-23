@@ -7,7 +7,7 @@ Open a terminal window (`Applications > Terminal`).
 We first need to activate our `mlp` Conda environment:
 
 ```
-source activate mlp
+conda activate mlp
 ```
 
 We now need to fetch any new code for the lab from the Github repository and create a new branch for this lab's work. First change in to the `mlpractical` repoistory directory (if you cloned the repository to a different directory than the default you will need to adjust the command below accordingly):
