@@ -48,7 +48,7 @@ This should be enough to enable conda and give you access to your packages. Plea
 
 
 
-## 3. Installing Miniconda From Scratch - Only do this step if you 
+## 3. Installing Miniconda From Scratch - Only do this step if you have chosen not to do step 2
 
 
 We provide instructions here for getting an environment with all the required dependencies running on computers running 
