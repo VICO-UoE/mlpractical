@@ -137,7 +137,7 @@ This bootstraps a new Conda environment named `mlp` with a minimal Python 3 inst
 We will now *activate* our created environment:
 
 ```
-source activate mlp
+conda activate mlp
 ```
 
 or on Windows only
