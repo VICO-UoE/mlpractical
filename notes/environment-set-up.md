@@ -117,7 +117,7 @@ Append at the end
 source ~/.benv
 ```
 
-## Creating the Conda environment
+## 4. Creating the Conda environment
 
 You should now have a working Conda installation. If you run
 
@@ -168,7 +168,7 @@ conda clean -t
 
 These tarballs are usually cached to allow quicker installation into additional environments however we will only be using a single environment here so there is no need to keep them on disk.
 
-## Getting the course code and a short introduction to Git
+## 5. Getting the course code and a short introduction to Git
 
 The next step in getting our environment set up will be to download the course code. This is available in a Git repository on Github:
 
@@ -297,7 +297,7 @@ You should make sure you are on the first lab branch now by running:
 git checkout mlp2018-9/lab1
 ```
 
-## Installing the `mlp` Python package
+## 6. Installing the `mlp` Python package
 
 In your local repository we noted above the presence of a `mlp` subdirectory. This contains the custom Python package implementing the NumPy based neural network framework we will be using in this course.
 
@@ -339,7 +339,7 @@ python
 
 ---
 
-## Adding a data directory variable to the environment
+## 7. Adding a data directory variable to the environment
 
 We observed previously the presence of a `data` subdirectory in the local repository. This directory holds the data files that will be used in the course. To enable the data loaders in the `mlp` package to locate these data files we need to set a `MLP_DATA_DIR` environment variable pointing to this directory.
 
@@ -367,7 +367,7 @@ mkdir .\etc\conda\deactivate.d
 set MLP_DATA_DIR=[path-to-local-repository]\data
 ```
 
-## Loading the first lab notebook
+## 8. Loading the first lab notebook
 
 Your environment is now all set up so you can move on to the introductory exercises in the first lab notebook.
 
