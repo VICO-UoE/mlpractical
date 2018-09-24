@@ -138,8 +138,7 @@ These tarballs are usually cached to allow quicker installation into additional 
 ***ANLP and IAML students only:***
 To have normal access to your ANLP and IAML environments please do the following:
 1. ```nano .condarc```
-Add the following in the file:
-2. 
+2. Add the following lines in the file:
 ```
 envs_dirs:
  - /group/teaching/conda/envs
