@@ -46,8 +46,14 @@ Append at the end
 ```
 source /group/teaching/conda/etc/profile.d/conda.sh
 ```
-This should be enough to enable conda and give you access to your packages. Please continue from the 'Creating the Conda environment section' if you have taken this path.
+This should be enough to enable conda and give you access to your packages every time to open a terminal. Please continue from the 'Creating the Conda environment section' if you have taken this path.
 
+Also, do not forget to run
+
+```
+source ~/.bashrc
+```
+In your current terminal session to get conda (automatic sourcing of .bashrc happens only when a new terminal is opened).
 
 
 ## 3. Installing Miniconda From Scratch - Only do this step if you have chosen not to do step 2
@@ -148,7 +154,7 @@ activate mlp
 
 When a environment is activated its name will be prepended on to the prompt which should now look something like `(mlp) [machine-name]:~$` on DICE.
 
-**You need to run this `source activate mlp` command every time you wish to activate the `mlp` environment in a terminal (for example at the beginning of each lab)**. When the environment is activated, the environment will be searched first when running commands so that e.g. `python` will launch the Python interpreter installed locally in the `mlp` environment rather than a system-wide version.
+**You need to run this `conda activate mlp` command every time you wish to activate the `mlp` environment in a terminal (for example at the beginning of each lab)**. When the environment is activated, the environment will be searched first when running commands so that e.g. `python` will launch the Python interpreter installed locally in the `mlp` environment rather than a system-wide version.
 
 If you wish to deactivate an environment loaded in the current terminal e.g. to launch the system Python interpreter, you can run `source deactivate` (just `deactivate` on Windows).
 
@@ -427,7 +433,7 @@ conda create -n mlp python=3
 Activate our created environment:
 
 ```
-source activate mlp
+conda activate mlp
 ```
 
 Install the dependencies for the course into the new environment:
