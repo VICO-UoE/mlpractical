@@ -58,7 +58,9 @@ definition in `.bashrc`. As the DICE bash start-up mechanism differs from the st
 On DICE, append the Miniconda binaries directory to `PATH` in manually in `~/.benv` using
 
 ```
-echo "export PATH=\""\$PATH":$HOME/miniconda3/bin\"" >> ~/.benv
+echo ". /afs/inf.ed.ac.uk/user/s14/s1473470/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
+echo ". /afs/inf.ed.ac.uk/user/s14/s1473470/miniconda3/etc/profile.d/conda.sh" >> ~/.benv
+
 ```
 
 For those who this appears a bit opaque to and want to know what is going on see here <sup id="a1">[1](#f1)</sup>.
@@ -69,20 +71,12 @@ We now need to `source` the updated `~/.benv` so that the `PATH` variable in the
 source ~/.benv
 ```
 
-From the next time you log in all future terminal sessions should have the updated `PATH` loaded by default.
-
-To make sure that your conda installation will be available even from an ssh entry from a remote laptop please also do:
+From the next time you log in all future terminal sessions should have conda readily available via:
 
 ```
-nano ~/.bashrc
+conda activate
 ```
-This opens the .bashrc file that is sourced whenever one starts a terminal.
 
-Append at the end
-
-```
-source ~/.benv
-```
 
 ## 3. Creating the Conda environment
 
