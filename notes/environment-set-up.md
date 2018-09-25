@@ -58,8 +58,8 @@ definition in `.bashrc`. As the DICE bash start-up mechanism differs from the st
 On DICE, append the Miniconda binaries directory to `PATH` in manually in `~/.benv` using
 
 ```
-echo ". /afs/inf.ed.ac.uk/user/s14/s1473470/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
-echo ". /afs/inf.ed.ac.uk/user/s14/s1473470/miniconda3/etc/profile.d/conda.sh" >> ~/.benv
+echo ". /afs/inf.ed.ac.uk/user/${USER:0:3}/$USER/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
+echo ". /afs/inf.ed.ac.uk/user/${USER:0:3}/$USER/miniconda3/etc/profile.d/conda.sh" >> ~/.benv
 ```
 
 For those who this appears a bit opaque to and want to know what is going on see here <sup id="a1">[1](#f1)</sup>.
