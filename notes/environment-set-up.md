@@ -383,8 +383,8 @@ You will then be asked whether to prepend the Miniconda binaries directory to th
 
 Append the Miniconda binaries directory to `PATH` in manually in `~/.benv`:
 ```
-echo ". /afs/inf.ed.ac.uk/user/s14/s1473470/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
-echo ". /afs/inf.ed.ac.uk/user/s14/s1473470/miniconda3/etc/profile.d/conda.sh" >> ~/.benv
+echo ". /afs/inf.ed.ac.uk/user/${USER:0:3}/$USER/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
+echo ". /afs/inf.ed.ac.uk/user/${USER:0:3}/$USER/miniconda3/etc/profile.d/conda.sh" >> ~/.benv
 ```
 
 `source` the updated `~/.benv`:
