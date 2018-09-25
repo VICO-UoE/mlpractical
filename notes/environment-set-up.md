@@ -60,7 +60,6 @@ On DICE, append the Miniconda binaries directory to `PATH` in manually in `~/.be
 ```
 echo ". /afs/inf.ed.ac.uk/user/s14/s1473470/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
 echo ". /afs/inf.ed.ac.uk/user/s14/s1473470/miniconda3/etc/profile.d/conda.sh" >> ~/.benv
-
 ```
 
 For those who this appears a bit opaque to and want to know what is going on see here <sup id="a1">[1](#f1)</sup>.
@@ -384,7 +383,8 @@ You will then be asked whether to prepend the Miniconda binaries directory to th
 
 Append the Miniconda binaries directory to `PATH` in manually in `~/.benv`:
 ```
-echo "export PATH=\""\$PATH":$HOME/miniconda3/bin\"" >> ~/.benv
+echo ". /afs/inf.ed.ac.uk/user/s14/s1473470/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
+echo ". /afs/inf.ed.ac.uk/user/s14/s1473470/miniconda3/etc/profile.d/conda.sh" >> ~/.benv
 ```
 
 `source` the updated `~/.benv`:
