@@ -35,23 +35,54 @@ class DataProvider(object):
         """
         self.inputs = inputs
         self.targets = targets
-        self.batch_size = batch_size
-        assert max_num_batches != 0 and not max_num_batches < -1, (
-            'max_num_batches should be -1 or > 0')
-        self.max_num_batches = max_num_batches
+        if batch_size < 1:
+            raise ValueError('batch_size must be >= 1')
+        self._batch_size = batch_size
+        if max_num_batches == 0 or max_num_batches < -1:
+            raise ValueError('max_num_batches must be -1 or > 0')
+        self._max_num_batches = max_num_batches
+        self._update_num_batches()
+        self.shuffle_order = shuffle_order
+        self._current_order = np.arange(inputs.shape[0])
+        if rng is None:
+            rng = np.random.RandomState(DEFAULT_SEED)
+        self.rng = rng
+        self.new_epoch()
+
+    @property
+    def batch_size(self):
+        """Number of data points to include in each batch."""
+        return self._batch_size
+
+    @batch_size.setter
+    def batch_size(self, value):
+        if value < 1:
+            raise ValueError('batch_size must be >= 1')
+        self._batch_size = value
+        self._update_num_batches()
+
+    @property
+    def max_num_batches(self):
+        """Maximum number of batches to iterate over in an epoch."""
+        return self._max_num_batches
+
+    @max_num_batches.setter
+    def max_num_batches(self, value):
+        if value == 0 or value < -1:
+            raise ValueError('max_num_batches must be -1 or > 0')
+        self._max_num_batches = value
+        self._update_num_batches()
+
+    def _update_num_batches(self):
+        """Updates number of batches to iterate over."""
         # maximum possible number of batches is equal to number of whole times
         # batch_size divides in to the number of data points which can be
         # found using integer division
-        possible_num_batches = self.inputs.shape[0] // batch_size
+        possible_num_batches = self.inputs.shape[0] // self.batch_size
         if self.max_num_batches == -1:
             self.num_batches = possible_num_batches
         else:
             self.num_batches = min(self.max_num_batches, possible_num_batches)
-        self.shuffle_order = shuffle_order
-        if rng is None:
-            rng = np.random.RandomState(DEFAULT_SEED)
-        self.rng = rng
-        self.reset()
 
     def __iter__(self):
         """Implements Python iterator interface.
@@ -63,27 +94,36 @@ class DataProvider(object):
         """
         return self
 
-    def reset(self):
-        """Resets the provider to the initial state to use in a new epoch."""
+    def new_epoch(self):
+        """Starts a new epoch (pass through data), possibly shuffling first."""
         self._curr_batch = 0
         if self.shuffle_order:
             self.shuffle()
 
-    def shuffle(self):
-        """Randomly shuffles order of data."""
-        new_order = self.rng.permutation(self.inputs.shape[0])
-        self.inputs = self.inputs[new_order]
-        self.targets = self.targets[new_order]
-
     def __next__(self):
         return self.next()
+
+    def reset(self):
+        """Resets the provider to the initial state."""
+        inv_perm = np.argsort(self._current_order)
+        self._current_order = self._current_order[inv_perm]
+        self.inputs = self.inputs[inv_perm]
+        self.targets = self.targets[inv_perm]
+        self.new_epoch()
+
+    def shuffle(self):
+        """Randomly shuffles order of data."""
+        perm = self.rng.permutation(self.inputs.shape[0])
+        self._current_order = self._current_order[perm]
+        self.inputs = self.inputs[perm]
+        self.targets = self.targets[perm]
 
     def next(self):
         """Returns next data batch or raises `StopIteration` if at end."""
         if self._curr_batch + 1 > self.num_batches:
-            # no more batches in current iteration through data set so reset
-            # the dataset for another pass and indicate iteration is at end
-            self.reset()
+            # no more batches in current iteration through data set so start
+            # new epoch ready for another pass and indicate iteration is at end
+            self.new_epoch()
             raise StopIteration()
         # create an index slice corresponding to current batch number
         batch_slice = slice(self._curr_batch * self.batch_size,
@@ -92,7 +132,6 @@ class DataProvider(object):
         targets_batch = self.targets[batch_slice]
         self._curr_batch += 1
         return inputs_batch, targets_batch
-
 
 class MNISTDataProvider(DataProvider):
     """Data provider for MNIST handwritten digit images."""
@@ -114,7 +153,7 @@ class MNISTDataProvider(DataProvider):
             rng (RandomState): A seeded random number generator.
         """
         # check a valid which_set was provided
-        assert which_set in ['train', 'valid', 'eval'], (
+        assert which_set in ['train', 'valid', 'test'], (
             'Expected which_set to be either train, valid or eval. '
             'Got {0}'.format(which_set)
         )
@@ -253,3 +292,41 @@ class CCPPDataProvider(DataProvider):
         targets = loaded[which_set + '_targets']
         super(CCPPDataProvider, self).__init__(
             inputs, targets, batch_size, max_num_batches, shuffle_order, rng)
+
+
+class AugmentedMNISTDataProvider(MNISTDataProvider):
+    """Data provider for MNIST dataset which randomly transforms images."""
+
+    def __init__(self, which_set='train', batch_size=100, max_num_batches=-1,
+                 shuffle_order=True, rng=None, transformer=None):
+        """Create a new augmented MNIST data provider object.
+
+        Args:
+            which_set: One of 'train', 'valid' or 'test'. Determines which
+                portion of the MNIST data this object should provide.
+            batch_size (int): Number of data points to include in each batch.
+            max_num_batches (int): Maximum number of batches to iterate over
+                in an epoch. If `max_num_batches * batch_size > num_data` then
+                only as many batches as the data can be split into will be
+                used. If set to -1 all of the data will be used.
+            shuffle_order (bool): Whether to randomly permute the order of
+                the data before each epoch.
+            rng (RandomState): A seeded random number generator.
+            transformer: Function which takes an `inputs` array of shape
+                (batch_size, input_dim) corresponding to a batch of input
+                images and a `rng` random number generator object (i.e. a
+                call signature `transformer(inputs, rng)`) and applies a
+                potentiall random set of transformations to some / all of the
+                input images as each new batch is returned when iterating over
+                the data provider.
+        """
+        super(AugmentedMNISTDataProvider, self).__init__(
+            which_set, batch_size, max_num_batches, shuffle_order, rng)
+        self.transformer = transformer
+
+    def next(self):
+        """Returns next data batch or raises `StopIteration` if at end."""
+        inputs_batch, targets_batch = super(
+            AugmentedMNISTDataProvider, self).next()
+        transformed_inputs_batch = self.transformer(inputs_batch, self.rng)
+        return transformed_inputs_batch, targets_batch
