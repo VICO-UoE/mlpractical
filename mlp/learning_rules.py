@@ -160,3 +160,292 @@ class MomentumLearningRule(GradientDescentLearningRule):
             mom *= self.mom_coeff
             mom -= self.learning_rate * grad
             param += mom
+
+
+class AdamLearningRule(GradientDescentLearningRule):
+    """Adaptive moments (Adam) learning rule.
+    First-order gradient-descent based learning rule which uses adaptive
+    estimates of first and second moments of the parameter gradients to
+    calculate the parameter updates.
+    References:
+      [1]: Adam: a method for stochastic optimisation
+           Kingma and Ba, 2015
+    """
+
+    def __init__(self, learning_rate=1e-3, beta_1=0.9, beta_2=0.999,
+                 epsilon=1e-8):
+        """Creates a new learning rule object.
+        Args:
+            learning_rate: A postive scalar to scale gradient updates to the
+                parameters by. This needs to be carefully set - if too large
+                the learning dynamic will be unstable and may diverge, while
+                if set too small learning will proceed very slowly.
+            beta_1: Exponential decay rate for gradient first moment estimates.
+                This should be a scalar value in [0, 1]. The running gradient
+                first moment estimate is calculated using
+                `m_1 = beta_1 * m_1_prev + (1 - beta_1) * g`
+                 where `m_1_prev` is the previous estimate and `g` the current
+                 parameter gradients.
+            beta_2: Exponential decay rate for gradient second moment
+                estimates. This should be a scalar value in [0, 1]. The run
+                gradient second moment estimate is calculated using
+                `m_2 = beta_2 * m_2_prev + (1 - beta_2) * g**2`
+                 where `m_2_prev` is the previous estimate and `g` the current
+                 parameter gradients.
+            epsilon: 'Softening' parameter to stop updates diverging when
+                second moment estimates are close to zero. Should be set to
+                a small positive value.
+        """
+        super(AdamLearningRule, self).__init__(learning_rate)
+        assert beta_1 >= 0. and beta_1 <= 1., 'beta_1 should be in [0, 1].'
+        assert beta_2 >= 0. and beta_2 <= 1., 'beta_2 should be in [0, 2].'
+        assert epsilon > 0., 'epsilon should be > 0.'
+        self.beta_1 = beta_1
+        self.beta_2 = beta_2
+        self.epsilon = epsilon
+
+    def initialise(self, params):
+        """Initialises the state of the learning rule for a set or parameters.
+        This must be called before `update_params` is first called.
+        Args:
+            params: A list of the parameters to be optimised. Note these will
+                be updated *in-place* to avoid reallocating arrays on each
+                update.
+        """
+        super(AdamLearningRule, self).initialise(params)
+        self.moms_1 = []
+        for param in self.params:
+            self.moms_1.append(np.zeros_like(param))
+        self.moms_2 = []
+        for param in self.params:
+            self.moms_2.append(np.zeros_like(param))
+        self.step_count = 0
+
+    def reset(self):
+        """Resets any additional state variables to their initial values.
+        For this learning rule this corresponds to zeroing the estimates of
+        the first and second moments of the gradients.
+        """
+        raise NotImplementedError
+
+    def update_params(self, grads_wrt_params):
+        """Applies a single update to all parameters.
+        All parameter updates are performed using in-place operations and so
+        nothing is returned.
+        Args:
+            grads_wrt_params: A list of gradients of the scalar loss function
+                with respect to each of the parameters passed to `initialise`
+                previously, with this list expected to be in the same order.
+        """
+        raise NotImplementedError
+
+class AdamLearningRuleWithWeightDecay(GradientDescentLearningRule):
+    """Adaptive moments (Adam) learning rule with Weight Decay.
+    First-order gradient-descent based learning rule which uses adaptive
+    estimates of first and second moments of the parameter gradients to
+    calculate the parameter updates.
+    References:
+      [1]: Adam: a method for stochastic optimisation
+           Kingma and Ba, 2015
+      [2]: https://arxiv.org/pdf/1711.05101.pdf
+    """
+
+    def __init__(self, learning_rate=1e-3, beta_1=0.9, beta_2=0.999,
+                 epsilon=1e-8, weight_decay=0.00001):
+        """Creates a new learning rule object.
+        Args:
+            learning_rate: A postive scalar to scale gradient updates to the
+                parameters by. This needs to be carefully set - if too large
+                the learning dynamic will be unstable and may diverge, while
+                if set too small learning will proceed very slowly.
+            beta_1: Exponential decay rate for gradient first moment estimates.
+                This should be a scalar value in [0, 1]. The running gradient
+                first moment estimate is calculated using
+                `m_1 = beta_1 * m_1_prev + (1 - beta_1) * g`
+                 where `m_1_prev` is the previous estimate and `g` the current
+                 parameter gradients.
+            beta_2: Exponential decay rate for gradient second moment
+                estimates. This should be a scalar value in [0, 1]. The run
+                gradient second moment estimate is calculated using
+                `m_2 = beta_2 * m_2_prev + (1 - beta_2) * g**2`
+                 where `m_2_prev` is the previous estimate and `g` the current
+                 parameter gradients.
+            epsilon: 'Softening' parameter to stop updates diverging when
+                second moment estimates are close to zero. Should be set to
+                a small positive value.
+        """
+        super(AdamLearningRuleWithWeightDecay, self).__init__(learning_rate)
+        assert beta_1 >= 0. and beta_1 <= 1., 'beta_1 should be in [0, 1].'
+        assert beta_2 >= 0. and beta_2 <= 1., 'beta_2 should be in [0, 2].'
+        assert epsilon > 0., 'epsilon should be > 0.'
+        self.beta_1 = beta_1
+        self.beta_2 = beta_2
+        self.epsilon = epsilon
+        self.weight_decay = weight_decay
+        self.initial_learning_rate = learning_rate
+
+    def initialise(self, params):
+        """Initialises the state of the learning rule for a set or parameters.
+        This must be called before `update_params` is first called.
+        Args:
+            params: A list of the parameters to be optimised. Note these will
+                be updated *in-place* to avoid reallocating arrays on each
+                update.
+        """
+        super(AdamLearningRuleWithWeightDecay, self).initialise(params)
+        self.moms_1 = []
+        for param in self.params:
+            self.moms_1.append(np.zeros_like(param))
+        self.moms_2 = []
+        for param in self.params:
+            self.moms_2.append(np.zeros_like(param))
+        self.step_count = 0
+
+    def reset(self):
+        """Resets any additional state variables to their initial values.
+        For this learning rule this corresponds to zeroing the estimates of
+        the first and second moments of the gradients.
+        """
+        raise NotImplementedError
+
+    def update_params(self, grads_wrt_params):
+        """Applies a single update to all parameters.
+        All parameter updates are performed using in-place operations and so
+        nothing is returned.
+        Args:
+            grads_wrt_params: A list of gradients of the scalar loss function
+                with respect to each of the parameters passed to `initialise`
+                previously, with this list expected to be in the same order.
+        """
+        # tip:
+        # ηt * initial_learning_rate = learning_rate
+        # ηt = learning_rate / initial_learning_rate
+
+
+        raise NotImplementedError
+
+
+class AdaGradLearningRule(GradientDescentLearningRule):
+    """Adaptive gradients (AdaGrad) learning rule.
+    First-order gradient-descent based learning rule which normalises gradient
+    updates by a running sum of the past squared gradients.
+    References:
+      [1]: Adaptive Subgradient Methods for Online Learning and Stochastic
+           Optimization. Duchi, Haxan and Singer, 2011
+    """
+
+    def __init__(self, learning_rate=1e-2, epsilon=1e-8):
+        """Creates a new learning rule object.
+        Args:
+            learning_rate: A postive scalar to scale gradient updates to the
+                parameters by. This needs to be carefully set - if too large
+                the learning dynamic will be unstable and may diverge, while
+                if set too small learning will proceed very slowly.
+            epsilon: 'Softening' parameter to stop updates diverging when
+                sums of squared gradients are close to zero. Should be set to
+                a small positive value.
+        """
+        super(AdaGradLearningRule, self).__init__(learning_rate)
+        assert epsilon > 0., 'epsilon should be > 0.'
+        self.epsilon = epsilon
+
+    def initialise(self, params):
+        """Initialises the state of the learning rule for a set or parameters.
+        This must be called before `update_params` is first called.
+        Args:
+            params: A list of the parameters to be optimised. Note these will
+                be updated *in-place* to avoid reallocating arrays on each
+                update.
+        """
+        super(AdaGradLearningRule, self).initialise(params)
+        self.sum_sq_grads = []
+        for param in self.params:
+            self.sum_sq_grads.append(np.zeros_like(param))
+
+    def reset(self):
+        """Resets any additional state variables to their initial values.
+        For this learning rule this corresponds to zeroing all the sum of
+        squared gradient states.
+        """
+        for sum_sq_grad in self.sum_sq_grads:
+            sum_sq_grad *= 0.
+
+    def update_params(self, grads_wrt_params):
+        """Applies a single update to all parameters.
+        All parameter updates are performed using in-place operations and so
+        nothing is returned.
+        Args:
+            grads_wrt_params: A list of gradients of the scalar loss function
+                with respect to each of the parameters passed to `initialise`
+                previously, with this list expected to be in the same order.
+        """
+        for param, sum_sq_grad, grad in zip(
+                self.params, self.sum_sq_grads, grads_wrt_params):
+            sum_sq_grad += grad**2
+            param -= (self.learning_rate * grad /
+                      (sum_sq_grad + self.epsilon)**0.5)
+
+
+class RMSPropLearningRule(GradientDescentLearningRule):
+    """Root mean squared gradient normalised learning rule (RMSProp).
+    First-order gradient-descent based learning rule which normalises gradient
+    updates by a exponentially smoothed estimate of the gradient second
+    moments.
+    References:
+      [1]: Neural Networks for Machine Learning: Lecture 6a slides
+           University of Toronto,Computer Science Course CSC321
+      http://www.cs.toronto.edu/~tijmen/csc321/slides/lecture_slides_lec6.pdf
+    """
+
+    def __init__(self, learning_rate=1e-3, beta=0.9, epsilon=1e-8):
+        """Creates a new learning rule object.
+        Args:
+            learning_rate: A postive scalar to scale gradient updates to the
+                parameters by. This needs to be carefully set - if too large
+                the learning dynamic will be unstable and may diverge, while
+                if set too small learning will proceed very slowly.
+            beta: Exponential decay rate for gradient second moment
+                estimates. This should be a scalar value in [0, 1]. The running
+                gradient second moment estimate is calculated using
+                `m_2 = beta * m_2_prev + (1 - beta) * g**2`
+                 where `m_2_prev` is the previous estimate and `g` the current
+                 parameter gradients.
+            epsilon: 'Softening' parameter to stop updates diverging when
+                gradient second moment estimates are close to zero. Should be
+                set to a small positive value.
+        """
+        super(RMSPropLearningRule, self).__init__(learning_rate)
+        assert beta >= 0. and beta <= 1., 'beta should be in [0, 1].'
+        assert epsilon > 0., 'epsilon should be > 0.'
+        self.beta = beta
+        self.epsilon = epsilon
+
+    def initialise(self, params):
+        """Initialises the state of the learning rule for a set or parameters.
+        This must be called before `update_params` is first called.
+        Args:
+            params: A list of the parameters to be optimised. Note these will
+                be updated *in-place* to avoid reallocating arrays on each
+                update.
+        """
+        super(RMSPropLearningRule, self).initialise(params)
+
+        raise NotImplementedError
+
+    def reset(self):
+        """Resets any additional state variables to their initial values.
+        For this learning rule this corresponds to zeroing all gradient
+        second moment estimates.
+        """
+        raise NotImplementedError
+
+    def update_params(self, grads_wrt_params):
+        """Applies a single update to all parameters.
+        All parameter updates are performed using in-place operations and so
+        nothing is returned.
+        Args:
+            grads_wrt_params: A list of gradients of the scalar loss function
+                with respect to each of the parameters passed to `initialise`
+                previously, with this list expected to be in the same order.
+        """
+        raise NotImplementedError
