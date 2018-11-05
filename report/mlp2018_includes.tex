@@ -2,10 +2,15 @@
 \usepackage{amssymb,amsmath}
 \usepackage{txfonts}
 \usepackage{microtype}
+\usepackage{xspace}
+\xspaceaddexceptions{\%}
+
+% Lists with less spacoing between items
+\usepackage{paralist}
 
 % For figures
 \usepackage{graphicx}
-\usepackage{subfigure} 
+\usepackage{subfig} 
 
 % For citations
 \usepackage{natbib}
@@ -29,7 +34,7 @@
 
 % Set up MLP coursework style (based on ICML style)
 \usepackage{mlp2018}
-\mlptitlerunning{MLP Coursework 1 (\studentNumber)}
+\mlptitlerunning{MLP Coursework 2 (\studentNumber)}
 \bibliographystyle{icml2017}
 
 
@@ -41,3 +46,8 @@
 \DeclareMathOperator{\elu}{elu}
 \DeclareMathOperator{\selu}{selu}
 \DeclareMathOperator{\maxout}{maxout}
+
+
+
+
+
