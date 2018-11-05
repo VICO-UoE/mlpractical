@@ -58,7 +58,7 @@ class Optimiser(object):
         parameters according to the learning rule.
         """
         with self.tqdm_progress(total=self.train_dataset.num_batches) as train_progress_bar:
-            train_progress_bar.set_description("Ep Prog")
+            train_progress_bar.set_description("Epoch Progress")
             for inputs_batch, targets_batch in self.train_dataset:
                 activations = self.model.fprop(inputs_batch)
                 grads_wrt_outputs = self.error.grad(activations[-1], targets_batch)
@@ -132,7 +132,7 @@ class Optimiser(object):
         start_train_time = time.time()
         run_stats = [list(self.get_epoch_stats().values())]
         with self.tqdm_progress(total=num_epochs) as progress_bar:
-            progress_bar.set_description("Exp Prog")
+            progress_bar.set_description("Experiment Progress")
             for epoch in range(1, num_epochs + 1):
                 start_time = time.time()
                 self.do_training_epoch()
