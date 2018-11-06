@@ -89,7 +89,7 @@ optional arguments:
 For example, to run a simple experiment using a convolutional network and max-pooling on the CPU you can run:
 
 ```
-python mlp/pytorch_experiment_scripts/train_evaluate_emnist_classification_system.py --batch_size 100 --seed 0 num_filters 32 --dim_reduction_type max_pooling --experiment_name tutorial_exp_1 --use_gpu False
+python mlp/pytorch_experiment_scripts/train_evaluate_emnist_classification_system.py --batch_size 100 --seed 0 --num_filters 32 --dim_reduction_type max_pooling --experiment_name tutorial_exp_1 --use_gpu False
 ```
 
 Your experiment should begin running.
@@ -100,7 +100,7 @@ tutorial_exp_1/saved_models.
 
 To run on a GPU on Google Compute Engine the command would be:
 ```
-python mlp/pytorch_experiment_scripts/train_evaluate_emnist_classification_system.py --batch_size 100 --seed 0 num_filters 32 --dim_reduction_type max_pooling --experiment_name tutorial_exp_1 --use_gpu True
+python mlp/pytorch_experiment_scripts/train_evaluate_emnist_classification_system.py --batch_size 100 --seed 0 --num_filters 32 --dim_reduction_type max_pooling --experiment_name tutorial_exp_1 --use_gpu True
 ```
 
 
