@@ -68,11 +68,11 @@ git checkout -b coursework_2 origin/mlp2018-9/coursework_2
 python setup.py develop
 ```
 
-Then, to test PyTorch running on the GPU, run this script that trains a small convolutional network on EMNIST:
+Then, to test PyTorch running on the GPU, run this script that trains a small convolutional network (4 conv layers, 64 filters) on EMNIST:
 ```
 python mlp/pytorch_experiment_scripts/train_evaluate_emnist_classification_system.py --dim_reduction_type max_pooling --use_gpu True
 ```
-You should be able to see an experiment running, using the GPU. It should be doing about 200 it/s (iterations per second).  You can stop it when ever you like using `ctrl-c`.  
+You should be able to see an experiment running, using the GPU. It should be doing about 60 it/s (iterations per second).  You can stop it when ever you like using `ctrl-c`.  
 
 If all the above matches what’s stated then you should be ready to run your coursework jobs.
 
