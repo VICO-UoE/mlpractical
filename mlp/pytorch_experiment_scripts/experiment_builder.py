@@ -35,7 +35,8 @@ class ExperimentBuilder(nn.Module):
         super(ExperimentBuilder, self).__init__()
         if torch.cuda.is_available() and use_gpu:  # checks whether a cuda gpu is available and whether the gpu flag is True
             self.device = torch.device('cuda')  # sets device to be cuda
-            os.environ["CUDA_VISIBLE_DEVICES"] = "0"  # sets the main GPU to be the one at index 0 (on multi gpu machines you can choose which one you want to use by using the relevant GPU ID)
+            os.environ[
+                "CUDA_VISIBLE_DEVICES"] = "0"  # sets the main GPU to be the one at index 0 (on multi gpu machines you can choose which one you want to use by using the relevant GPU ID)
             print("use GPU")
         else:
             print("use CPU")
@@ -75,6 +76,13 @@ class ExperimentBuilder(nn.Module):
             self.starting_epoch = continue_from_epoch
         else:
             self.starting_epoch = 0
+
+    def get_num_parameters(self):
+        total_num_params = 0
+        for param in self.parameters():
+            total_num_params += np.prod(param.shape)
+
+        return total_num_params
 
     def run_train_iter(self, x, y):
         """
@@ -182,7 +190,8 @@ class ExperimentBuilder(nn.Module):
                     value))  # get mean of all metrics of current epoch metrics dict, to get them ready for storage and output on the terminal.
 
             save_statistics(experiment_log_dir=self.experiment_logs, filename='summary.csv',
-                            stats_dict=total_losses, current_epoch=i)  # save statistics to stats file.
+                            stats_dict=total_losses, current_epoch=i,
+                            continue_from_mode=True if self.starting_epoch != 0 else False)  # save statistics to stats file.
 
             # load_statistics(experiment_log_dir=self.experiment_logs, filename='summary.csv') # How to load a csv file if you need to
 
@@ -217,6 +226,6 @@ class ExperimentBuilder(nn.Module):
                        current_epoch_losses.items()}  # save test set metrics in dict format
         save_statistics(experiment_log_dir=self.experiment_logs, filename='test_summary.csv',
                         # save test set metrics on disk in .csv format
-                        stats_dict=test_losses, current_epoch=0)
+                        stats_dict=test_losses, current_epoch=0, continue_from_mode=False)
 
         return total_losses, test_losses

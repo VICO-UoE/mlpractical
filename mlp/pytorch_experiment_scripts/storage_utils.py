@@ -17,7 +17,7 @@ def load_from_stats_pkl_file(experiment_log_filepath, filename):
     return stats
 
 
-def save_statistics(experiment_log_dir, filename, stats_dict, current_epoch, save_full_dict=False):
+def save_statistics(experiment_log_dir, filename, stats_dict, current_epoch, continue_from_mode=False, save_full_dict=False):
     """
     Saves the statistics in stats dict into a csv file. Using the keys as the header entries and the values as the
     columns of a particular header entry
@@ -29,7 +29,7 @@ def save_statistics(experiment_log_dir, filename, stats_dict, current_epoch, sav
     :return: The filepath to the summary file
     """
     summary_filename = os.path.join(experiment_log_dir, filename)
-    mode = 'w' if ((current_epoch == 0) or (save_full_dict == True)) else 'a'
+    mode = 'a' if continue_from_mode else 'w'
     with open(summary_filename, mode) as f:
         writer = csv.writer(f)
         if current_epoch == 0:
