@@ -191,7 +191,7 @@ class ExperimentBuilder(nn.Module):
 
             save_statistics(experiment_log_dir=self.experiment_logs, filename='summary.csv',
                             stats_dict=total_losses, current_epoch=i,
-                            continue_from_mode=True if self.starting_epoch != 0 else False)  # save statistics to stats file.
+                            continue_from_mode=True if (self.starting_epoch != 0 and i == 0) else False)  # save statistics to stats file.
 
             # load_statistics(experiment_log_dir=self.experiment_logs, filename='summary.csv') # How to load a csv file if you need to
 
