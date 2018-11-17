@@ -32,7 +32,7 @@ def save_statistics(experiment_log_dir, filename, stats_dict, current_epoch, con
     mode = 'a' if continue_from_mode else 'w'
     with open(summary_filename, mode) as f:
         writer = csv.writer(f)
-        if current_epoch == 0:
+        if not continue_from_mode:
             writer.writerow(list(stats_dict.keys()))
 
         if save_full_dict:
