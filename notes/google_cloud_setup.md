@@ -95,7 +95,7 @@ If ssh fails while running an experiment, then the experiment is normally killed
 To avoid this use the command ```screen```. It creates a process of the current session that keeps running whether
  a user is signed in or not.
  
-The basics of using screen is to use ```screen -r``` to create a new session, then to enter an existing session you use:
+The basics of using screen is to use ```screen``` to create a new session, then to enter an existing session you use:
 ```screen -ls```
 To get a list of all available sessions. Then once you find the one you want use:
 ```screen -d -r screen_id``` 
@@ -103,7 +103,7 @@ Replacing screen_id with the id of the session you want to enter.
 
 While in a session, you can use 
 - ```ctrl+a+esc``` To pause process and be able to scroll
-- ```ctrl+a+d``` to detach from session while leaving it running
+- ```ctrl+a+d``` to detach from session while leaving it running (once you detach you can reattach using ```screen -r```)
 - ```ctrl+a+n``` to see the next session.
 - ```ctrl+a+c``` to create a new session
  
