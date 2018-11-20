@@ -103,7 +103,7 @@ Replacing screen_id with the id of the session you want to enter.
 
 While in a session, you can use 
 - ```ctrl+a+esc``` To pause process and be able to scroll
-- ```ctrl+a+d``` to detach from session while leaving it running
+- ```ctrl+a+d``` to detach from session while leaving it running (once you detach you can reattach using ```screen -r```)
 - ```ctrl+a+n``` to see the next session.
 - ```ctrl+a+c``` to create a new session
  
