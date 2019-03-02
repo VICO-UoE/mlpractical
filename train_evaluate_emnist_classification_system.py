@@ -1,6 +1,3 @@
-import torchvision
-from torchvision import transforms
-import torch
 import data_providers as data_providers
 import numpy as np
 from arg_extractor import get_args
@@ -8,8 +5,12 @@ from experiment_builder import ExperimentBuilder
 from model_architectures import ConvolutionalNetwork
 
 
-args = get_args()  # get arguments from command line
+args, device = get_args()  # get arguments from command line
 rng = np.random.RandomState(seed=args.seed)  # set the seeds for the experiment
+
+from torchvision import transforms
+import torch
+
 torch.manual_seed(seed=args.seed) # sets pytorch's seed
 
 
@@ -81,8 +82,8 @@ conv_experiment = ExperimentBuilder(network_model=custom_conv_net,
                                     experiment_name=args.experiment_name,
                                     num_epochs=args.num_epochs,
                                     weight_decay_coefficient=args.weight_decay_coefficient,
-                                    gpu_id=args.gpu_id, use_gpu=args.use_gpu,
                                     continue_from_epoch=args.continue_from_epoch,
+                                    device=device,
                                     train_data=train_data, val_data=val_data,
                                     test_data=test_data)  # build an experiment object
 experiment_metrics, test_metrics = conv_experiment.run_experiment()  # run experiment and return experiment metrics

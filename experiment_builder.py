@@ -9,10 +9,9 @@ import time
 
 from storage_utils import save_statistics
 
-
 class ExperimentBuilder(nn.Module):
     def __init__(self, network_model, experiment_name, num_epochs, train_data, val_data,
-                 test_data, weight_decay_coefficient, use_gpu, gpu_id, continue_from_epoch=-1):
+                 test_data, weight_decay_coefficient, device, continue_from_epoch=-1):
         """
         Initializes an ExperimentBuilder object. Such an object takes care of running training and evaluation of a deep net
         on a given dataset. It also takes care of saving per epoch models and automatically inferring the best val model
@@ -28,26 +27,15 @@ class ExperimentBuilder(nn.Module):
         :param continue_from_epoch: An int indicating whether we'll start from scrach (-1) or whether we'll reload a previously saved model of epoch 'continue_from_epoch' and continue training from there.
         """
         super(ExperimentBuilder, self).__init__()
-        if torch.cuda.is_available() and use_gpu:  # checks whether a cuda gpu is available and whether the gpu flag is True
-            if "," in gpu_id:
-                self.device = [torch.device('cuda:{}'.format(idx)) for idx in gpu_id.split(",")]  # sets device to be cuda
-            else:
-                self.device = torch.device('cuda:{}'.format(gpu_id))  # sets device to be cuda
-
-            os.environ["CUDA_VISIBLE_DEVICES"] = gpu_id  # sets the main GPU to be the one at index 0 (on multi gpu machines you can choose which one you want to use by using the relevant GPU ID)
-            print("use GPU")
-            print("GPU ID {}".format(gpu_id))
-        else:
-            print("use CPU")
-            self.device = torch.device('cpu')  # sets the device to be CPU
 
         self.experiment_name = experiment_name
         self.model = network_model
         self.model.reset_parameters()
-        if type(self.device) is list:
-            self.model.to(self.device[0])
-            self.model = nn.DataParallel(module=self.model, device_ids=self.device)
-            self.device = self.device[0]
+        self.device = device
+
+        if torch.cuda.device_count() > 1:
+            self.model.to(self.device)
+            self.model = nn.DataParallel(module=self.model)
         else:
             self.model.to(self.device)  # sends the model from the cpu to the gpu
           # re-initialize network parameters
@@ -82,7 +70,7 @@ class ExperimentBuilder(nn.Module):
                     model_save_dir=self.experiment_saved_models, model_save_name="train_model",
                     model_idx='latest')  # reload existing model from epoch and return best val model index
                 # and the best val acc of that model
-                self.starting_epoch = continue_from_epoch
+                self.starting_epoch = self.state['current_epoch_idx']
             except:
                 print("Model objects cannot be found, initializing a new model and starting from scratch")
                 self.starting_epoch = 0
