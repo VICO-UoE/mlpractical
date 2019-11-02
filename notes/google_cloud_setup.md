@@ -8,7 +8,7 @@ For any question you might have, that is not covered here, a quick google search
 
 1. Get your coupon by following the instructions in the [coupon retrieval link](http://google.force.com/GCPEDU?cid=gUsa1mwo1yeUg4uWn5dJ7nsQXBQhsopl2fYBzL1ETQUEe7BiV6%2BQCOTy2nFd50d0/).
 2. Once you receive your coupon, follow the email instructions to add your coupon to your account.
-3. Once you have added your coupon, join the [MLPractical2018-9 Google Group](https://groups.google.com/d/forum/mlpractical_2018-9) using the same Google account you used to redeem your coupon. This ensures access to the shared disk images.
+3. Once you have added your coupon, join the [MLPractical GCP Google Group](https://groups.google.com/forum/#!forum/mlpractical_gcp) using the same Google account you used to redeem your coupon. This ensures access to the shared disk images.
 4. Once logged in, click on Projects (on the left hand side of the search bar on top of the page)
 Name your project sxxxxxxx-MLPractical - replacing the sxxxxxxx with your student number.
 5. Make sure that the financial source for your project is the MLPractical credit by clicking the 3 lines icon at the top left corner and then clicking billing -> go to linked billing account.
@@ -20,20 +20,20 @@ Name your project sxxxxxxx-MLPractical - replacing the sxxxxxxx with your studen
 2. Click ```Compute Engine```
 3. On the left hand side, click ```Images```
 4. Click the ```CREATE IMAGE``` button at the top of the window
-5. Name your image `mlpractical-2018-9-v14`
+5. Name your image `mlpractical-2019-20-v1`
 6. Set ```Source``` of image to be ```Image```
 7. Set the ```Source project for images``` to be ```MLPractical``` with ID ```mlpractical-221202```. If you can't find this exact project ID then please post on Piazza to let us know and pause at this step until we resolve this for you.
-8. Choose ```Source image``` to be ```mlpractical-2018-9-v14```.
+8. Choose ```Source image``` to be ```mlpractical-2019-20-v1```.
 9. Click ```Create``` and wait until it is done (this may take a few minutes).
 10. Go back to the ```Images``` menu (this may happen automatically)
-11. Tick in the box next to the ```mlpractical-2018-9-v14``` image that you have just created.
+11. Tick in the box next to the ```mlpractical-2019-20-v1``` image that you have just created.
 12. Click  ```CREATE INSTANCE```  at the top of the window
 13. Name the instance ```mlpractical-1```
 14. Select region to be ```us-west1``` and zone to be ```us-west-1b``` (there are other suitable regions however this one has K80s available right now so we went with this one, feel free to find something else if for some reason you need to, but it is recommended ro run on K80 GPUs.)
 15. Select  ```2 vCPUs``` with ```7.5Gb memory```.
 16. Click ```Customize```. Under ```GPUs``` select `1` of type ```NVidia Tesla K80```.
 17. Disk size should be at least 30GB (feel free to add more, but it'll cost more). 
-And the chosen image should be the `mlpractical-2018-9-v14`
+And the chosen image should be the `mlpractical-2019-20-v1`
 18. Click ```Create```. 
 Your instance should be ready in a minute or two.
 
@@ -68,9 +68,9 @@ git checkout -b coursework_2 origin/mlp2018-9/coursework_2
 python setup.py develop
 ```
 
-Then, to test PyTorch running on the GPU, run this script that trains a small convolutional network (4 conv layers, 64 filters) on EMNIST:
+Then, to test PyTorch running on the GPU, run this script that trains a small convolutional network (4 conv layers, 64 filters) on CIFAR100:
 ```
-python mlp/pytorch_experiment_scripts/train_evaluate_emnist_classification_system.py --dim_reduction_type max_pooling --use_gpu True
+python mlp/pytorch_experiment_scripts/train_evaluate_image_classification_system.py --dim_reduction_type max_pooling --use_gpu True
 ```
 You should be able to see an experiment running, using the GPU. It should be doing about 60 it/s (iterations per second).  You can stop it when ever you like using `ctrl-c`.  
 
