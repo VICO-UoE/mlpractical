@@ -25,13 +25,13 @@ transform_test = transforms.Compose([
     transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
 ])
 
-train_data = data_providers.CIFAR100(root='../data', set_name='train',
+train_data = data_providers.CIFAR100(root='data', set_name='train',
                  transform=transform_train,
                  download=True)  # initialize our rngs using the argument set seed
-val_data = data_providers.CIFAR100(root='../data', set_name='val',
+val_data = data_providers.CIFAR100(root='data', set_name='val',
                  transform=transform_test,
                  download=True)  # initialize our rngs using the argument set seed
-test_data = data_providers.CIFAR100(root='../data', set_name='test',
+test_data = data_providers.CIFAR100(root='data', set_name='test',
                  transform=transform_test,
                  download=True)  # initialize our rngs using the argument set seed
 
@@ -42,15 +42,6 @@ test_data_loader = DataLoader(test_data, batch_size=args.batch_size, shuffle=Tru
 if args.block_type == 'conv_block':
     processing_block_type = ConvolutionalProcessingBlock
     dim_reduction_block_type = ConvolutionalDimensionalityReductionBlock
-elif args.block_type == 'skip_block':
-    processing_block_type = SkipConnectionConvolutionalProcessingBlock
-    dim_reduction_block_type = SkipConnectionConvolutionalDimensionalityReductionBlock
-elif args.block_type == 'skip_bn_block':
-    processing_block_type = SkipBNConnectionConvolutionalProcessingBlock
-    dim_reduction_block_type = SkipBNConnectionConvolutionalDimensionalityReductionBlock
-elif args.block_type == 'bn_block':
-    processing_block_type = BNConvolutionalProcessingBlock
-    dim_reduction_block_type = BNConvolutionalDimensionalityReductionBlock
 else:
     raise ModuleNotFoundError
 
