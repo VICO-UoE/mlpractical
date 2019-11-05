@@ -64,7 +64,7 @@ You only have $50 dollars worth of credit, which should be about 125 hours of GP
 ```
 git clone https://github.com/CSTR-Edinburgh/mlpractical.git ~/mlpractical
 cd ~/mlpractical
-git checkout -b coursework_2 origin/mlp2018-9/coursework_2
+git checkout -b coursework_2 origin/mlp2019-20/coursework_2
 python setup.py develop
 ```
 
