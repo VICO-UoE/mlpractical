@@ -50,6 +50,7 @@ You only have $50 dollars worth of credit, which should be about 125 hours of GP
 1. In a DICE terminal window ```conda activate mlp```
 2. Download the `gcloud` toolkit using ```curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-269.0.0-linux-x86_64.tar.gz```
 3. Install the `gcloud` toolkit using ```tar zxvf google-cloud-sdk-269.0.0-linux-x86_64.tar.gz; bash google-cloud-sdk/install.sh```
+**Note**: You will be asked to provide a passphrase to generate your local key, simply use a password of your choice. There might be some Yes/No style questions as well, choose yes, when that happens.
 4. To authorize current machine to access your nodes run
 ```gcloud auth login```. This will authenticate your google account login.
 3. Follow the prompts to get a token for your current machine.
