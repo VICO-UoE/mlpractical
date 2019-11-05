@@ -59,7 +59,7 @@ You only have $50 dollars worth of credit, which should be about 125 hours of GP
 6. Add a password for your ssh-key (and remember it!). 
 7. Re-enter password (which will unlock your ssh-key) when prompted.
 8. Well done, you are now in your instance! When you login you may see an error of the form `Unable to set persistence mode for GPU 00000000:00:04.0: Insufficient Permissions` - you should be able to ignore this.  The instance on the first startup should check for the gpu cuda drivers and since they are not there, it will install them.  This will only happen once on your first login. Once the installation is finished you are ready to use the instance for your coursework.
-9. Working in your Google Compute Instance that you are now logged into (via ssh), use ```conda activate mlp``` to activate your environment.
+9. Working in your Google Compute Instance that you are now logged into (via ssh), use ```conda create --name mlp_local --clone mlp``` to create a clone of the shared conda environment. Then, use ```conda activate mlp_local``` to activate this environment.
 10. Run ```nvidia-smi``` to confirm that the GPU can be found.  This should report 1 Tesla K80 GPU.
 11. Then clone a fresh mlpractical repository, and checkout branch `coursework_2`: 
 
@@ -70,10 +70,12 @@ git checkout -b coursework_2 origin/mlp2019-20/coursework_2
 python setup.py develop
 ```
 
-Then, to test PyTorch running on the GPU, run this script that trains a small convolutional network (4 conv layers, 64 filters) on CIFAR100:
+Then, to test PyTorch running on the GPU, run this script that trains a small convolutional network (7 conv layers + 1 linear layer, 32 filters) on CIFAR100:
+
 ```
-python mlp/pytorch_experiment_scripts/train_evaluate_image_classification_system.py --dim_reduction_type max_pooling --use_gpu True
+python pytorch_mlp_framework/train_evaluate_image_classification_system.py --batch_size 100 --seed 0 --num_filters 32 --num_stages 3 --num_blocks_per_stage 0 --experiment_name VGG_08_experiment --use_gpu True --num_classes 100 --block_type 'conv_block' --continue_from_epoch -1
 ```
+
 You should be able to see an experiment running, using the GPU. It should be doing about 60 it/s (iterations per second).  You can stop it when ever you like using `ctrl-c`.  
 
 If all the above matches what’s stated then you should be ready to run your coursework jobs.
