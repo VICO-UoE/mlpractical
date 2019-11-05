@@ -48,8 +48,9 @@ You only have $50 dollars worth of credit, which should be about 125 hours of GP
 
 ### To login into your instance via terminal:
 1. In a DICE terminal window ```conda activate mlp```
-2. Install the `gcloud` toolkit using ```conda install -c conda-forge google-cloud-sdk```
-2. To authorize current machine to access your nodes run
+2. Download the `gcloud` toolkit using ```curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-269.0.0-linux-x86_64.tar.gz```
+3. Install the `gcloud` toolkit using ```tar zxvf google-cloud-sdk-269.0.0-linux-x86_64.tar.gz; bash google-cloud-sdk/install.sh```
+4. To authorize current machine to access your nodes run
 ```gcloud auth login```. This will authenticate your google account login.
 3. Follow the prompts to get a token for your current machine.
 4. Run ```gcloud config set project PROJECT_ID``` where you replace `PROJECT-ID` with your project ID, you can find that in the projects drop down menu on the top of the Google Compute Engine window; this sets the current project as the active one
