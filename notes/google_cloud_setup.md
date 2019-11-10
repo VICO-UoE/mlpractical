@@ -49,9 +49,10 @@ You only have $50 dollars worth of credit, which should be about 125 hours of GP
 ### To login into your instance via terminal:
 1. In a DICE terminal window ```conda activate mlp```
 2. Download the `gcloud` toolkit using ```curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-sdk-269.0.0-linux-x86_64.tar.gz```
-3. Install the `gcloud` toolkit using ```tar zxvf google-cloud-sdk-269.0.0-linux-x86_64.tar.gz; bash google-cloud-sdk/install.sh```
+3. Install the `gcloud` toolkit using ```tar zxvf google-cloud-sdk-269.0.0-linux-x86_64.tar.gz; bash google-cloud-sdk/install.sh```.
 **Note**: You will be asked to provide a passphrase to generate your local key, simply use a password of your choice. There might be some Yes/No style questions as well, choose yes, when that happens.
-4. To authorize current machine to access your nodes run
+
+4. Reset your terminal using ```reset; source ~/.bashrc```. Then authorize the current machine to access your nodes run
 ```gcloud auth login```. This will authenticate your google account login.
 3. Follow the prompts to get a token for your current machine.
 4. Run ```gcloud config set project PROJECT_ID``` where you replace `PROJECT-ID` with your project ID, you can find that in the projects drop down menu on the top of the Google Compute Engine window; this sets the current project as the active one
@@ -76,7 +77,7 @@ Then, to test PyTorch running on the GPU, run this script that trains a small co
 python pytorch_mlp_framework/train_evaluate_image_classification_system.py --batch_size 100 --seed 0 --num_filters 32 --num_stages 3 --num_blocks_per_stage 0 --experiment_name VGG_08_experiment --use_gpu True --num_classes 100 --block_type 'conv_block' --continue_from_epoch -1
 ```
 
-You should be able to see an experiment running, using the GPU. It should be doing about 60 it/s (iterations per second).  You can stop it when ever you like using `ctrl-c`.  
+You should be able to see an experiment running, using the GPU. It should be doing about 26-30 it/s (iterations per second).  You can stop it when ever you like using `ctrl-c`.  
 
 If all the above matches what’s stated then you should be ready to run your coursework jobs.
 
