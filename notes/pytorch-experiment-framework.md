@@ -42,7 +42,7 @@ to allow you to control your experiment hyperparameters directly from the comman
 
 You can get a list of all available hyperparameters and arguments by using:
 ```
-python mlp/pytorch_experiment_scripts/train_evaluate_image_classification_system.py -h
+python pytorch_mlp_framework/train_evaluate_image_classification_system.py -h
 ```
 
 The -h at the end is short for --help, which presents a list with all possible arguments next to a description of what they modify in the setup.
