@@ -85,7 +85,7 @@ custom_conv_net = ConvolutionalNetwork(  # initialize our network object, in thi
     use_bias=False,
     num_output_classes=num_output_classes)
 
-conv_experiment = ExperimentBuilder(network_model=custom_conv_net,
+conv_experiment = ExperimentBuilder(network_model=custom_conv_net, use_gpu=args.use_gpu,
                                     experiment_name=args.experiment_name,
                                     num_epochs=args.num_epochs,
                                     weight_decay_coefficient=args.weight_decay_coefficient,
