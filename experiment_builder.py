@@ -1,3 +1,5 @@
+import sys
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -163,7 +165,7 @@ class ExperimentBuilder(nn.Module):
             model_idx))))  # save state at prespecified filepath
 
     def run_training_epoch(self, current_epoch_losses):
-        with tqdm.tqdm(total=len(self.train_data)) as pbar_train:  # create a progress bar for training
+        with tqdm.tqdm(total=len(self.train_data), file=sys.stdout) as pbar_train:  # create a progress bar for training
             for idx, (x, y) in enumerate(self.train_data):  # get data batches
                 loss, accuracy = self.run_train_iter(x=x, y=y)  # take a training iter step
                 current_epoch_losses["train_loss"].append(loss)  # add current iter loss to the train loss list
@@ -175,7 +177,7 @@ class ExperimentBuilder(nn.Module):
 
     def run_validation_epoch(self, current_epoch_losses):
 
-        with tqdm.tqdm(total=len(self.val_data)) as pbar_val:  # create a progress bar for validation
+        with tqdm.tqdm(total=len(self.val_data), file=sys.stdout) as pbar_val:  # create a progress bar for validation
             for x, y in self.val_data:  # get data batches
                 loss, accuracy = self.run_evaluation_iter(x=x, y=y)  # run a validation iter
                 current_epoch_losses["val_loss"].append(loss)  # add current iter loss to val loss list.
@@ -187,7 +189,7 @@ class ExperimentBuilder(nn.Module):
 
     def run_testing_epoch(self, current_epoch_losses):
 
-        with tqdm.tqdm(total=len(self.test_data)) as pbar_test:  # ini a progress bar
+        with tqdm.tqdm(total=len(self.test_data), file=sys.stdout) as pbar_test:  # ini a progress bar
             for x, y in self.test_data:  # sample batch
                 loss, accuracy = self.run_evaluation_iter(x=x,
                                                           y=y)  # compute loss and accuracy by running an evaluation step
