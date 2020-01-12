@@ -9,6 +9,8 @@ import os
 import numpy as np
 import time
 
+from torch.optim import AdamW
+
 from storage_utils import save_statistics
 
 class ExperimentBuilder(nn.Module):
@@ -44,7 +46,7 @@ class ExperimentBuilder(nn.Module):
         self.train_data = train_data
         self.val_data = val_data
         self.test_data = test_data
-        self.optimizer = optim.AdamW(self.parameters(), amsgrad=False,
+        self.optimizer = AdamW(self.parameters(), amsgrad=False,
                                     weight_decay=weight_decay_coefficient)
         # Generate the directory names
         self.experiment_folder = os.path.abspath(experiment_name)
