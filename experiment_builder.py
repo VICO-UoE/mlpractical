@@ -11,7 +11,7 @@ from storage_utils import save_statistics
 
 class ExperimentBuilder(nn.Module):
     def __init__(self, network_model, experiment_name, num_epochs, train_data, val_data,
-                 test_data, weight_decay_coefficient, device, continue_from_epoch=-1):
+                 test_data, weight_decay_coefficient, continue_from_epoch=-1):
         """
         Initializes an ExperimentBuilder object. Such an object takes care of running training and evaluation of a deep net
         on a given dataset. It also takes care of saving per epoch models and automatically inferring the best val model
@@ -31,7 +31,7 @@ class ExperimentBuilder(nn.Module):
         self.experiment_name = experiment_name
         self.model = network_model
         self.model.reset_parameters()
-        self.device = device
+        self.device = torch.cuda.current_device()
 
         if torch.cuda.device_count() > 1:
             self.model.to(self.device)
@@ -42,7 +42,7 @@ class ExperimentBuilder(nn.Module):
         self.train_data = train_data
         self.val_data = val_data
         self.test_data = test_data
-        self.optimizer = optim.Adam(self.parameters(), amsgrad=False,
+        self.optimizer = optim.AdamW(self.parameters(), amsgrad=False,
                                     weight_decay=weight_decay_coefficient)
         # Generate the directory names
         self.experiment_folder = os.path.abspath(experiment_name)
@@ -162,6 +162,43 @@ class ExperimentBuilder(nn.Module):
         torch.save(state, f=os.path.join(model_save_dir, "{}_{}".format(model_save_name, str(
             model_idx))))  # save state at prespecified filepath
 
+    def run_training_epoch(self, current_epoch_losses):
+        with tqdm.tqdm(total=len(self.train_data)) as pbar_train:  # create a progress bar for training
+            for idx, (x, y) in enumerate(self.train_data):  # get data batches
+                loss, accuracy = self.run_train_iter(x=x, y=y)  # take a training iter step
+                current_epoch_losses["train_loss"].append(loss)  # add current iter loss to the train loss list
+                current_epoch_losses["train_acc"].append(accuracy)  # add current iter acc to the train acc list
+                pbar_train.update(1)
+                pbar_train.set_description("loss: {:.4f}, accuracy: {:.4f}".format(loss, accuracy))
+
+        return current_epoch_losses
+
+    def run_validation_epoch(self, current_epoch_losses):
+
+        with tqdm.tqdm(total=len(self.val_data)) as pbar_val:  # create a progress bar for validation
+            for x, y in self.val_data:  # get data batches
+                loss, accuracy = self.run_evaluation_iter(x=x, y=y)  # run a validation iter
+                current_epoch_losses["val_loss"].append(loss)  # add current iter loss to val loss list.
+                current_epoch_losses["val_acc"].append(accuracy)  # add current iter acc to val acc lst.
+                pbar_val.update(1)  # add 1 step to the progress bar
+                pbar_val.set_description("loss: {:.4f}, accuracy: {:.4f}".format(loss, accuracy))
+
+        return current_epoch_losses
+
+    def run_testing_epoch(self, current_epoch_losses):
+
+        with tqdm.tqdm(total=len(self.test_data)) as pbar_test:  # ini a progress bar
+            for x, y in self.test_data:  # sample batch
+                loss, accuracy = self.run_evaluation_iter(x=x,
+                                                          y=y)  # compute loss and accuracy by running an evaluation step
+                current_epoch_losses["test_loss"].append(loss)  # save test loss
+                current_epoch_losses["test_acc"].append(accuracy)  # save test accuracy
+                pbar_test.update(1)  # update progress bar status
+                pbar_test.set_description(
+                    "loss: {:.4f}, accuracy: {:.4f}".format(loss, accuracy))  # update progress bar string output
+        return current_epoch_losses
+
+
     def load_model(self, model_save_dir, model_save_name, model_idx):
         """
         Load the network parameter state and the best val model idx and best val acc to be compared with the future val accuracies, in order to choose the best val model
@@ -185,29 +222,18 @@ class ExperimentBuilder(nn.Module):
             epoch_start_time = time.time()
             current_epoch_losses = {"train_acc": [], "train_loss": [], "val_acc": [], "val_loss": []}
 
-            with tqdm.tqdm(total=len(self.train_data)) as pbar_train:  # create a progress bar for training
-                for idx, (x, y) in enumerate(self.train_data):  # get data batches
-                    loss, accuracy = self.run_train_iter(x=x, y=y)  # take a training iter step
-                    current_epoch_losses["train_loss"].append(loss)  # add current iter loss to the train loss list
-                    current_epoch_losses["train_acc"].append(accuracy)  # add current iter acc to the train acc list
-                    pbar_train.update(1)
-                    pbar_train.set_description("loss: {:.4f}, accuracy: {:.4f}".format(loss, accuracy))
+            current_epoch_losses = self.run_training_epoch(current_epoch_losses)
+            current_epoch_losses = self.run_validation_epoch(current_epoch_losses)
 
-            with tqdm.tqdm(total=len(self.val_data)) as pbar_val:  # create a progress bar for validation
-                for x, y in self.val_data:  # get data batches
-                    loss, accuracy = self.run_evaluation_iter(x=x, y=y)  # run a validation iter
-                    current_epoch_losses["val_loss"].append(loss)  # add current iter loss to val loss list.
-                    current_epoch_losses["val_acc"].append(accuracy)  # add current iter acc to val acc lst.
-                    pbar_val.update(1)  # add 1 step to the progress bar
-                    pbar_val.set_description("loss: {:.4f}, accuracy: {:.4f}".format(loss, accuracy))
             val_mean_accuracy = np.mean(current_epoch_losses['val_acc'])
             if val_mean_accuracy > self.best_val_model_acc:  # if current epoch's mean val acc is greater than the saved best val acc then
                 self.best_val_model_acc = val_mean_accuracy  # set the best val model acc to be current epoch's val accuracy
                 self.best_val_model_idx = epoch_idx  # set the experiment-wise best val idx to be the current epoch's idx
 
             for key, value in current_epoch_losses.items():
-                total_losses[key].append(np.mean(
-                    value))  # get mean of all metrics of current epoch metrics dict, to get them ready for storage and output on the terminal.
+                total_losses[key].append(np.mean(value))
+                # get mean of all metrics of current epoch metrics dict,
+                # to get them ready for storage and output on the terminal.
 
             total_losses['curr_epoch'].append(epoch_idx)
             save_statistics(experiment_log_dir=self.experiment_logs, filename='summary.csv',
@@ -237,18 +263,12 @@ class ExperimentBuilder(nn.Module):
                         # load best validation model
                         model_save_name="train_model")
         current_epoch_losses = {"test_acc": [], "test_loss": []}  # initialize a statistics dict
-        with tqdm.tqdm(total=len(self.test_data)) as pbar_test:  # ini a progress bar
-            for x, y in self.test_data:  # sample batch
-                loss, accuracy = self.run_evaluation_iter(x=x,
-                                                          y=y)  # compute loss and accuracy by running an evaluation step
-                current_epoch_losses["test_loss"].append(loss)  # save test loss
-                current_epoch_losses["test_acc"].append(accuracy)  # save test accuracy
-                pbar_test.update(1)  # update progress bar status
-                pbar_test.set_description(
-                    "loss: {:.4f}, accuracy: {:.4f}".format(loss, accuracy))  # update progress bar string output
+
+        current_epoch_losses = self.run_testing_epoch(current_epoch_losses=current_epoch_losses)
 
         test_losses = {key: [np.mean(value)] for key, value in
                        current_epoch_losses.items()}  # save test set metrics in dict format
+
         save_statistics(experiment_log_dir=self.experiment_logs, filename='test_summary.csv',
                         # save test set metrics on disk in .csv format
                         stats_dict=test_losses, current_epoch=0, continue_from_mode=False)

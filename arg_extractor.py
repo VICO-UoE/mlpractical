@@ -43,58 +43,20 @@ def get_args():
                         help='Experiment name - to be used for building the experiment folder')
     parser.add_argument('--use_gpu', nargs="?", type=str2bool, default=False,
                         help='A flag indicating whether we will use GPU acceleration or not')
-    parser.add_argument('--gpu_id', type=str, default="None", help="A string indicating the gpu to use")
     parser.add_argument('--weight_decay_coefficient', nargs="?", type=float, default=1e-05,
                         help='Weight decay to use for Adam')
     parser.add_argument('--filepath_to_arguments_json_file', nargs="?", type=str, default=None,
                         help='')
 
     args = parser.parse_args()
-    gpu_id = str(args.gpu_id)
+
     if args.filepath_to_arguments_json_file is not None:
         args = extract_args_from_json(json_file_path=args.filepath_to_arguments_json_file, existing_args_dict=args)
-
-    if gpu_id != "None":
-        args.gpu_id = gpu_id
 
     arg_str = [(str(key), str(value)) for (key, value) in vars(args).items()]
     print(arg_str)
 
-    if args.use_gpu == True:
-        num_requested_gpus = len(args.gpu_id.split(","))
-        num_received_gpus = len(GPUtil.getAvailable(order='first', limit=8, maxLoad=0.1,
-                                             maxMemory=0.1, includeNan=False,
-                                             excludeID=[], excludeUUID=[]))
-
-        if num_requested_gpus == 1 and num_received_gpus > 1:
-            print("Detected Slurm problem with GPUs, attempting automated fix")
-            gpu_to_use = GPUtil.getAvailable(order='first', limit=num_received_gpus, maxLoad=0.1,
-                                             maxMemory=0.1, includeNan=False,
-                                             excludeID=[], excludeUUID=[])
-            if len(gpu_to_use) > 0:
-                os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_to_use[0])
-                print("Using GPU with ID", gpu_to_use[0])
-            else:
-                print("Not enough GPUs available, please try on another node now, or retry on this node later")
-                sys.exit()
-
-        elif num_requested_gpus > 1 and num_received_gpus > num_requested_gpus:
-            print("Detected Slurm problem with GPUs, attempting automated fix")
-            gpu_to_use = GPUtil.getAvailable(order='first', limit=num_received_gpus,
-                                             maxLoad=0.1,
-                                             maxMemory=0.1, includeNan=False,
-                                             excludeID=[], excludeUUID=[])
-
-            if len(gpu_to_use) >= num_requested_gpus:
-                os.environ["CUDA_VISIBLE_DEVICES"] = ",".join(str(gpu_idx) for gpu_idx in gpu_to_use[:num_requested_gpus])
-                print("Using GPU with ID", gpu_to_use[:num_requested_gpus])
-            else:
-                print("Not enough GPUs available, please try on another node now, or retry on this node later")
-                sys.exit()
-
-
     import torch
-    args.use_cuda = torch.cuda.is_available()
 
     if torch.cuda.is_available():  # checks whether a cuda gpu is available and whether the gpu flag is True
         device = torch.cuda.current_device()
