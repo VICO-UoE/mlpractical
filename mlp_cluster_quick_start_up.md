@@ -70,7 +70,7 @@ To submit a job one needs to use ```sbatch script.sh``` which will automatically
 #!/bin/sh
 #SBATCH -N 1	  # nodes requested
 #SBATCH -n 1	  # tasks requested
-#SBATCH --partition=Teach-Standard*
+#SBATCH --partition=Teach-Standard
 #SBATCH --gres=gpu:1
 #SBATCH --mem=12000  # memory in Mb
 #SBATCH --time=0-08:00:00
