@@ -62,6 +62,12 @@ echo ". /afs/inf.ed.ac.uk/user/${USER:0:3}/$USER/miniconda3/etc/profile.d/conda.
 echo ". /afs/inf.ed.ac.uk/user/${USER:0:3}/$USER/miniconda3/etc/profile.d/conda.sh" >> ~/.benv
 ```
 
+To avoid any errors later, check both the bashrc and benv files for the correct file path by running : 
+
+```
+vim ~/.bashrc and vim ~/.benv 
+```
+
 For those who this appears a bit opaque to and want to know what is going on see here <sup id="a1">[1](#f1)</sup>.
 
 We now need to `source` the updated `~/.benv` so that the `PATH` variable in the current terminal session is updated:
