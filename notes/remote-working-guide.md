@@ -2,7 +2,7 @@
 
 Here are some steps you should follow if you are working remotely on the labs and coursework. The university computing service has a detailed guide for remote working which can be found [here](http://computing.help.inf.ed.ac.uk/remote-working). If you want to use the Remote Desktop client or Virtual Dice Machine follow the detailed instructions given [here](http://computing.help.inf.ed.ac.uk/remote-working). 
 
-One of the faster ways to connect remotely to the DICE system is to first connect to the Informatics Network using [OpenVPN](http://computing.help.inf.ed.ac.uk/openvpn) and then remotely connecting to thedice machines via ssh. For doing so, open a terminal window and run - 
+One of the faster ways to connect remotely to the DICE system is through firewall via ssh. For doing so, open a terminal window and run - 
 
 ```
 ssh [dice-username]@student.ssh.inf.ed.ac.uk
