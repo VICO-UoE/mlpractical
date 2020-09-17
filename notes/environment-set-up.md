@@ -30,8 +30,7 @@ differ slightly - you should instead select the relevant installer for your syst
 *Note: Although we are happy for you to additionally set up an environment on a personal machine, you should still set up a DICE environment now as this will make sure you are able to use shared computing resources later in the course. Also although we have tried to note when the required commands will differ on non-DICE systems, these instructions have only been tested on DICE and we will not be able to offer any support in labs on getting set up on a non-DICE system.*
 
 ---
-
-Open a bash terminal (`Applications > Terminal` on DICE).
+If you are using ssh connection to the student server, move to the next step. If you are using a DICE computer with graphical user interface, open a bash terminal (`Applications > Terminal` on DICE). 
 
 We first need to download the latest 64-bit Python 3 Miniconda install script:
 
