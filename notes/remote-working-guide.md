@@ -1,19 +1,24 @@
 # Remote Working Guide 
 
-Here are some steps you should follow if you are working remotely on the labs and coursework. The university computing service has a detailed guide for remote working which can be found [here](http://computing.help.inf.ed.ac.uk/remote-working). If you want to use the Remote Desktop client or Virtual Dice Machine follow the detailed instructions given [here](http://computing.help.inf.ed.ac.uk/remote-working). 
+This page helps you to use School computers from home. 
 
-One of the faster ways to connect remotely to the DICE system is through firewall via ssh. For doing so, open a terminal window and run - 
+School supports multiple ways for accessing School computers including using [remote desktop service](http://computing.help.inf.ed.ac.uk/remote-desktop), [Virtual Dice Machine](http://computing.help.inf.ed.ac.uk/vdice) and External Login via ssh. 
+
+External Login provides a fast way to connect remotely to the DICE system is through firewall via ssh. We recommend this option and explain how to use it next. If you like to use the other options, please follow the links above.
+
+The first step is to access the Informatics student server, simply start a terminal application in your computer and enter the following:
 
 ```
 ssh [dice-username]@student.ssh.inf.ed.ac.uk
 ```
+It is assumed you already have a SSH client set up on the machine you are connecting from and that you are familiar with how to use SSH. If this is not the case, please read "How to use an SSH gateway" in the [information page](http://computing.help.inf.ed.ac.uk/external-login).
 
-By doing this, you will we remotely logged in to the dice machine. Now you can set up the environment as given in these [instructions](environment-set-up.md). 
+Now you can set up the environment as given in these [instructions](environment-set-up.md). 
 Once you have done that, you may want to run jupyter notebooks over SSH which you can do so by following the step-by-step detailed instructions below.  
 
 # Running Jupyter notebooks over SSH
 
-Below is a guide for how to start a Jupyter notebook server remotely on one of the shared-use `student.compute` servers and to connect to it on a local machine by port-forwarding over SSH. It is assumed you already have a SSH client set up on the machine you are connecting from and that you are familiar with how to use SSH. These instructions have been written for use with a SSH client running within a terminal session - although it may be possible to replicate the relevant commands within a GUI based SSH client, you will need to figure out how to do this yourself. They were written and tested on Ubuntu 14.04 and no attempt has been made to test them on other operating systems.
+Below is a guide for how to start a Jupyter notebook server remotely on one of the shared-use `student.compute` servers and to connect to it on a local machine by port-forwarding over SSH. These instructions have been written for use with a SSH client running within a terminal session - although it may be possible to replicate the relevant commands within a GUI based SSH client, you will need to figure out how to do this yourself. They were written and tested on Ubuntu 14.04 and no attempt has been made to test them on other operating systems.
 
 ## Securing your notebook server
 
