@@ -8,7 +8,7 @@ One of the faster ways to connect remotely to the DICE system is to first connec
 ssh [dice-username]@student.ssh.inf.ed.ac.uk
 ```
 
-By doing this, you will we remotely logged in to the dice machine. Now you can set up the environment as given in these [instructions](notes/environment-set-up.md). 
+By doing this, you will we remotely logged in to the dice machine. Now you can set up the environment as given in these [instructions](environment-set-up.md). 
 Once you have done that, you may want to run jupyter notebooks over SSH which you can do so by following the step-by-step detailed instructions below.  
 
 # Running Jupyter notebooks over SSH
