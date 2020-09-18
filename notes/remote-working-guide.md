@@ -114,22 +114,22 @@ Here we provide a detailed guide for setting-up PuTTY with tunnel forwarding so 
 
 Change the remaining options as is in the screenshot below. 
 
-<center><img src="./figures/putty1.png"></center> 
+<center><img src="./figures/putty1.png"  width="400" height="300"></center> 
 
 2. Now navigate to **Connection** and drop-down on **Data**. In **Auto-Login username** , enter your student id `sXXXXXXX`. 
     
-<center><img src="./figures/putty2.png"></center> 
+<center><img src="./figures/putty2.png"  width="400" height="300"></center> 
 
 3. After step 1 and 2, follow the instructions [here](http://computing.help.inf.ed.ac.uk/installing-putty) from screenshots 3-5 to set-up **Auth** and **X11 Forwarding**. To avoid errors later, strictly follow the instructions for this set-up. 
 
 4. In this step, we will configure SSH tunneling to locally run the notebooks. On the left side of the PuTTY window, navigate to **Tunnels** under SSH and then add a `[local-port]` in **Source port** and `localhost:[local-port]` in **Destination**.  Remember the `[local-port]`  you used here as we will need this later. 
         
 
-<center><img src="./figures/putty3.png"></center> 
+<center><img src="./figures/putty3.png"  width="400" height="300"></center> 
         
 Then press **Add** near the Source port box to add your new forwarded port. Once you add, you will see your newly added port as shown below - 
     
-<center><img src="./figures/putty4.png"></center> 
+<center><img src="./figures/putty4.png"  width="400" height="300"></center> 
         
 5. After you have done steps 1-4, navigate back to **Session** on the left side and click **Save** to save all your current configurations. 
 
