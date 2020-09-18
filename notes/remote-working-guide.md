@@ -16,7 +16,7 @@ It is assumed you already have a SSH client set up on the machine you are connec
 Now you can set up the environment as given in these [instructions](environment-set-up.md). 
 Once you have done that, you may want to run jupyter notebooks over SSH which you can do so by following the step-by-step detailed instructions below.  
 
-**Note**: If you are using Windows OS, then skip to the instructions [here](remote-working-guide.md#Set Up SSH Tunneling in Windows) to connect to the remote server. 
+**Note**: If you are using Windows OS, then skip to the instructions [here](remote-working-guide.md#set-up-ssh-tunneling-in-windows) to connect to the remote server. 
 
 # Running Jupyter notebooks over SSH
 
