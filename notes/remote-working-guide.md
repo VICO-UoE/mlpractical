@@ -97,6 +97,75 @@ ssh -N -o ProxyCommand="ssh -q [dice-username]@student.ssh.inf.ed.ac.uk nc [remo
 
 You will be asked to enter your (DICE) password twice, once to log on to the gateway server and a second time to log on to the remote compute server.
 
-Assuming you enter your password both times correctly, the remote port will now be getting forwarded to the specified local port on your computer. If you now open up a browser on your computer and go to `https://localhost:[local-port]` you should (potentially after seeing a security warning about the self-signed certicate) now asked to enter the notebook server password you specified earlier. Once you enter this password you should be able to access the notebook dashboard and open and edit notebooks as you usually do in labratories.
+Assuming you enter your password both times correctly, the remote port will now be getting forwarded to the specified local port on your computer. If you now open up a browser on your computer and go to `https://localhost:[local-port]` you should (potentially after seeing a security warning about the self-signed certificate) now asked to enter the notebook server password you specified earlier. Once you enter this password you should be able to access the notebook dashboard and open and edit notebooks as you usually do in laboratories.
 
 When you are finished working you should both close down the notebook server by entering `Ctrl+C` twice in the terminal window the SSH session you used to start up the notebook server is running and halt the port forwarding command by entering `Ctrl+C` in the terminal it is running in.
+
+
+## Set Up SSH Tunneling in Windows 
+
+School machines can also be logged in if you are using Windows on your personal computer. The school recommends installing [PuTTY](http://computing.help.inf.ed.ac.uk/installing-putty) for remotely logging in. 
+
+Please first follow the instructions given on the computing webpage for installing PuTTY and Kerberos.   
+
+Here we provide a detailed guide for setting-up PuTTY with tunnel forwarding so that it is convenient to use the jupyter notebooks on your personal machine. 
+
+1. To start off, run the PuTTY executable file you downloaded, navigate to **Session** on the left column and enter the **hostname** as `student.ssh.inf.ed.ac.uk`. Put any name in the **Saved Sessions** box so that you can retrieve your saved PuTTY session for future use.  
+
+Change the remaining options as is in the screenshot below. 
+
+        <center><img src="figures/putty1.png"></center> 
+
+2. Now navigate to **Connection** and drop-down on **Data**. In **Auto-Login username** , enter your student id `sXXXXXXX`. 
+    
+        <center><img src="figures/putty2.png"></center> 
+
+3. After step 1 and 2, follow the instructions [here](http://computing.help.inf.ed.ac.uk/installing-putty) from screenshots 3-5 to set-up **Auth** and **X11 Forwarding**. To avoid errors later, strictly follow the instructions for this set-up. 
+
+4. In this step, we will configure SSH tunneling to locally run the notebooks. On the left side of the PuTTY window, navigate to **Tunnels** under SSH and then add a `[local-port]` in **Source port** and `localhost:[local-port]` in **Destination**.  Remember the `[local-port]`  you used here as we will need this later. 
+        
+        <center><img src="figures/putty3.png"></center> 
+        
+    Then press **Add** near the Source port box to add your new forwarded port. Once you add, you will see your newly added port as shown below - 
+    
+        <center><img src="figures/putty4.png"></center> 
+        
+5. After you have done steps 1-4, navigate back to **Session** on the left side and click **Save** to save all your current configurations. 
+
+        <center><img src="figures/putty5.png"></center> 
+        
+6.  Then click **Open** and a terminal window will pop-up asking for your DICE password. After you enter the password, you will be logged in to SSH Gateway Server.  As the message printed when you log in points out this is intended only for accessing the Informatics network externally and you should not attempt to work on this server. You should log in to one of the student.compute shared-use servers by running - 
+
+```
+ssh student.compute
+```
+You should now be logged on to one of the shared-use compute servers. The name of the server you are logged on to will appear at the bash prompt e.g.
+
+```
+ashbury:~$
+```
+You will need to know the name of this remote server you are using later on.
+
+
+7.  You can setup your `mlp` environment by following the instructions [here](environment-set-up.md). If you have correctly set-up the environment, activate your `conda` environment and navigate to the jupyter notebooks as detailed [here](remote-working-guide.md#starting-a-notebook-server-on-the-remote-computer).  You should also secure your notebook server by following the instructions [here](remote-working-guide.md#running-jupyter-notebooks-over-ssh). 
+
+Once the notebook server starts running you should take note of the port it is being served on as indicated in the `The Jupyter Notebook is running at: https://localhost:[port]/` message.
+
+8.  Now that the notebook server is running on the remote server you need to connect to it on your local machine. We will do this by forwarding the port the notebook server is being run on over SSH to your local machine. 
+
+       For doing this, open another session of PuTTY and load the session that you saved in the **Session** on the left side. Enter the password in the prompt and this will login to the SSH gateway server. **Do not** run `ssh student.compute` now. 
+       
+       In this terminal window, enter the command below - 
+       
+       ```
+       ssh -N -f -L localhost:[local-port]:localhost:[port] [dice-username]@[remote-server-name] 
+       ```
+       The `[local-port]` is the source port you entered in Step 4, `[port]` is the remote port running on the remote server as in Step 7 and  `[remote-server-name]` is the name of the remote server you got connected to in Step 6. 
+       
+       If asked for a password at this stage, enter your DICE password again to login. 
+       
+   9.  Assuming you have set-up correctly, the remote port will now be getting forwarded to the specified local port on your computer. If you now open up a browser on your computer and go to `https://localhost:[local-port]`  you should (potentially after seeing a security warning about the self-signed certificate) now asked to enter the notebook server password you specified earlier. Once you enter this password you should be able to access the notebook dashboard and open and edit notebooks as you usually do in laboratories.
+   
+   When you are finished working you should both close down the notebook server by entering `Ctrl+C` twice in the terminal window the SSH session you used to start up the notebook server is running and halt the port forwarding command by entering `Ctrl+C` in the terminal it is running in.
+   
+   
