@@ -133,7 +133,7 @@ Then press **Add** near the Source port box to add your new forwarded port. Once
         
 5. After you have done steps 1-4, navigate back to **Session** on the left side and click **Save** to save all your current configurations. 
 
-    <center><img src="./figures/putty5.png"></center> 
+    <center><img src="./figures/putty5.png"  width="150" height="100" ></center> 
         
 6.  Then click **Open** and a terminal window will pop-up asking for your DICE password. After you enter the password, you will be logged in to SSH Gateway Server.  As the message printed when you log in points out this is intended only for accessing the Informatics network externally and you should not attempt to work on this server. You should log in to one of the student.compute shared-use servers by running - 
 
