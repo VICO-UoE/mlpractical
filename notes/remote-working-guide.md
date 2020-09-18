@@ -16,6 +16,8 @@ It is assumed you already have a SSH client set up on the machine you are connec
 Now you can set up the environment as given in these [instructions](environment-set-up.md). 
 Once you have done that, you may want to run jupyter notebooks over SSH which you can do so by following the step-by-step detailed instructions below.  
 
+**Note**: If you are using Windows OS, then skip to the instructions [here](remote-working-guide.md#Set Up SSH Tunneling in Windows) to connect to the remote server. 
+
 # Running Jupyter notebooks over SSH
 
 Below is a guide for how to start a Jupyter notebook server remotely on one of the shared-use `student.compute` servers and to connect to it on a local machine by port-forwarding over SSH. These instructions have been written for use with a SSH client running within a terminal session - although it may be possible to replicate the relevant commands within a GUI based SSH client, you will need to figure out how to do this yourself. They were written and tested on Ubuntu 14.04 and no attempt has been made to test them on other operating systems.
