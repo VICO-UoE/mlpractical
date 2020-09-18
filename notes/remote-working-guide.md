@@ -104,7 +104,7 @@ Assuming you enter your password both times correctly, the remote port will now 
 When you are finished working you should both close down the notebook server by entering `Ctrl+C` twice in the terminal window the SSH session you used to start up the notebook server is running and halt the port forwarding command by entering `Ctrl+C` in the terminal it is running in.
 
 
-## Set Up SSH Tunneling in Windows 
+## Set-Up SSH Tunneling in Windows 
 
 School machines can also be logged in if you are using Windows on your personal computer. The school recommends installing [PuTTY](http://computing.help.inf.ed.ac.uk/installing-putty) for remotely logging in. 
 
