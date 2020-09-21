@@ -93,13 +93,10 @@ Now that the notebook server is running on the remote server you need to connect
 In a **new terminal window / tab** run the command below with the `[...]` placeholders substituted with the appropriate values to securely forward the specified port on the remote server to your local machine and bind it to a local port. You should choose `[remote-port]` to be the port the notebook server is running on on the remote server, `[local-port]` to be a currently unused port on your local machine and `[remote-server-name]` to be the host name of the remote server the notebook server is being run on.
 
 ```
-ssh -N -o ProxyCommand="ssh -q [dice-username]@student.ssh.inf.ed.ac.uk nc [remote-server-name] 22" \
-  -L [local-port]:localhost:[remote-port] [dice-username]@[remote-server-name]
+ssh -L [local-port]:[remote-server-name]:[remote-port] [dice-username]@student.ssh.inf.ed.ac.uk
 ```
 
-You will be asked to enter your (DICE) password twice, once to log on to the gateway server and a second time to log on to the remote compute server.
-
-Assuming you enter your password both times correctly, the remote port will now be getting forwarded to the specified local port on your computer. If you now open up a browser on your computer and go to `https://localhost:[local-port]` you should (potentially after seeing a security warning about the self-signed certificate) now asked to enter the notebook server password you specified earlier. Once you enter this password you should be able to access the notebook dashboard and open and edit notebooks as you usually do in laboratories.
+Assuming you enter your password correctly, the remote port will now be getting forwarded to the specified local port on your computer. If you now open up a browser on your computer and go to `https://localhost:[local-port]` you should (potentially after seeing a security warning about the self-signed certificate) now asked to enter the notebook server password you specified earlier. Once you enter this password you should be able to access the notebook dashboard and open and edit notebooks as you usually do in laboratories.
 
 When you are finished working you should both close down the notebook server by entering `Ctrl+C` twice in the terminal window the SSH session you used to start up the notebook server is running and halt the port forwarding command by entering `Ctrl+C` in the terminal it is running in.
 
