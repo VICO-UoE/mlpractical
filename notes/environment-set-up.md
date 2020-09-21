@@ -425,14 +425,14 @@ conda clean -t
 Clone the course repository to your home directory:
 
 ```
-git clone https://github.com/CSTR-Edinburgh/mlpractical.git ~/mlpractical
+git clone https://github.com/VICO-UoE/mlpractical.git ~/mlpractical
 ```
 
 Make sure we are on the first lab branch
 
 ```
 cd ~/mlpractical
-git checkout mlp2018-9/lab1
+git checkout mlp2020-21/lab1
 ```
 
 Install the `mlp` package in the environment in develop mode
