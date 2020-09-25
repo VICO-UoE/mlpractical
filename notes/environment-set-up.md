@@ -30,8 +30,7 @@ differ slightly - you should instead select the relevant installer for your syst
 *Note: Although we are happy for you to additionally set up an environment on a personal machine, you should still set up a DICE environment now as this will make sure you are able to use shared computing resources later in the course. Also although we have tried to note when the required commands will differ on non-DICE systems, these instructions have only been tested on DICE and we will not be able to offer any support in labs on getting set up on a non-DICE system.*
 
 ---
-
-Open a bash terminal (`Applications > Terminal` on DICE).
+If you are using ssh connection to the student server, move to the next step. If you are using a DICE computer with graphical user interface, open a bash terminal (`Applications > Terminal` on DICE). 
 
 We first need to download the latest 64-bit Python 3 Miniconda install script:
 
@@ -60,6 +59,12 @@ On DICE, append the Miniconda binaries directory to `PATH` in manually in `~/.be
 ```
 echo ". /afs/inf.ed.ac.uk/user/${USER:0:3}/$USER/miniconda3/etc/profile.d/conda.sh" >> ~/.bashrc
 echo ". /afs/inf.ed.ac.uk/user/${USER:0:3}/$USER/miniconda3/etc/profile.d/conda.sh" >> ~/.benv
+```
+
+To avoid any errors later, check both the bashrc and benv files for the correct file path by running : 
+
+```
+vim ~/.bashrc and vim ~/.benv 
 ```
 
 For those who this appears a bit opaque to and want to know what is going on see here <sup id="a1">[1](#f1)</sup>.
@@ -146,7 +151,7 @@ pkgs_dirs:
 
 The next step in getting our environment set up will be to download the course code. This is available in a Git repository on Github:
 
-https://github.com/CSTR-Edinburgh/mlpractical
+https://github.com/VICO-UoE/mlpractical
 
 [Git](https://git-scm.com/) is a distributed version control system and [Github](https://github.com) a popular site for hosting Git repositories. We will be using Git to distribute the code for all the labs and assignments. We will explain all the necessary `git` commands as we go, though those new to Git may find [this concise guide by Roger Dudler](http://rogerdudler.github.io/git-guide/) or [this slightly longer one from Atlassian](https://www.atlassian.com/git/tutorials/) useful.
 
@@ -167,7 +172,7 @@ We will now go over the process of [cloning](https://www.atlassian.com/git/tutor
 ---
 **Confident Git users only:**
 
-For those who have their own Github account and are confident Git users, you may wish to consider instead [creating a private fork](http://stackoverflow.com/a/30352360) of the `CSTR-Edinburgh/mlpractical` repository on Github. This is not required for the course, however it will allow you to push your local commits to Github making it easier to for example sync your work between DICE computers and a personal machine.
+For those who have their own Github account and are confident Git users, you may wish to consider instead [creating a private fork](http://stackoverflow.com/a/30352360) of the `VICO-UoE/mlpractical` repository on Github. This is not required for the course, however it will allow you to push your local commits to Github making it easier to for example sync your work between DICE computers and a personal machine.
 
 **Note you should NOT create a public fork using the default forking mechanism on Github as this will make any commits you push to the fork publicly available which creates a risk of plagiarism.**
 
@@ -181,7 +186,7 @@ By default we will assume here you are cloning to your home directory however if
 To clone the `mlpractical` repository to the home directory run
 
 ```
-git clone https://github.com/CSTR-Edinburgh/mlpractical.git ~/mlpractical
+git clone https://github.com/VICO-UoE/mlpractical.git ~/mlpractical
 ```
 
 This will create a new `mlpractical` subdirectory with a local copy of the repository in it. Enter the directory and list all its contents, including hidden files, by running:
@@ -268,7 +273,7 @@ This will change the code in the working directory to the current state of the c
 You should make sure you are on the first lab branch now by running:
 
 ```
-git checkout mlp2018-9/lab1
+git checkout mlp2020-21/lab1
 ```
 
 ## 6. Installing the `mlp` Python package
@@ -420,14 +425,14 @@ conda clean -t
 Clone the course repository to your home directory:
 
 ```
-git clone https://github.com/CSTR-Edinburgh/mlpractical.git ~/mlpractical
+git clone https://github.com/VICO-UoE/mlpractical.git ~/mlpractical
 ```
 
 Make sure we are on the first lab branch
 
 ```
 cd ~/mlpractical
-git checkout mlp2018-9/lab1
+git checkout mlp2020-21/lab1
 ```
 
 Install the `mlp` package in the environment in develop mode
