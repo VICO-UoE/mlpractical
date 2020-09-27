@@ -123,9 +123,9 @@ class Optimiser(object):
         """
         run_stats = [list(self.get_epoch_stats().values())]
         for epoch in range(1, num_epochs + 1):
-            start_time = time.clock()
+            start_time = time.process_time()
             self.do_training_epoch()
-            epoch_time = time.clock() - start_time
+            epoch_time = time.process_time() - start_time
             if epoch % stats_interval == 0:
                 stats = self.get_epoch_stats()
                 self.log_stats(epoch, epoch_time, stats)
