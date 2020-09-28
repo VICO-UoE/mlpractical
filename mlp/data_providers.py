@@ -133,11 +133,12 @@ class MNISTDataProvider(DataProvider):
         super(MNISTDataProvider, self).__init__(
             inputs, targets, batch_size, max_num_batches, shuffle_order, rng)
 
-    # def next(self):
-    #    """Returns next data batch or raises `StopIteration` if at end."""
-    #    inputs_batch, targets_batch = super(MNISTDataProvider, self).next()
-    #    return inputs_batch, self.to_one_of_k(targets_batch)
-    #
+    def next(self):
+       """Returns next data batch or raises `StopIteration` if at end."""
+       inputs_batch, targets_batch = super(MNISTDataProvider, self).next()
+       return inputs_batch, self.to_one_of_k(targets_batch)
+#        return inputs_batch, targets_batch
+    
     def __next__(self):
         return self.next()
 
@@ -156,6 +157,12 @@ class MNISTDataProvider(DataProvider):
             to zero except for the column corresponding to the correct class
             which is equal to one.
         """
+#         print("1")
+        matrix = np.zeros(shape=(len(int_targets), 10))
+#         print(int_targets)
+        for index, targets in enumerate(int_targets):
+            matrix[index, targets-1] = 1
+        return matrix
         raise NotImplementedError()
 
 
@@ -185,14 +192,42 @@ class MetOfficeDataProvider(DataProvider):
         data_path = os.path.join(
             os.environ['MLP_DATA_DIR'], 'HadSSP_daily_qc.txt')
         assert os.path.isfile(data_path), (
-            'Data file does not exist at expected path: ' + data_path
+            'Data file does not exist at expected path: ' + dasta_path
         )
+        
+        
         # load raw data from text file
         # ...
+        txt = np.loadtxt(data_path, skiprows=3, usecols=np.arange(2, 33))
         # filter out all missing datapoints and flatten to a vector
-        # ...
+        txt[txt == -99.99] = 0
+        txt = txt.reshape(-1)
         # normalise data to zero mean, unit standard deviation
         # ...
+        mean = np.mean(txt)
+        std = np.std(txt)
+        self.inputs = (txt - mean) / std
+        
+        self.batch_size = batch_size
+        assert max_num_batches != 0 and not max_num_batches < -1, (
+            'max_num_batches should be -1 or > 0')
+        self.max_num_batches = max_num_batches
+        # maximum possible number of batches is equal to number of whole times
+        # batch_size divides in to the number of data points which can be
+        # found using integer division
+        possible_num_batches = self.inputs.shape[0] // batch_size
+        if self.max_num_batches == -1:
+            self.num_batches = possible_num_batches
+        else:
+            self.num_batches = min(self.max_num_batches, possible_num_batches)
+        self.inputs_num = np.zeros(shape = (len(self.inputs)-self.window_size+1, self.window_size - 1))
+        self.targets = np.zeros(len(self.inputs)-self.window_size+1)
+        for i in range(len(self.inputs)+1-self.window_size):
+            window_list = self.inputs[i:(i+self.window_size-1)]
+            target_list = self.inputs[i+self.window_size-1]
+            self.inputs_num[i:(i+self.window_size-1),:] = window_list
+            self.targets[i] = target_list
+        self.reset()
         # convert from flat sequence to windowed data
         # ...
         # inputs are first (window_size - 1) entries in windows
@@ -203,4 +238,34 @@ class MetOfficeDataProvider(DataProvider):
         # super(MetOfficeDataProvider, self).__init__(
         #     inputs, targets, batch_size, max_num_batches, shuffle_order, rng)
     def __next__(self):
-            return self.next()
+        return self.next()
+    
+    def __iter__(self):
+        """Implements Python iterator interface.
+
+        This should return an object implementing a `next` method which steps
+        through a sequence returning one element at a time and raising
+        `StopIteration` when at the end of the sequence. Here the object
+        returned is the DataProvider itself.
+        """
+        return self
+
+    def reset(self):
+        """Resets the provider to the initial state to use in a new epoch."""
+        self._curr_batch = 0
+          
+    def next(self):
+        """Returns next data batch or raises `StopIteration` if at end."""
+        if self._curr_batch + 1 > self.num_batches:
+            # no more batches in current iteration through data set so reset
+            # the dataset for another pass and indicate iteration is at end
+            self.reset()
+            raise StopIteration()
+        # create an index slice corresponding to current batch number
+        batch_slice = slice(self._curr_batch * self.batch_size,
+                            (self._curr_batch + 1) * self.batch_size)
+        inputs_batch = self.inputs_num[batch_slice]
+        targets_batch = self.targets[batch_slice]
+        self._curr_batch += 1
+        return inputs_batch, targets_batch
+        pass
