@@ -9,6 +9,11 @@ The code in this repository is split into:
   *  a Python package `mlp`, a [NumPy](http://www.numpy.org/) based neural network package designed specifically for the course that students will implement parts of and extend during the course labs and assignments,
   *  a series of [Jupyter](http://jupyter.org/) notebooks in the `notebooks` directory containing explanatory material and coding exercises to be completed during the course labs.
 
+## Remote working
+
+If you are working remotely, follow this [guide](notes/remote-working-guide.md).
+
 ## Getting set up
 
 Detailed instructions for setting up a development environment for the course are given in [this file](notes/environment-set-up.md). Students doing the course will spend part of the first lab getting their own environment set up.
+

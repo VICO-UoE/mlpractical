@@ -119,8 +119,8 @@ python pytorch_mlp_framework/train_evaluate_image_classification_system.py --bat
 ```
 
 We have also provided the exact scripts we used to run the experiments of VGG07 and VGG37 as shown in the coursework spec inside the files:
-- run_vgg_07_default.sh
-- run_vgg_37_default.sh
+- run_vgg_08_default.sh
+- run_vgg_38_default.sh
 
 **However, remember, if you want to reuse those scripts for your own investigations, change the experiment name and seed.
 If you do not change the name, the old folders will be overwritten.**

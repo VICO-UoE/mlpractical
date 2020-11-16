@@ -7,7 +7,7 @@ Open a terminal window (`Applications > Terminal`).
 We first need to activate our `mlp` Conda environment:
 
 ```
-source activate mlp
+conda activate mlp
 ```
 
 We now need to fetch any new code for the lab from the Github repository and create a new branch for this lab's work. First change in to the `mlpractical` repoistory directory (if you cloned the repository to a different directory than the default you will need to adjust the command below accordingly):
@@ -34,15 +34,15 @@ We are now ready to fetch any updated code from the remote repository on Github.
 git fetch origin
 ```
 
-This should display a message indicate a new branch has been found and fetched, named `origin/mlp2017-8/lab[n]` where `[n]` is the relevant lab number e.g. `origin/mlp2017-8/lab2` for the second lab.
+This should display a message indicate a new branch has been found and fetched, named `origin/mlp2018-9/lab[n]` where `[n]` is the relevant lab number e.g. `origin/mlp2018-9/lab2` for the second lab.
 
 We now need to create and checkout a new local branch from the remote branch fetched above. This can be done by running
 
 ```
-git checkout -b lab[n] origin/mlp2017-8/lab[n]
+git checkout -b lab[n] origin/mlp2018-9/lab[n]
 ```
 
-where again `lab[n]` corresponds to the relevant lab number fetched above e.g. `lab2`. This command creates a new local branch named `lab[n]` from the fetched branch on the remote repository `origin/mlp2017-8/lab[n]`.
+where again `lab[n]` corresponds to the relevant lab number fetched above e.g. `lab2`. This command creates a new local branch named `lab[n]` from the fetched branch on the remote repository `origin/mlp2018-9/lab[n]`.
 
 Inside the `notebooks` directory there should new be a new notebook for today's lab. The notebook for the previous lab will now also have proposed solutions filled in.
 
