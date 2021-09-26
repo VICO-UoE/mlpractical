@@ -25,7 +25,7 @@ the School of Informatics [DICE desktop](http://computing.help.inf.ed.ac.uk/dice
 should be able to used on other Linux distributions such as Ubuntu and Linux Mint with minimal adjustments.
 
 For those wishing to install on a personal Windows or OSX machine, the initial instructions for setting up Conda will 
-differ slightly - you should instead select the relevant installer for your system from [here](http://conda.pydata.org/miniconda.html) and following the corresponding installation instructions from [here](http://conda.pydata.org/docs/install/quick.html). After Conda is installed the [remaining instructions](#creating-the-conda-environment) should be broadly the same across different systems.
+differ slightly - you should instead select the relevant installer for your system from [here](https://docs.conda.io/en/latest/miniconda.html) and following the corresponding installation instructions from [here](https://conda.io/projects/conda/en/latest/user-guide/install/index.html). After Conda is installed the [remaining instructions](#creating-the-conda-environment) should be broadly the same across different systems.
 
 *Note: Although we are happy for you to additionally set up an environment on a personal machine, you should still set up a DICE environment now as this will make sure you are able to use shared computing resources later in the course. Also although we have tried to note when the required commands will differ on non-DICE systems, these instructions have only been tested on DICE and we will not be able to offer any support in labs on getting set up on a non-DICE system.*
 
@@ -273,7 +273,7 @@ This will change the code in the working directory to the current state of the c
 You should make sure you are on the first lab branch now by running:
 
 ```
-git checkout mlp2020-21/lab1
+git checkout mlp2021-22/lab1
 ```
 
 ## 6. Installing the `mlp` Python package
@@ -432,7 +432,7 @@ Make sure we are on the first lab branch
 
 ```
 cd ~/mlpractical
-git checkout mlp2020-21/lab1
+git checkout mlp2021-22/lab1
 ```
 
 Install the `mlp` package in the environment in develop mode
