@@ -302,10 +302,11 @@ Note that after the first time a Python module is loaded into an interpreter ins
 import mlp
 ```
 
-Running the `import` statement any further times will have no effect even if the underlying module code has been changed. To reload an already imported module we instead need to use the [`reload`](https://docs.python.org/2.7/library/functions.html#reload) function, e.g.
+Running the `import` statement any further times will have no effect even if the underlying module code has been changed. To reload an already imported module we instead need to use the [`importlib.reload`](https://docs.python.org/3/library/importlib.html#importlib.reload) function, e.g.
 
 ```
-reload(mlp)
+import importlib
+importlib.reload(mlp)
 ```
 
 **Note: To be clear as this has caused some confusion in previous labs the above `import ...` / `reload(...)` statements should NOT be run directly in a bash terminal. They are examples Python statements - you could run them in a terminal by first loading a Python interpreter using:**
@@ -370,7 +371,7 @@ Below are instructions for setting up the environment without additional explana
 
 ---
 
-Start a new bash terminal. Download the latest 64-bit Python 2.7 Miniconda install script:
+Start a new bash terminal. Download the latest 64-bit Python 3.9 Miniconda install script:
 
 ```
 wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh
