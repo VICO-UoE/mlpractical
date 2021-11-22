@@ -2,15 +2,10 @@
 \usepackage{amssymb,amsmath}
 \usepackage{txfonts}
 \usepackage{microtype}
-\usepackage{xspace}
-\xspaceaddexceptions{\%}
-
-% Lists with less spacoing between items
-\usepackage{paralist}
 
 % For figures
 \usepackage{graphicx}
-\usepackage{subfig} 
+\usepackage{subcaption} 
 
 % For citations
 \usepackage{natbib}
@@ -23,9 +18,13 @@
 % resulting PDF.  If this breaks your system, please commend out the
 % following usepackage line and replace \usepackage{mlp2017} with
 % \usepackage[nohyperref]{mlp2017} below.
-\usepackage[hyphens]{url}
-\urlstyle{same}
 \usepackage{hyperref}
+\usepackage{url}
+\urlstyle{same}
+
+\usepackage{color}
+\usepackage{booktabs} % To thicken table lines
+\usepackage{multirow} % Multirow cells in table
 
 % Packages hyperref and algorithmic misbehave sometimes.  We can fix
 % this with the following command.
@@ -33,9 +32,10 @@
 
 
 % Set up MLP coursework style (based on ICML style)
-\usepackage{mlp2020}
-\mlptitlerunning{MLP Coursework 2 (\studentNumber)}
+\usepackage{mlp2021}
+\mlptitlerunning{MLP Coursework 1 (\studentNumber)}
 \bibliographystyle{icml2017}
+\usepackage{bm,bbm}
 
 
 \DeclareMathOperator{\softmax}{softmax}
@@ -46,8 +46,5 @@
 \DeclareMathOperator{\elu}{elu}
 \DeclareMathOperator{\selu}{selu}
 \DeclareMathOperator{\maxout}{maxout}
-
-
-
-
+\newcommand{\bx}{\bm{x}}
 

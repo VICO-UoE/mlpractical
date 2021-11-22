@@ -1,0 +1,306 @@
+%% Template for MLP Coursework 2 / 22 November 2021 
+
+%% Based on  LaTeX template for ICML 2017 - example_paper.tex at 
+%%  https://2017.icml.cc/Conferences/2017/StyleAuthorInstructions
+
+\documentclass{article}
+\input{mlp2021_includes}
+
+
+\definecolor{red}{rgb}{0.95,0.4,0.4}
+\definecolor{blue}{rgb}{0.4,0.4,0.95}
+\definecolor{orange}{rgb}{1, 0.65, 0}
+
+\newcommand{\youranswer}[1]{{\color{red} \bf[#1]}} %your answer: 
+
+
+%% START of YOUR ANSWERS
+\input{mlp-cw2-questions}
+%% END of YOUR ANSWERS
+
+
+
+%% Do not change anything in this file. Add your answers to mlp-cw1-questions.tex
+
+
+
+\begin{document} 
+
+\twocolumn[
+\mlptitle{MLP Coursework 2}
+\centerline{\studentNumber}
+\vskip 7mm
+]
+
+\begin{abstract} 
+Deep neural networks have become the state-of-the-art 
+in many standard computer vision problems thanks to more powerful
+neural networks and large labeled datasets.
+While very deep networks allow for better deciphering
+of the complex patterns in the data,
+training these models successfully is a challenging task
+due to problematic gradient flow through the layers, 
+known as vanishing/exploding gradient problem (VGP and EGP respectively).
+In this report, we first analyze this problem in VGG models
+with 8 and 38 hidden layers on the CIFAR100 image dataset, 
+by monitoring the gradient flow during training. 
+We explore known solutions to this problem including batch
+normalization or residual connections, and explain their theory
+and implementation details. 
+Our experiments show that batch normalization and residual connections effectively
+address the aforementioned problem and hence enable a deeper model to outperform
+shallower ones in the same experimental setup.
+\end{abstract} 
+
+\section{Introduction}
+\label{sec:intro}
+Despite the remarkable progress of deep neural networks in image classification problems~\cite{simonyan2014very, he2016deep}, training very deep networks is a challenging procedure.
+One of the major problems is the VGP, a phenomenon where gradients from the loss function shrink to zero as they backpropagate
+to earlier layers, hence preventing the network from updating its
+weights effectively. 
+This phenomenon is prevalent and has been extensively
+studied in various deep network including feedforward  networks~\cite{glorot2010understanding}, 
+RNNs~\cite{bengio1993problem}, and CNNs~\cite{he2016deep}. 
+Multiple solutions have been proposed to mitigate this problem by using
+weight initialization strategies~\cite{glorot2010understanding},
+activation functions~\cite{glorot2010understanding},
+input normalization~\cite{bishop1995neural},
+batch normalization~\cite{ioffe2015batch}, and shortcut
+connections \cite{he2016deep, huang2017densely}.
+
+This report focuses on diagnosing the VGP occurred in the VGG38 model and addressing
+it by implementing two standard solutions.
+In particular, we first study the ``broken''
+network in terms of its gradient flow, norm of gradients with respect to
+model weights for each layer and contrast it 
+to ones in the healthy VGG08 to pinpoint the problem.
+Next, we review two standard solutions for this problem, 
+batch normalization (BN)~\cite{ioffe2015batch} and residual connections (RC)~\cite{he2016deep}
+in detail and discuss how they can address the gradient problem.
+We first incorporate batch normalization (denoted as VGG38+BN), 
+residual connections (denoted as VGG38+RC), 
+and their combination (denoted as VGG38+BN+RC) to the given VGG38 architecture.
+We train the resulting three configurations, and VGG08 and VGG38 models on 
+CIFAR-100 dataset and present the results.
+The results show that though separate use of BN and RC does tackle 
+the vanishing/exploding gradient problem, therefore enabling the training of the VGG38 model, 
+the best results are obtained by combining both BN and RC.
+
+%
+
+
+\section{Identifying training problems of a deep CNN}
+\label{sec:task1}
+
+\begin{figure}[t]
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/loss_plot.pdf}
+        \caption{Loss per epoch}
+        \label{fig:loss_curves}
+    \end{subfigure}
+
+    \begin{subfigure}{\linewidth}
+        \centering
+        \includegraphics[width=\linewidth]{figures/accuracy_plot.pdf}
+        \caption{Accuracy per epoch}
+        \label{fig:acc_curves}
+    \end{subfigure}
+    \caption{Training curves for VGG08 and VGG38}
+    \label{fig:curves}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\linewidth]{figures/grad_flow_vgg08.pdf}
+    \caption{Gradient flow on VGG08}
+    \label{fig:grad_flow_08}
+\end{figure}
+
+\questionFigureThree
+
+Concretely, training deep neural typically involves three steps, forward
+pass, backward pass (or backpropagation algorithm~\cite{rumelhart1986learning}) and weight update.
+The first step involves passing the input $x^0$ to the network and producing 
+the network prediction and also the error value.
+In detail, each layer takes in the output of the previous layer and applies
+a non-linear transformation:
+\begin{equation}
+\label{eq.fprop}
+\bx^{(l)} = f^{(l)}(\bx^{(l-1)}; W^{(l)})    
+\end{equation} 
+where $(l)$ denotes the $l$-th layer in $L$ layer deep network,
+$f^{(l)}(\cdot,W^{(l)})$ is 
+a non-linear transformation for layer $l$, and $W^{(l)})$ are the 
+weights of layer $l$.
+For instance, $f^{(l)}$ is typically a convolution operation followed by an activation
+function in convolutional neural networks.
+The second step involves the backpropagation algorithm, where we calculate
+the gradient of an error function $E$ (e.g. cross-entropy) for each layer's
+weight as follows:
+
+\begin{equation}
+    \label{eq.bprop}
+\frac{\partial E}{\partial W^{(l)}} = \frac{\partial E}{\partial \bx^{(L)}} \frac{\partial \bx^{(L)}}{\partial \bx^{(L-1)}} \dots \frac{\partial \bx^{(l+1)}}{\partial \bx^{(l)}}\frac{\partial \bx^{(l)}}{\partial W^{(l)}}.
+\end{equation}
+
+This step includes consecutive tensor multiplications between multiple
+partial derivative terms.
+The final step involves updating model weights by using the computed 
+$\frac{\partial E}{\partial W^{(l)}}$ with an update rule.
+The exact update rule depends on the optimizer.
+
+A notorious problem for training deep neural networks is the vanishing/exploding gradient
+problem~\cite{bengio1993problem} that typically occurs in the backpropagation step when some of partial gradient terms in Eq.~\ref{eq.bprop} includes values larger or smaller than 1.
+In this case, due to the multiple consecutive multiplications, the gradients w.r.t. weights
+can get exponentially very small (close to 0) or very large (close to infinity) and
+prevent effective learning of network weights.
+
+
+%
+
+
+Figures~\ref{fig:grad_flow_08} and \ref{fig:grad_flow_38} depict the gradient flows through
+VGG architectures \cite{simonyan2014very} with 8 and 38 layers respectively,
+trained and evaluated for a total of 100 epochs on the 
+CIFAR100 dataset. \questionOne.
+
+
+\section{Background Literature}
+\label{sec:lit_rev}
+In this section we will highlight some of the most influential
+papers that have been central to overcoming the VGP in
+deep CNNs.
+
+\paragraph{Batch Normalization}\cite{ioffe2015batch}
+BN seeks to solve the  problem of 
+internal covariate shift (ICS), when distribution of each layer’s 
+inputs changes during training, as the parameters of the previous layers change. 
+The authors
+argue that without batch normalization, the distribution of
+each layer’s inputs can vary significantly due to the 
+stochastic nature of randomly sampling mini-batches from your
+training set. Layers in the network hence must continuously
+adapt to these high variance distributions which hinders the
+rate of convergence gradient-based optimizers. This optimization
+problem is exacerbated further with network depth due
+to the updating of parameters at layer $l$ being dependent on
+the previous $l-1$ layers.
+
+It is hence beneficial to embed the normalization of
+training data into the network architecture after work from
+LeCun \emph{et al.} showed that training converges faster with
+this addition \cite{lecun2012efficient}. Through standardizing
+the inputs to each layer, we take a step towards achieving
+the fixed distributions of inputs that remove the ill effects
+of ICS. Ioffe and Szegedy demonstrate the effectiveness of
+their technique through training an ensemble of BN
+networks which achieve an accuracy on the ImageNet classification
+task exceeding that of humans in 14 times fewer
+training steps than the state-of-the-art of the time.
+It should be noted, however, that the exact reason for
+BN’s effectiveness is still not completely understood and it is 
+an open research question~\cite{santurkar2018does}.
+
+
+
+\paragraph{Residual networks (ResNet)}\cite{he2016deep}
+One interpretation of how the VGP arises is that stacking non-linear layers
+between the input and output of networks makes the
+connection between these variables increasingly
+complex. This results in the gradients becoming
+increasingly scrambled as they are propagated back through
+the network and the desired mapping between input and output
+being lost. He~\emph{et al.} observed this on 
+a deep 56-layer neural network counter-intuitively
+achieving a higher training error than a shallower 20-
+layer network despite higher theoretical power.
+Residual networks, colloquially
+known as ResNets, aim to alleviate this through the
+incorporation of skip connections that bypass the linear
+transformations into the network architecture. The authors
+argue that this new mapping is significantly easier
+to optimize since if an identity mapping were optimal, the
+network could comfortably learn to push the residual to
+zero rather than attempting to fit an identity mapping via
+a stack of nonlinear layers. They bolster their argument
+by successfully training ResNets with depths exceeding
+1000 layers on the CIFAR10 dataset.
+Prior to their work, training even a 100-layer was accepted
+as a great challenge within the deep learning community.
+The addition of skip connections solves the VGP through
+enabling information to flow more freely throughout the
+network architecture without the addition of neither extra
+parameters, nor computational complexity.
+
+\section{Solution overview}
+\subsection{Batch normalization}
+
+\questionTwo.
+
+
+\subsection{Residual connections}
+
+\questionThree.
+
+
+\section{Experiment Setup}
+
+\questionFigureFour
+
+\questionFigureFive
+
+\questionTableOne
+
+We conduct our experiment on the CIFAR-100 dataset \cite{krizhevsky2009learning},
+which consists of 60,000 32x32 colour images from
+100 different classes. The number of samples per class is balanced, and the
+samples are split into training, validation, and test set while
+maintaining balanced class proportions. In total, there are
+47,500; 2,500; and 10,000 instances in the training, validation,
+and test set, respectively. Moreover, we apply data
+augmentation strategies (cropping, horizontal flipping) to
+improve the generalization of the model.
+
+With the goal of understanding whether BN or skip connections
+help fighting vanishing gradients, we first test these
+methods independently, before combining them in an attempt
+to fully exploit the depth of the VGG38 model.
+
+All experiments are conducted using the Adam optimizer with the default
+learning rate (1e-3) -- unless otherwise specified, cosine annealing and a batch size of 100
+for 100 epochs. 
+Additionally, training images are augmented with random 
+cropping and horizontal flipping.
+Note that we do not use data augmentation at test time.
+These hyperparameters along with the augmentation strategy are used
+to produce the results shown in Figure~\ref{fig:curves}.
+
+When used, BN is applied
+after each convolutional layer, before the Leaky
+ReLU non-linearity. Similarly, the skip connections are applied from 
+before the convolution layer to before the final activation function
+of the block as per Figure~2 of \cite{he2016deep} 
+
+
+
+
+
+\section{Results and Discussion}
+\label{sec:disc}
+
+\questionFour.
+
+\section{Conclusion}
+\label{sec:concl}
+    
+\questionFive.
+
+\bibliography{refs}
+
+\end{document} 
+
+
+
+
+
