@@ -53,9 +53,9 @@ This reloads .bashrc which includes the new miniconda path.
 7. Now run ```source activate mlp```.
 8. Install git using```conda install git```. Then config git using: 
 ```git config --global user.name "[your name]"; git config --global user.email "[matric-number]@sms.ed.ac.uk"```
-9. Now clone the mlpractical repo using ```git clone https://github.com/CSTR-Edinburgh/mlpractical.git```.
+9. Now clone the mlpractical repo using ```git clone https://github.com/VICO-UoE/mlpractical.git```.
 10. ```cd mlpractical```
-11. Checkout the mlp_cluster_tutorial branch using ```git checkout mlp2018-9/mlp_cluster_tutorial```.
+11. Checkout the mlp_cluster_tutorial branch using ```git checkout mlp2021-22/mlp_cluster_tutorial```.
 12. Install the required packages using ```bash install.sh```.
 13. This includes all of the required installations. Proceed to the next section outlining how to use the slurm cluster
  management software. Please remember to clean your setup files using ```conda clean -t```
