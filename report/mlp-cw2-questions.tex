@@ -115,7 +115,7 @@ The length of this question description is indicative of the average length of a
 \youranswer{
 Question Table 1 - Fill in Table 1 with the results from your experiments on 
 \begin{enumerate}
-    \item \textit{VGG38 RC (LR 1e-3)}, and 
+    \item \textit{VGG38 BN (LR 1e-3)}, and 
     \item \textit{VGG38 BN + RC (LR 1e-2)}.
 \end{enumerate}
 %
@@ -125,13 +125,13 @@ Question Table 1 - Fill in Table 1 with the results from your experiments on
     \toprule
         Model                   & LR   & \# Params & Train loss & Train acc & Val loss & Val acc \\
     \midrule
-        VGG08                   & 1e-3 & 60 K    &  1.74      & 51.59     & 1.95     & 46.84 \\
-        VGG38                   & 1e-3 & 336 K   &  4.61      & 00.01     & 4.61     & 00.01 \\
-        VGG38 BN                & 1e-3 & 339 K   &  1.91      & 47.13     & 2.14     & 42.76 \\
-        VGG38 RC                & 1e-3 &     ?   &     ?      &     ?     &    ?     &     ? \\
-        VGG38 BN + RC           & 1e-3 & 339 K   &  1.26      & 62.99     & 1.73     & 53.76 \\
-        VGG38 BN                & 1e-2 & 339 K   &  1.70      & 52.28     & 1.99     & 46.72 \\
-        VGG38 BN + RC           & 1e-2 &     ?   &     ?      &     ?     &    ?     &  ? \\
+        VGG08                   & 1e-3 & 60 K      &  1.74      & 51.59     & 1.95     & 46.84 \\
+        VGG38                   & 1e-3 & 336 K     &  4.61      & 00.01     & 4.61     & 00.01 \\
+        VGG38 BN                & 1e-3 &     ?     &     ?      &     ?     &    ?     &     ? \\
+        VGG38 RC                & 1e-3 & 336 K     &  1.33      & 61.52     & 1.84     & 52.32 \\
+        VGG38 BN + RC           & 1e-3 & 339 K     &  1.26      & 62.99     & 1.73     & 53.76 \\
+        VGG38 BN                & 1e-2 & 339 K     &  1.70      & 52.28     & 1.99     & 46.72 \\
+        VGG38 BN + RC           & 1e-2 &     ?     &     ?      &     ?     &    ?     &     ? \\
     \bottomrule
     \end{tabular}
     \caption{Experiment results (number of model parameters, Training and Validation loss and accuracy) for different combinations of VGG08, VGG38, Batch Normalisation (BN), and Residual Connections (RC), LR is learning rate.}
