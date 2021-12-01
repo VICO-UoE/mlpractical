@@ -168,6 +168,7 @@ class ExperimentBuilder(nn.Module):
             layers.append(layer)
         ########################################\
         
+        plt = self.plot_func_def(all_grads, layers)
         return plt
     
     
