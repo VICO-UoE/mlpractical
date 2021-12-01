@@ -159,11 +159,10 @@ class ExperimentBuilder(nn.Module):
                 continue;
             layer_arr = layer_name.split(".");
             if 'linear' in layer_name:
-                print(layer_name)
-                layer = layer_arr[1] + '_' + layer_arr[0]
+                layer = layer_arr[2] + '_' + layer_arr[1]
             else:
-                layer = layer_arr[1] + '_' + layer_arr[3]
-            print(layer)
+                layer = layer_arr[2] + '_' + layer_arr[4]
+            
             all_grads.append(torch.mean(torch.abs(values)))
             layers.append(layer)
         ########################################\
