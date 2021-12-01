@@ -66,3 +66,5 @@ target/
 
 #Notebook stuff
 notebooks/.ipynb_checkpoints/
+
+data/
