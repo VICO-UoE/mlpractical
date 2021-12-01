@@ -154,14 +154,18 @@ class ExperimentBuilder(nn.Module):
         Complete the code in the block below to collect absolute mean of the gradients for each layer in all_grads with the             layer names in layers.
         """
         ########################################
-        for layer, values in named_parameters:
+        for layer_name, values in named_parameters:
+            if 'bias' in layer_name:
+                continue;
+            layer_arr = layer_name.split(".");
+            if 'linear' in layer_name:
+                layer = layer_str_arr[2] + '_' + layer_str_arr[1]
+            else:
+                layer = layer_str_arr[2] + '_' + layer_str_arr[4]
+            
             all_grads.append(torch.mean(torch.abs(values)))
             layers.append(layer)
-            
-        
         ########################################\
-        with torch.no_grad():
-            plt = self.plot_func_def(all_grads, layers)
         
         return plt
     
