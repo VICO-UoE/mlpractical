@@ -164,7 +164,7 @@ class ExperimentBuilder(nn.Module):
             else:
                 layer = layer_arr[1] + '_' + layer_arr[3]
             print(layer)
-            all_grads.append(torch.mean(torch.abs(values)))
+            all_grads.append(float(torch.mean(torch.abs(values))))
             layers.append(layer)
         ########################################\
         
