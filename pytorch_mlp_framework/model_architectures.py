@@ -384,12 +384,12 @@ class ConvolutionalBatchNormProcessingBlock(nn.Module):
         out = x
 
         out = self.layer_dict['conv_0'].forward(out)
-        print("conv_0 fprop output:" + out.shape)
+        #print("conv_0 fprop output:" + out.shape)
         out = F.leaky_relu(out)
         out = self.layer_dict['bn_0'](out)
 
         out = self.layer_dict['conv_1'].forward(out)
-        print("conv_1 fprop output:" + out.shape)
+        #print("conv_1 fprop output:" + out.shape)
         out = F.leaky_relu(out)
         out = self.layer_dict['bn_1'](out)
         return out
@@ -442,15 +442,15 @@ class ConvolutionalBatchNormDimensionalityReductionBlock(nn.Module):
         out = x
 
         out = self.layer_dict['conv_0'].forward(out)
-        print("conv_0 fprop output:" + out.shape)
+        #print("conv_0 fprop output:" + out.shape)
         out = F.leaky_relu(out)
         out = self.layer_dict['bn_0'](out)
 
         out = F.avg_pool2d(out, self.reduction_factor)
-        print("avg_pool fprop output:" + out.shape)
+        #print("avg_pool fprop output:" + out.shape)
 
         out = self.layer_dict['conv_1'].forward(out)
-        print("conv_1 fprop output:" + out.shape)
+        #print("conv_1 fprop output:" + out.shape)
         out = F.leaky_relu(out)
         out = self.layer_dict['bn_1'][out]
 
