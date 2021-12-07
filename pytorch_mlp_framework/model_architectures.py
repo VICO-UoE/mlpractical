@@ -353,6 +353,7 @@ class ConvolutionalBatchNormProcessingBlock(nn.Module):
         self.build_module()
 
     def build_module(self):
+        print("building module")
         self.layer_dict = nn.ModuleDict()
         x = torch.zeros(self.input_shape)
         out = x

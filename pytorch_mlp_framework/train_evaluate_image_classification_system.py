@@ -48,6 +48,7 @@ elif args.block_type == 'empty_block':
     processing_block_type = EmptyBlock
     dim_reduction_block_type = EmptyBlock
 elif args.block_type == 'conv_block_bn':
+    print("BN Chosen")
     processing_block_type = ConvolutionalBatchNormProcessingBlock
     dim_reduction_block_type = ConvolutionalBatchNormDimensionalityReductionBlock
 raise ModuleNotFoundError
