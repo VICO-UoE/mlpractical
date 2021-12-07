@@ -347,7 +347,7 @@ class ConvolutionalBatchNormProcessingBlock(nn.Module):
         self.kernel_size = kernel_size
         self.input_shape = input_shape
         self.padding = padding
-        self.bias = use_bias
+        self.bias = bias
         self.dilation = dilation
 
         self.build_module()
@@ -395,14 +395,14 @@ class ConvolutionalBatchNormProcessingBlock(nn.Module):
         return out
         
 class ConvolutionalBatchNormDimensionalityReductionBlock(nn.Module):
-    def __init__(self, input_shape, num_filters, kernel_size, padding, use_bias, dilation, reduction_factor):
+    def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation, reduction_factor):
         super(ConvolutionalBatchNormDimensionalityReductionBlock, self).__init__()
 
         self.num_filters = num_filters
         self.kernel_size = kernel_size
         self.input_shape = input_shape
         self.padding = padding
-        self.bias = use_bias
+        self.bias = bias
         self.dilation = dilation
         self.reduction_factor = reduction_factor
         self.build_module()
