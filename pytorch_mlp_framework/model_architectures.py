@@ -338,3 +338,119 @@ class ConvolutionalNetwork(nn.Module):
                 pass
 
         self.logit_linear_layer.reset_parameters()
+
+class ConvolutionalBatchNormProcessingBlock(nn.Module):
+    def __init__(self, input_shape, num_filters, kernel_size, padding, use_bias, dilation):
+        super(ConvolutionalBatchNormProcessingBlock, self).__init__()
+
+        self.num_filters = num_filters
+        self.kernel_size = kernel_size
+        self.input_shape = input_shape
+        self.padding = padding
+        self.bias = use_bias
+        self.dilation = dilation
+
+        self.build_module()
+
+    def build_module(self):
+        self.layer_dict = nn.ModuleDict()
+        x = torch.zeros(self.input_shape)
+        out = x
+
+        self.layer_dict['conv_0'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
+                                              kernel_size=self.kernel_size, dilation=self.dilation,
+                                              padding=self.padding, stride=1)
+
+        out = self.layer_dict['conv_0'].forward(out)
+        out = F.leaky_relu(out)
+        
+        self.layer_dict['bn_0'] = nn.BatchNorm2d(out.shape[1],affine=True)
+        out = self.layer_dict['bn_0'](out)
+        
+        self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
+                                              kernel_size=self.kernel_size, dilation=self.dilation,
+                                              padding=self.padding, stride=1)
+
+        out = self.layer_dict['conv_1'].forward(out)
+        out = F.leaky_relu(out)
+        
+        self.layer_dict['bn_1'] = nn.BatchNorm2d(out.shape[1],affine=True)
+        out = self.layer_dict['bn_1'](out)
+        
+        print(out.shape)
+
+    def forward(self, x):
+        out = x
+
+        out = self.layer_dict['conv_0'].forward(out)
+        print("conv_0 fprop output:" + out.shape)
+        out = F.leaky_relu(out)
+        out = self.layer_dict['bn_0'](out)
+
+        out = self.layer_dict['conv_1'].forward(out)
+        print("conv_1 fprop output:" + out.shape)
+        out = F.leaky_relu(out)
+        out = self.layer_dict['bn_1'](out)
+        return out
+        
+class ConvolutionalBatchNormDimensionalityReductionBlock(nn.Module):
+    def __init__(self, input_shape, num_filters, kernel_size, padding, use_bias, dilation, reduction_factor):
+        super(ConvolutionalBatchNormDimensionalityReductionBlock, self).__init__()
+
+        self.num_filters = num_filters
+        self.kernel_size = kernel_size
+        self.input_shape = input_shape
+        self.padding = padding
+        self.bias = use_bias
+        self.dilation = dilation
+        self.reduction_factor = reduction_factor
+        self.build_module()
+
+    def build_module(self):
+        self.layer_dict = nn.ModuleDict()
+        x = torch.zeros(self.input_shape)
+        out = x
+
+        self.layer_dict['conv_0'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
+                                              kernel_size=self.kernel_size, dilation=self.dilation,
+                                              padding=self.padding, stride=1)
+
+        out = self.layer_dict['conv_0'].forward(out)
+        out = F.leaky_relu(out)
+        
+        self.layer_dict['bn_0'] = nn.BatchNorm2d(out.shape[1],affine=True)
+        out = self.layer_dict['bn_0'](out)
+        
+        out = F.avg_pool2d(out, self.reduction_factor)
+
+        self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
+                                              kernel_size=self.kernel_size, dilation=self.dilation,
+                                              padding=self.padding, stride=1)
+
+        out = self.layer_dict['conv_1'].forward(out)
+        out = F.leaky_relu(out)
+        
+        out = out
+        
+        self.layer_dict['bn_1'] = nn.BatchNorm2d(out.shape[1],affine=True)
+        out = self.layer_dict['bn_1'](out)
+
+        print(out.shape)
+
+    def forward(self, x):
+        out = x
+
+        out = self.layer_dict['conv_0'].forward(out)
+        print("conv_0 fprop output:" + out.shape)
+        out = F.leaky_relu(out)
+        out = self.layer_dict['bn_0'](out)
+
+        out = F.avg_pool2d(out, self.reduction_factor)
+        print("avg_pool fprop output:" + out.shape)
+
+        out = self.layer_dict['conv_1'].forward(out)
+        print("conv_1 fprop output:" + out.shape)
+        out = F.leaky_relu(out)
+        out = self.layer_dict['bn_1'][out]
+
+        return out
