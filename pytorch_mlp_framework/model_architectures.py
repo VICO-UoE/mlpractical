@@ -340,7 +340,7 @@ class ConvolutionalNetwork(nn.Module):
         self.logit_linear_layer.reset_parameters()
 
 class ConvolutionalBatchNormProcessingBlock(nn.Module):
-    def __init__(self, input_shape, num_filters, kernel_size, padding, use_bias, dilation):
+    def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation):
         super(ConvolutionalBatchNormProcessingBlock, self).__init__()
 
         self.num_filters = num_filters
