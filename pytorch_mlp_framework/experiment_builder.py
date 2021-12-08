@@ -161,7 +161,7 @@ class ExperimentBuilder(nn.Module):
             if 'linear' in layer_name:
                 print(layer_name)
                 layer = layer_arr[1] + '_' + layer_arr[0]
-            if 'input' not in layer_name:
+            if 'input' in layer_name:
                 if 'bn' in layer_name:
                     continue;
             else:
