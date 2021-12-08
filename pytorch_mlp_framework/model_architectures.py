@@ -549,15 +549,17 @@ class ConvolutionalBatchNormRCDimensionalityReductionBlock(nn.Module):
 
         out = self.layer_dict['conv_1'].forward(out)
         out = F.leaky_relu(out)
+        print("x shape:")
+        print(x.shape)
+        print("Out shape:")
+        print(out.shape)
+
         
         out = out + x
         
         self.layer_dict['bn_1'] = nn.BatchNorm2d(out.shape[1],affine=True)
         out = self.layer_dict['bn_1'](out)
         
-        print("x shape:")
-        print(x.shape)
-        print("Out shape:"
         print(out.shape)
 
     def forward(self, x):
