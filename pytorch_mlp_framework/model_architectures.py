@@ -543,7 +543,7 @@ class ConvolutionalBatchNormRCDimensionalityReductionBlock(nn.Module):
         
         print("before pool")
         #print(out.shape)
-        #out = F.avg_pool2d(out, self.reduction_factor)
+        out = F.avg_pool2d(out, self.reduction_factor)
         #print(out.shape)
         self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
                                               kernel_size=self.kernel_size, dilation=self.dilation,
@@ -557,7 +557,7 @@ class ConvolutionalBatchNormRCDimensionalityReductionBlock(nn.Module):
         print(out.shape)
 
         
-        out = out + x
+        #out = out + x
         
         self.layer_dict['bn_1'] = nn.BatchNorm2d(out.shape[1],affine=True)
         out = self.layer_dict['bn_1'](out)
@@ -571,11 +571,11 @@ class ConvolutionalBatchNormRCDimensionalityReductionBlock(nn.Module):
         out = F.leaky_relu(out)
         out = self.layer_dict['bn_0'](out)
 
-        #out = F.avg_pool2d(out, self.reduction_factor)
+        out = F.avg_pool2d(out, self.reduction_factor)
 
         out = self.layer_dict['conv_1'].forward(out)
         out = F.leaky_relu(out)
-        out = out + x
+        #out = out + x
         
         out = self.layer_dict['bn_1'](out)
         
