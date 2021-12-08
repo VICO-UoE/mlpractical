@@ -555,7 +555,9 @@ class ConvolutionalBatchNormRCDimensionalityReductionBlock(nn.Module):
         self.layer_dict['bn_1'] = nn.BatchNorm2d(out.shape[1],affine=True)
         out = self.layer_dict['bn_1'](out)
         
+        print("x shape:")
         print(x.shape)
+        print("Out shape:"
         print(out.shape)
 
     def forward(self, x):
