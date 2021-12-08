@@ -153,18 +153,14 @@ class ExperimentBuilder(nn.Module):
         """
         Complete the code in the block below to collect absolute mean of the gradients for each layer in all_grads with the             layer names in layers.
         """
-        layer = ''
         ########################################
         for layer_name, values in named_parameters:
-            if 'bias' in layer_name:
+            if 'bias' or 'bn' in layer_name:
                 continue;
             layer_arr = layer_name.split(".");
             if 'linear' in layer_name:
                 print(layer_name)
                 layer = layer_arr[1] + '_' + layer_arr[0]
-            if 'input' in layer_name:
-                if 'bn' in layer_name:
-                    continue;
             else:
                 layer = layer_arr[1] + '_' + layer_arr[3]
             #print(layer)
