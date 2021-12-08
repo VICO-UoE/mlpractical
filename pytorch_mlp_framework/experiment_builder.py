@@ -158,13 +158,15 @@ class ExperimentBuilder(nn.Module):
             if 'bias' in layer_name:
                 continue;
             layer_arr = layer_name.split(".");
-            if 'bn' in layer_arr[4]:
+            bn_check = any('bn_' in layer for layer in layer_arr)
+            if bn_check:
                 continue;
-            if 'linear' in layer_name:
-                print(layer_name)
-                layer = layer_arr[1] + '_' + layer_arr[0]
             else:
-                layer = layer_arr[1] + '_' + layer_arr[3]
+                if 'linear' in layer_name:
+                    print(layer_name)
+                    layer = layer_arr[1] + '_' + layer_arr[0]
+                else:
+                    layer = layer_arr[1] + '_' + layer_arr[3]
             #print(layer)
             #print(torch.mean(torch.abs(values))
             #all_grads.append(float(torch.mean(torch.abs(values))))
