@@ -543,7 +543,7 @@ class ConvolutionalBatchNormRCDimensionalityReductionBlock(nn.Module):
         
         out = F.avg_pool2d(out, self.reduction_factor)
 
-        self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
+        self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters * 2, bias=self.bias,
                                               kernel_size=self.kernel_size, dilation=self.dilation,
                                               padding=self.padding, stride=1)
 
