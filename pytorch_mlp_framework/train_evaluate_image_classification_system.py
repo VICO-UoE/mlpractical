@@ -51,6 +51,10 @@ elif args.block_type == 'conv_block_bn':
     print("BN Chosen")
     processing_block_type = ConvolutionalBatchNormProcessingBlock
     dim_reduction_block_type = ConvolutionalBatchNormDimensionalityReductionBlock
+elif args.block_type == 'conv_block_bn_rc':
+    print("BN + RC Chosen")
+    processing_block_type = ConvolutionalBatchNormWithRCProcessingBlock
+    dim_reduction_block_type = ConvolutionalBatchNormRCDimensionalityReductionBlock
 else:
     raise ModuleNotFoundError
 
