@@ -155,9 +155,11 @@ class ExperimentBuilder(nn.Module):
         """
         ########################################
         for layer_name, values in named_parameters:
-            if 'bias' or 'bn' in layer_name:
+            if 'bias' in layer_name:
                 continue;
             layer_arr = layer_name.split(".");
+            if 'bn' in layer_arr[4]:
+                continue;
             if 'linear' in layer_name:
                 print(layer_name)
                 layer = layer_arr[1] + '_' + layer_arr[0]
