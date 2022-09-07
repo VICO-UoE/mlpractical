@@ -273,7 +273,7 @@ This will change the code in the working directory to the current state of the c
 You should make sure you are on the first lab branch now by running:
 
 ```
-git checkout mlp2021-22/lab1
+git checkout mlp2022-23/lab1
 ```
 
 ## 6. Installing the `mlp` Python package
@@ -433,7 +433,7 @@ Make sure we are on the first lab branch
 
 ```
 cd ~/mlpractical
-git checkout mlp2021-22/lab1
+git checkout mlp2022-23/lab1
 ```
 
 Install the `mlp` package in the environment in develop mode
