@@ -28,8 +28,8 @@ Name your project sxxxxxxx-MLPractical - replacing the sxxxxxxx with your studen
 8. Select NVIDIA Tesla K80. Those are the cheapest one, be careful as others can cost up to 8 times more to run
 9. Series and in Machine type select  ```2 vCPUs``` with ```7.5Gb memory```.
 10. Under ```Boot disk```, click change.
-11. On the new menu that appears, select the ```Deep Learning on Linux``` operating system, with the ```Pytorch 1.10, no-XLA``` version, then click select at the bottom.
-12. You should consider going into the ```Networking, disks, security, management, sole tenancy``` drop down menu at the bottom and enable ```Preemptiblity``` under management. As the warning says, this will restrict your VM life to 24h but greatly cuts costs. Using this option will be helpful if you're running low on credits or need quick results in a bind (paired with a stronger GPU)
+11. On the new menu that appears (under public images), select the ```Deep Learning on Linux``` operating system, with the ```Pytorch 1.10, no-XLA``` version, then click select at the bottom.
+12. You should consider going into the ```Advanced Options``` drop down menu at the bottom and enable ```Spot``` under ```VM provisioning model``` in the management tab. Using this option will be helpful if you're running low on credits.
 13. Click ```Create```. Your instance should be ready in a minute or two.
 14. If your instance failed to create due to the following error - ```Quota 'GPUS_ALL_REGIONS' exceeded. Limit: 0.0 globally.```,  type ```quota``` in the search bar then click ```All quotas```
 15. Search for 'GPUS_ALL_REGIONS' in the filters
