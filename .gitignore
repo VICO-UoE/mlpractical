@@ -61,3 +61,6 @@ target/
 
 # Jupyter notebook
 */.ipynb_checkpoints/*.ipynb
+
+# Data folder
+data/
