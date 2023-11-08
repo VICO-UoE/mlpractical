@@ -32,7 +32,7 @@ Name your project sxxxxxxx-MLPractical - replacing the sxxxxxxx with your studen
     * ```Depp Learning VM with CUDA 11.8 M112``` version,
     * ```Balanced persistent disk``` as boot disk type, 
     * ```100```GB as disk size, and then click select at the bottom.
-![Alt test](notes/figures/boot_disk.png)
+![Alt test](igures/boot_disk.png)
     
 12. Under ```Availability policies```, in the ```VM provisioning model``` drop down menu, select ```Spot```. Using this option will be helpful if you're running low on credits.
 13. You can ```Enable display device``` if you want to use a GUI. This is not necessary for the coursework.
