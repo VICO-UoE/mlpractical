@@ -24,15 +24,22 @@ Name your project sxxxxxxx-MLPractical - replacing the sxxxxxxx with your studen
 5. Click on ```VM FROM INSTANCE TEMPLATE```, and create your VM template for this coursework:
 6. Name the template ```mlpractical-1```.
 7. Select ```Regional``` as the location type and ```us-west1(Oregon)``` as the region.
+
+![VM location](figures/vm_instance_location.png)
+
 8. Under ```Machine Configuration```, select ```GPU``` machine family. Select one NVIDIA Tesla K80. Those are the cheapest one, be careful as others can cost up to 8 times more to run.
 9. Below, in ```Machine type```, under ```PRESET``` select ```n1-standard-2 (2 vCPU, 1 core, 7.5Gb memory)```.
+
+![VM location](figures/vm_instance_configuration.png)
+
 10. Under ```Boot disk```, click change.
 11. On the right-hand new menu that appears (under ```PUBLIC IMAGES```), select
     * ```Deep Learning on Linux``` operating system,
     * ```Depp Learning VM with CUDA 11.8 M112``` version,
     * ```Balanced persistent disk``` as boot disk type, 
     * ```100```GB as disk size, and then click select at the bottom.
-![Alt test](figures/boot_disk.png)
+
+![Boot disk](figures/boot_disk.png)
     
 12. Under ```Availability policies```, in the ```VM provisioning model``` drop down menu, select ```Spot```. Using this option will be helpful if you're running low on credits.
 13. You can ```Enable display device``` if you want to use a GUI. This is not necessary for the coursework.
@@ -41,6 +48,9 @@ Name your project sxxxxxxx-MLPractical - replacing the sxxxxxxx with your studen
 16. Click ```CREATE```. Your instance should be ready in a minute or two.
 15. If your instance failed to create due to the following error - ```The GPUS-ALL-REGIONS-per-project quota maximum has been exceeded. Current limit: 0.0. Metric: compute.googleapis.com/gpus_all_regions.```, click on ```REQUEST QUOTA``` in the notification.
 16. Tick ```Compute Engine API``` and then click ```EDIT QUOTAS``` (top right).
+
+![VM location](figures/increase_quota.png)
+
 17. This will open a box in the right side corner. Put your ```New Limit``` as ```1``` and in the description you can mention you need GPU for machine learning coursework.
 18. Click ```NEXT```, fill in your details and then click ```SUBMIT REQUEST```.
 19. You will receive a confirmation email with your Quota Limit increased. This may take some minutes.
