@@ -8,41 +8,49 @@ For any question you might have, that is not covered here, a quick google search
 
 
 ### To create your account and start a project funded by the student credit
-1. Login with your preferred gmail id to [google cloud console](https://cloud.google.com/), click on Select a Project on the left hand side of the search bar on top of the page and then click on New Project on the right hand side of the Pop-Up.
-Name your project sxxxxxxx-MLPractical - replacing the sxxxxxxx with your student number. Make sure you are on this project before following the next steps. 
+1. Login with your preferred gmail id to [google cloud console](https://cloud.google.com/). Click on `Console` (upper right corner), which would lead you to a new page and once there, click on Select a Project on the left hand side of the search bar on top of the page and then click on New Project on the right hand side of the Pop-Up.
+Name your project sxxxxxxx-MLPractical - replacing the sxxxxxxx with your student number. **Make sure you are on this project before following the next steps**. 
 2. Get your coupon by following the instructions in the coupon retrieval link that you received.
 3. Once you receive your coupon, follow the email instructions to add your coupon to your account.
 4. Once you have added your coupon, join the [MLPractical GCP Google Group](https://groups.google.com/forum/#!forum/mlpractical_gcp) using the same Google account you used to redeem your coupon. This ensures access to the shared disk images.
-5. Make sure that the financial source for your project is the MLPractical credit by clicking the 3 lines icon at the top left corner and then clicking billing -> go to linked billing account.
-6. If it's not set to the MLPractical credits then set it by going to billing -> manage billing accounts -> My projects. Click the 3 dots under the Actions column for the relevant project and click change billing account. Select the MLPractical credit from your coupon.
+5. Make sure that the financial source for your project is the MLPractical credit. You can check this by going to the [Google Cloud Console](https://console.cloud.google.com/) and selecting your project. Then, click on the `Billing` tile. Once on the `Billing` page, select `Account management` from the left hand side menu. You should see your project under `Projects linked to this billing account`. If not, you can add it by clicking on `Add projects` and selecting your project from the list of available projects. 
 6. Start the project
 
 ### To create an instance
-1. Click the button with the three lines at the top left corner.
-2. Click ```Compute Engine```. You might be asked to activate it.
-3. On the left hand side, select ```VM Instances```.
+1. On the console page, click the button with the three lines at the top left corner.
+2. In the ```Compute Engine``` sub-menu select ```VM Instances```.
+3. Enable ```Compute Engine API``` if prompted.
 4. Click the ```CREATE INSTANCE``` button at the top of the window. 
-5. Name the instance ```mlpractical-1```
-6. Select region to be ```us-west1(Oregon)``` and zone to be ```us-west-1b``` (there are other suitable regions however this one has K80s available right now so we went with this one, feel free to find something else if for some reason you need to, but it is recommended ro run on K80 GPUs.)
-7. In Machine Configuration, select ```GPU``` machine family.
-8. Select NVIDIA Tesla K80. Those are the cheapest one, be careful as others can cost up to 8 times more to run
-9. Series and in Machine type select  ```2 vCPUs``` with ```7.5Gb memory```.
+5. Click on ```VM FROM INSTANCE TEMPLATE```, and create your VM template for this coursework:
+6. Name the template ```mlpractical-1```.
+7. Select ```Regional``` as the location type and ```us-west1(Oregon)``` as the region.
+8. Under ```Machine Configuration```, select ```GPU``` machine family. Select one NVIDIA Tesla K80. Those are the cheapest one, be careful as others can cost up to 8 times more to run.
+9. Below, in ```Machine type```, under ```PRESET``` select ```n1-standard-2 (2 vCPU, 1 core, 7.5Gb memory)```.
 10. Under ```Boot disk```, click change.
-11. On the new menu that appears (under public images), select the ```Deep Learning on Linux``` operating system, with the ```Pytorch 1.10, no-XLA``` version, then click select at the bottom.
-12. You should consider going into the ```Advanced Options``` drop down menu at the bottom and enable ```Spot``` under ```VM provisioning model``` in the management tab. Using this option will be helpful if you're running low on credits.
-13. Click ```Create```. Your instance should be ready in a minute or two.
-14. If your instance failed to create due to the following error - ```Quota 'GPUS_ALL_REGIONS' exceeded. Limit: 0.0 globally.```,  type ```quota``` in the search bar then click ```All quotas```
-15. Search for 'GPUS_ALL_REGIONS' in the filters
-16. Tick in the box next to Global and then Click ```Edit Quotas``` in the top bar. 
-17. This will open a box in the right side corner asking for your details. Fill in those and then click Next.
-18. Put your New Limit as ```1``` and in the description you can mention you need GPU for machine learning coursework. And then Send Request. 
+11. On the right-hand new menu that appears (under ```PUBLIC IMAGES```), select
+    * ```Deep Learning on Linux``` operating system,
+    * ```Depp Learning VM with CUDA 11.8 M112``` version,
+    * ```Balanced persistent disk``` as boot disk type, 
+    * ```100```GB as disk size, and then click select at the bottom.
+![Alt test](relative%20notes/figures/boot_disk.png?raw=true "Title")
+    
+12. Under ```Availability policies```, in the ```VM provisioning model``` drop down menu, select ```Spot```. Using this option will be helpful if you're running low on credits.
+13. You can ```Enable display device``` if you want to use a GUI. This is not necessary for the coursework.
+14. Leave other options as default and click ```CREATE```.
+15. Tick your newly created template and click ```CREATE VM``` (top centre).
+16. Click ```CREATE```. Your instance should be ready in a minute or two.
+15. If your instance failed to create due to the following error - ```The GPUS-ALL-REGIONS-per-project quota maximum has been exceeded. Current limit: 0.0. Metric: compute.googleapis.com/gpus_all_regions.```, click on ```REQUEST QUOTA``` in the notification.
+16. Tick ```Compute Engine API``` and then click ```EDIT QUOTAS``` (top right).
+17. This will open a box in the right side corner. Put your ```New Limit``` as ```1``` and in the description you can mention you need GPU for machine learning coursework.
+18. Click ```NEXT```, fill in your details and then click ```SUBMIT REQUEST```.
 19. You will receive a confirmation email with your Quota Limit increased. This may take some minutes.
 20. After the confirmation email, you can recheck the GPU(All Regions) Quota Limit being set to 1. This usually shows up in 10-15 minutes after the confirmation email. 
-21. Retry making the VM instance again as before and you should have your instance now. 
+21. Retry making the VM instance again as before, by choosing your template, and you should have your instance now. 
+22. Dont forget to stop your instance when not using it. You pay for the time you use the machine, not for the computational cycles used.
 
 
 #### Note
-Be careful to select 1 x K80 GPU (P100s and P4s are 5x more expensive)
+Be careful to select 1 x K80 GPU (P100s and P4s are 5x more expensive).
 
 You only have $50 dollars worth of credit, which should be about 125 hours of GPU usage on a K80.
 
