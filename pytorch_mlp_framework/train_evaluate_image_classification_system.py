@@ -37,9 +37,9 @@ test_data = data_providers.CIFAR100(root='data', set_name='test',
                  transform=transform_test,
                  download=True)  # initialize our rngs using the argument set seed
 
-train_data_loader = DataLoader(train_data, batch_size=args.batch_size, shuffle=True, num_workers=4)
-val_data_loader = DataLoader(val_data, batch_size=args.batch_size, shuffle=True, num_workers=4)
-test_data_loader = DataLoader(test_data, batch_size=args.batch_size, shuffle=True, num_workers=4)
+train_data_loader = DataLoader(train_data, batch_size=args.batch_size, shuffle=True, num_workers=2)
+val_data_loader = DataLoader(val_data, batch_size=args.batch_size, shuffle=True, num_workers=2)
+test_data_loader = DataLoader(test_data, batch_size=args.batch_size, shuffle=True, num_workers=2)
 
 if args.block_type == 'conv_block':
     processing_block_type = ConvolutionalProcessingBlock
