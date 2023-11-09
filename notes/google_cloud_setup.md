@@ -4,8 +4,8 @@ This document has been created to help you setup a google cloud instance to be u
 This document is non-exhaustive and many more useful information is available on the [google cloud documentation page](https://cloud.google.com/docs/).
 For any question you might have, that is not covered here, a quick google search should get you what you need. Anything in the official google cloud docs should be very helpful.
 
-| WARNING: Read those instructions carefully. You will be given 50$ worth of credits and you will need to manage them properly |
-| ---------------------------------------------------------------------------------------------------------------------------- |
+| WARNING: Read those instructions carefully. You will be given 50$ worth of credits and you will need to manage them properly. We will not be able to provide more credits. |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
 
 ### To create your account and start a project funded by the student credit
