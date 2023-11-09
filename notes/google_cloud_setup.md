@@ -75,14 +75,14 @@ You only have $50 dollars worth of credit, which should be about 125 hours of GP
 **Note**: You might be asked to provide a passphrase to generate your local key, simply use a password of your choice. There might be some Yes/No style questions as well, choose yes, when that happens.
 
 4. Reset your terminal using ```reset; source ~/.bashrc```. Then authorize the current machine to access your nodes run ```gcloud auth login```. This will authenticate your google account login.
-3. Follow the prompts to get a token for your current machine.
-4. Run ```gcloud config set project PROJECT_ID``` where you replace `PROJECT-ID` with your project ID. You can find that in the projects drop down menu on the top of the Google Compute Engine window; this sets the current project as the active one. If you followed the above 
+5. Follow the prompts to get a token for your current machine.
+6. Run ```gcloud config set project PROJECT_ID``` where you replace `PROJECT-ID` with your project ID. You can find that in the projects drop down menu on the top of the Google Compute Engine window; this sets the current project as the active one. If you followed the above 
 instructions, your project ID should be `sxxxxxxx-mlpractical`, where `sxxxxxxx` is your student number.
-5. In your compute engine window, in the line for the instance  that you have started (`mlpractical-1`), click on the downward arrow next to ```SSH```. Choose ```View gcloud command```. Copy the command to your terminal and press enter. Make sure your VM is up and running before doing this.
-6. Add a password for your ssh-key (and remember it!). 
-7. Re-enter password (which will unlock your ssh-key) when prompted.
-8. On your first login, you will be asked if you want to install nvidia drivers, **DO NOT AGREE** and follow the nvidia drivers installation below.
-9. Install the R470 Nvidia driver by running the following commands:
+7. In your compute engine window, in the line for the instance  that you have started (`mlpractical-1`), click on the downward arrow next to ```SSH```. Choose ```View gcloud command```. Copy the command to your terminal and press enter. Make sure your VM is up and running before doing this.
+8. Add a password for your ssh-key (and remember it!). 
+9. Re-enter password (which will unlock your ssh-key) when prompted.
+10. On your first login, you will be asked if you want to install nvidia drivers, **DO NOT AGREE** and follow the nvidia drivers installation below.
+11. Install the R470 Nvidia driver by running the following commands:
     * Add "contrib" and "non-free" components to /etc/apt/sources.list
     ```
     sudo -e /etc/apt/sources.list
@@ -101,24 +101,35 @@ instructions, your project ID should be `sxxxxxxx-mlpractical`, where `sxxxxxxx`
     sudo apt update
     sudo apt install nvidia-driver firmware-misc-nonfree
     ```
-10. Run ```nvidia-smi``` to confirm that the GPU can be found.  This should report 1 Tesla K80 GPU. if not, the driver might have failed to install.
-11. Well done, you are now in your instance and ready to use it for your coursework.
-12. Clone a fresh mlpractical repository, and checkout branch `coursework2`: 
+12. Run ```nvidia-smi``` to confirm that the GPU can be found.  This should report 1 Tesla K80 GPU. if not, the driver might have failed to install.
+13. To test that PyTorch has access to the GPU you can type the commands below in your terminal. You should see `torch.cuda_is_available()` return `True`.
+    ```
+    python
+    ```
+    ```
+    import torch
+    torch.cuda.is_available()
+    ```
+    ```
+    exit()
+    ```
+14. Well done, you are now in your instance and ready to use it for your coursework.
+15. **When the coursework is released**, clone a fresh mlpractical repository, and checkout branch `coursework2`: 
 
-```
-git clone https://github.com/VICO-UoE/mlpractical.git ~/mlpractical
-cd ~/mlpractical
-git checkout -b coursework2 origin/mlp2023-24/coursework2
-python setup.py develop
-```
+    ```
+    git clone https://github.com/VICO-UoE/mlpractical.git ~/mlpractical
+    cd ~/mlpractical
+    git checkout -b coursework2 origin/mlp2023-24/coursework2
+    python setup.py develop
+    ```
 
-Then, to test PyTorch running on the GPU, run this script that trains a small convolutional network (7 conv layers + 1 linear layer, 32 filters) on CIFAR100:
+    Then, to test PyTorch running on the GPU, run this script that trains a small convolutional network (7 conv layers + 1 linear layer, 32 filters) on CIFAR100:
 
-```
-python pytorch_mlp_framework/train_evaluate_image_classification_system.py --batch_size 100 --seed 0 --num_filters 32 --num_stages 3 --num_blocks_per_stage 0 --experiment_name VGG_08_experiment --use_gpu True --num_classes 100 --block_type 'conv_block' --continue_from_epoch -1
-```
+    ```
+    python pytorch_mlp_framework/train_evaluate_image_classification_system.py --batch_size 100 --seed 0 --num_filters 32 --num_stages 3 --num_blocks_per_stage 0 --experiment_name VGG_08_experiment --use_gpu True --num_classes 100 --block_type 'conv_block' --continue_from_epoch -1
+    ```
 
-You should be able to see an experiment running, using the GPU. It should be doing about 26-30 it/s (iterations per second). You can stop it when ever you like using `ctrl-c`.
+    You should be able to see an experiment running, using the GPU. It should be doing about 26-30 it/s (iterations per second). You can stop it when ever you like using `ctrl-c`.
 
 If all the above matches what’s stated then you should be ready to run your coursework jobs.
 

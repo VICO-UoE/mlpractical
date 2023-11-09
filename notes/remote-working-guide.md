@@ -32,7 +32,7 @@ bash scripts/secure-notebook-server.sh
 ```
 As this script creates a self-signed certificate to set up the secure HTTP encrypted communication between the browser and server, you will be shown a security warning when you load up the URL the notebooks are being served on.
 
-If you want to manually secure the notebook server yourself or to create a certificate which will stop the security warnings appearing you can refer to the [relevant official Jupyter documentation page](http://jupyter-notebook.readthedocs.io/en/latest/public_server.html).
+If you want to manually secure the notebook server yourself or to create a certificate which will stop the security warnings appearing you can refer to the [relevant official Jupyter documentation page](https://jupyter-notebook.readthedocs.io/en/latest/notebook.html).
 
 ## Connecting to a remote `student.compute` server over SSH
 

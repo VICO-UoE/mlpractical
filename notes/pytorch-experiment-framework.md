@@ -1,15 +1,15 @@
-# Pytorch Experiment Framework
+# PyTorch Experiment Framework
 
 ## What does this framework do?
-The Pytorch experiment framework located in ```mlp/pytorch_mlp_framework``` includes tooling for building an array of deep neural networks,
+The PyTorch experiment framework located in ```mlp/pytorch_mlp_framework``` includes tooling for building an array of deep neural networks,
 including fully connected and convolutional networks. In addition, it also includes tooling for experiment running, 
 metric handling and storage, model weight storage, checkpointing (allowing continuation from previous saved point), as 
 well as taking care of keeping track of the best validation model which is then used as the end to produce test set evaluation metrics.
 
 ## Why do we need it?
-It serves two main purposes. The first, is to allow you an easy, worry-free transition into using Pytorch for experiments
+It serves two main purposes. The first, is to allow you an easy, worry-free transition into using PyTorch for experiments
  in your coursework. The second, is to teach you good coding practices for building and running deep learning experiments
-  using Pytorch. The framework comes fully loaded with tooling that can keep track of relevant metrics, save models, resume from previous saved states and 
+  using PyTorch. The framework comes fully loaded with tooling that can keep track of relevant metrics, save models, resume from previous saved states and 
   even automatically choose the best validation model for test set evaluation. We include documentation and comments in almost 
   every single line of code in the framework, to help you maximize your learning. The code style itself, can be used for
    learning good programming practices in structuring your code in a modular, readable and computationally efficient manner that minimizes chances of user-error.
@@ -19,24 +19,15 @@ It serves two main purposes. The first, is to allow you an easy, worry-free tran
 First thing you have to do is activate your conda MLP environment. 
 
 ### GPU version on Google Compute Engine
-For usage on google cloud, the disk image we provide comes pre-loaded with all the packages you need to run the Pytorch
-experiment framework, including Pytorch itself.  Thus when you created an instance and setup your environment, everything you need for this framework was installed, thus removing the need for you to install Pytorch.
 
-
+For usage on google cloud, the disk image we provide comes pre-loaded with all the packages you need to run the PyTorch
+experiment framework, including PyTorch itself.  Thus when you created an instance and setup your environment, everything you need for this framework was installed, thus removing the need for you to install PyTorch.
 
 ### CPU version on DICE (or other local machine)
 
-If you do not have your MLP conda environment installed on your current machine 
-please follow the instructions in notes/environment-set-up.md. Once your mlp conda environment is activated, please go to
-[Pytorch's installation page](https://pytorch.org/get-started/locally/) and take some time to choose the right Pytorch version for your setup (taking care to choose CPU/GPU version depending on what hardward you have available).
+If you do not have your MLP conda environment installed on your current machine please follow the instructions in the [MLP environment installation guide](notes/environment-set-up.md). It includes an explanation on how to install a CPU version of PyTorch, or a GPU version if you have a GPU available on your local machine.
 
-For example, on DICE you can install the CPU version using the command: 
-```
-conda install pytorch-cpu torchvision-cpu -c pytorch
-```
-
-Once Pytorch is installed in your mlp conda enviroment, you can start using the framework. The framework has been built 
-to allow you to control your experiment hyperparameters directly from the command line, by using command line argument parsing.
+Once PyTorch is installed in your MLP conda enviroment, you can start using the framework. The framework has been built to allow you to control your experiment hyperparameters directly from the command line, by using command line argument parsing.
 
 ## Using the framework
 
@@ -49,7 +40,7 @@ The -h at the end is short for --help, which presents a list with all possible a
 Once you execute that command, you should be able to see the following list:
 
 ```
-Welcome to the MLP course's Pytorch training and inference helper script
+Welcome to the MLP course's PyTorch training and inference helper script
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -125,9 +116,9 @@ We have also provided the exact scripts we used to run the experiments of VGG07 
 **However, remember, if you want to reuse those scripts for your own investigations, change the experiment name and seed.
 If you do not change the name, the old folders will be overwritten.**
 
-## So, where can I ask more questions and find more information on Pytorch and what it can do?
+## So, where can I ask more questions and find more information on PyTorch and what it can do?
 
-First course of action should be to search the web and then to refer to the Pytorch [documentation](https://pytorch.org/docs/stable/index.html),
+First course of action should be to search the web and then to refer to the PyTorch [documentation](https://pytorch.org/docs/stable/index.html),
  [tutorials](https://pytorch.org/tutorials/) and [github](https://github.com/pytorch/pytorch) sites.
  
  If you still can't get an answer to your question then as always, post on Piazza and/or come to the lab sessions.
