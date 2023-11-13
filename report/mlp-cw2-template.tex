@@ -1,4 +1,4 @@
-%% Template for MLP Coursework 2 / 25 November 2022
+%% Template for MLP Coursework 2 / 13 November 2023
 
 %% Based on  LaTeX template for ICML 2017 - example_paper.tex at 
 %%  https://2017.icml.cc/Conferences/2017/StyleAuthorInstructions
@@ -36,36 +36,26 @@
 Deep neural networks have become the state-of-the-art 
 in many standard computer vision problems thanks to their powerful
 representations and availability of large labeled datasets.
-While very deep networks allow for learning more levels of abstractions in their layers from the data,
-training these models successfully is a challenging task
-due to problematic gradient flow through the layers, 
-known as vanishing/exploding gradient problem.
-In this report, we first analyze this problem in VGG models
-with 8 and 38 hidden layers on the CIFAR100 image dataset, 
-by monitoring the gradient flow during training. 
-We explore known solutions to this problem including batch
-normalization or residual connections, and explain their theory
-and implementation details. 
-Our experiments show that batch normalization and residual connections effectively
-address the aforementioned problem and hence enable a deeper model to outperform
-shallower ones in the same experimental setup.
+While very deep networks allow for learning more levels of abstractions in their layers from the data, training these models successfully is a challenging task due to problematic gradient flow through the layers, known as vanishing/exploding gradient problem.
+In this report, we first analyze this problem in VGG models with 8 and 38 hidden layers on the CIFAR100 image dataset, by monitoring the gradient flow during training. 
+We explore known solutions to this problem including batch normalization or residual connections, and explain their theory and implementation details. 
+Our experiments show that batch normalization and residual connections effectively address the aforementioned problem and hence enable a deeper model to outperform shallower ones in the same experimental setup.
 \end{abstract} 
 
 \section{Introduction}
 \label{sec:intro}
-Despite the remarkable progress of deep neural networks in image classification problems~\cite{simonyan2014very, he2016deep}, training very deep networks is a challenging procedure.
+Despite the remarkable progress of modern convolutional neural networks (CNNs) in image classification problems~\cite{simonyan2014very, he2016deep}, training very deep networks is a challenging procedure.
 One of the major problems is the Vanishing Gradient Problem (VGP), a phenomenon where the gradients of the error function with respect to network weights shrink to zero, as they backpropagate to earlier layers, hence preventing effective weight updates. 
 This phenomenon is prevalent and has been extensively studied in various deep neural networks including feedforward  networks~\cite{glorot2010understanding},  RNNs~\cite{bengio1993problem}, and CNNs~\cite{he2016deep}. 
 Multiple solutions have been proposed to mitigate this problem by using weight initialization strategies~\cite{glorot2010understanding},
 activation functions~\cite{glorot2010understanding}, input normalization~\cite{bishop1995neural},
 batch normalization~\cite{ioffe2015batch}, and shortcut connections \cite{he2016deep, huang2017densely}.
 
-This report focuses on diagnosing the VGP occurring in the VGG38 model and addressing it by implementing two standard solutions.
-In particular, we first study a ``broken'' network in terms of its gradient flow, norm of gradients with respect to
-its weights for each layer and contrast it to ones in the healthy VGG08 to pinpoint the problem.
+This report focuses on diagnosing the VGP occurring in the VGG38 model\footnote{VGG stands for the Visual Geometry Group in the University of Oxford.} and addressing it by implementing two standard solutions.
+In particular, we first study a ``broken'' network in terms of its gradient flow, norm of gradients with respect to its weights for each layer and contrast it to ones in the healthy and shallower VGG08 to pinpoint the problem.
 Next, we review two standard solutions for this problem,  batch normalization (BN)~\cite{ioffe2015batch} and residual connections (RC)~\cite{he2016deep} in detail and discuss how they can address the gradient problem.
 We first incorporate batch normalization (denoted as VGG38+BN), residual connections (denoted as VGG38+RC),  and their combination (denoted as VGG38+BN+RC) to the given VGG38 architecture.
-We train the resulting three configurations, and VGG08 and VGG38 models on CIFAR-100 dataset and present the results.
+We train the resulting three configurations, and VGG08 and VGG38 models on CIFAR100 (pronounced as `see far 100' ) dataset and present the results.
 The results show that though separate use of BN and RC does mitigate the vanishing/exploding gradient problem, therefore enabling effective training of the VGG38 model, the best results are obtained by combining both BN and RC.
 
 %
@@ -78,17 +68,17 @@ The results show that though separate use of BN and RC does mitigate the vanishi
     \begin{subfigure}{\linewidth}
         \centering
         \includegraphics[width=\linewidth]{figures/loss_plot.pdf}
-        \caption{Loss per epoch}
+        \caption{Cross entropy error per epoch}
         \label{fig:loss_curves}
     \end{subfigure}
 
     \begin{subfigure}{\linewidth}
         \centering
         \includegraphics[width=\linewidth]{figures/accuracy_plot.pdf}
-        \caption{Accuracy per epoch}
+        \caption{Classification accuracy per epoch}
         \label{fig:acc_curves}
     \end{subfigure}
-    \caption{Training curves for VGG08 and VGG38}
+    \caption{Training curves for VGG08 and VGG38 in terms of (a) cross-entropy error and (b) classification accuracy}
     \label{fig:curves}
 \end{figure}
 
@@ -103,7 +93,7 @@ The results show that though separate use of BN and RC does mitigate the vanishi
 
 Concretely, training deep neural networks typically involves three steps: forward
 pass, backward pass (or backpropagation algorithm~\cite{rumelhart1986learning}) and weight update.
-The first step involves passing the input $\bx^0$ to the network and producing 
+The first step involves passing the input $\bx^{(0)}$ to the network and producing 
 the network prediction and also the error value.
 In detail, each layer takes in the output of the previous layer and applies
 a non-linear transformation:
@@ -114,7 +104,7 @@ a non-linear transformation:
 where $(l)$ denotes the $l$-th layer in $L$ layer deep network,
 $f^{(l)}(\cdot,W^{(l)})$ is a non-linear transformation for layer $l$, and $W^{(l)}$ are the weights of layer $l$.
 For instance, $f^{(l)}$ is typically a convolution operation followed by an activation function in convolutional neural networks.
-The second step involves the backpropagation algorithm, where we calculate the gradient of an error function $E$ (e.g. cross-entropy) for each layer's weight as follows:
+The second step involves the backpropagation algorithm, where we calculate the gradient of an error function $E$ (\textit{e.g.} cross-entropy) for each layer's weight as follows:
 
 \begin{equation}
     \label{eq.bprop}
@@ -129,18 +119,14 @@ The exact update rule depends on the optimizer.
 
 A notorious problem for training deep neural networks is the vanishing/exploding gradient
 problem~\cite{bengio1993problem} that typically occurs in the backpropagation step when some of partial gradient terms in Eq.~\ref{eq.bprop} includes values larger or smaller than 1.
-In this case, due to the multiple consecutive multiplications, the gradients w.r.t. weights
-can get exponentially very small (close to 0) or very large (close to infinity) and
+In this case, due to the multiple consecutive multiplications, the gradients \textit{w.r.t.} weights can get exponentially very small (close to 0) or very large (close to infinity) and
 prevent effective learning of network weights.
 
 
 %
 
 
-Figures~\ref{fig:grad_flow_08} and \ref{fig:grad_flow_38} depict the gradient flows through
-VGG architectures \cite{simonyan2014very} with 8 and 38 layers respectively,
-trained and evaluated for a total of 100 epochs on the 
-CIFAR100 dataset. \questionOne.
+Figures~\ref{fig:grad_flow_08} and \ref{fig:grad_flow_38} depict the gradient flows through VGG architectures \cite{simonyan2014very} with 8 and 38 layers respectively, trained and evaluated for a total of 100 epochs on the CIFAR100 dataset. \questionOne.
 
 
 \section{Background Literature}
@@ -153,14 +139,11 @@ deep CNNs.
 BN seeks to solve the  problem of 
 internal covariate shift (ICS), when distribution of each layer’s 
 inputs changes during training, as the parameters of the previous layers change. 
-The authors
-argue that without batch normalization, the distribution of
-each layer’s inputs can vary significantly due to the 
-stochastic nature of randomly sampling mini-batches from your
-training set. Layers in the network hence must continuously
-adapt to these high variance distributions which hinders the
-rate of convergence gradient-based optimizers. This optimization
-problem is exacerbated further with network depth due
+The authors argue that without batch normalization, the distribution of
+each layer’s inputs can vary significantly due to the  stochastic nature of randomly sampling mini-batches from your
+training set. 
+Layers in the network hence must continuously adapt to these high variance distributions which hinders the rate of convergence gradient-based optimizers.
+This optimization problem is exacerbated further with network depth due
 to the updating of parameters at layer $l$ being dependent on
 the previous $l-1$ layers.
 
@@ -175,8 +158,7 @@ their technique through training an ensemble of BN
 networks which achieve an accuracy on the ImageNet classification
 task exceeding that of humans in 14 times fewer
 training steps than the state-of-the-art of the time.
-It should be noted, however, that the exact reason for
-BN’s effectiveness is still not completely understood and it is 
+It should be noted, however, that the exact reason for BN’s effectiveness is still not completely understood and it is 
 an open research question~\cite{santurkar2018does}.
 
 
@@ -207,7 +189,47 @@ parameters, nor computational complexity.
 \section{Solution overview}
 \subsection{Batch normalization}
 
-\questionThree.
+
+
+
+
+BN has been a standard component in the state-of-the-art 
+convolutional neural networks \cite{he2016deep,huang2017densely}.
+% As mentioned in Section~\ref{sec:lit_rev}, 
+Concretely, BN is a
+layer transformation that is performed to whiten the activations
+originating from each layer. 
+As computing full dataset statistics at each training iteration
+would be computationally expensive, BN computes batch statistics
+to approximate them. 
+Given a minibatch of $B$ training samples and their feature maps
+ $X = (\bx^1, \bx^2,\ldots , \bx^B)$ at an arbitrary layer where $X \in \mathbb{R}^{B\times H \times W \times C}$, $H, W$ are the height, width of the feature map and $C$ is the number of channels, the batch normalization first computes the following statistics:
+
+\begin{align}
+\label{eq.bnstats}
+    \mu_c &= \frac{1}{BWH}  \sum_{n=1}^{B}\sum_{i,j=1}^{H,W} \bx_{cij}^{n}\\
+    \sigma^2_c &= \frac{1}{BWH}
+    \sum_{n=1}^{B}\sum_{i,j=1}^{H,W} (\bx_{cij}^{n} - \mu_{c})^2
+\end{align} where $c$, $i$, $j$ denote the index values for $y$, $x$ and channel coordinates of feature maps, and $\bm{\mu}$ and $\bm{\sigma}^2$ are the mean and variance of the batch.
+
+BN applies the following operation on each feature map in batch B for every $c,i,j$:
+\begin{equation}
+\label{eq.bnop}
+\text{BN}(\bx_{cij}) = \frac{\bx_{cij} - \mu_{c}}{\sqrt{\sigma^2_{c}} + \epsilon} * \gamma_{c} + \beta_{c}
+\end{equation} where $\gamma \in \mathbb{R}^C$ and $\beta\in \mathbb{R}^C$ are learnable parameters and $\epsilon$ is a small constant introduced to ensure numerical stability.
+
+At inference time, using batch statistics is a poor choice as it introduces noise in the evaluation and might not even be well defined. Therefore, $\bm{\mu}$ and $\bm{\sigma}$ are replaced by running averages of the mean and variance computed during training, which is a better approximation of the full dataset statistics.
+
+Recent work
+has shown that BatchNorm has a more fundamental
+benefit of smoothing the optimization landscape during
+training \cite{santurkar2018does} thus enhancing the predictive
+power of gradients as our guide to the global minimum.
+Furthermore, a smoother optimization landscape should
+additionally enable the use of a wider range of learning
+rates and initialization schemes which is congruent with the
+findings of Ioffe and Szegedy in the original BatchNorm
+paper~\cite{ioffe2015batch}.
 
 
 \subsection{Residual connections}
@@ -219,14 +241,13 @@ More precisely, given a mapping $F^{(b)}$ that denotes the transformation of the
 feature map $\bx^{(b-1)}$ as $\bx^{(b)} = \bx^{(b-1)} + {F}(\bx^{(b-1)})$.
 
 Intuitively, stacking residual blocks creates an architecture where inputs of each blocks
-are given two paths : passing through the convolution or skipping to the next layer. A 
-residual network can therefore be seen as an ensemble model averaging every sub-network
+are given two paths : passing through the convolution or skipping to the next layer. A residual network can therefore be seen as an ensemble model averaging every sub-network
 created by choosing one of the two paths. The skip connections allow gradients to flow
 easily into early layers, since 
 \begin{equation}
-    \frac{\partial \bx_{(b)}}{\partial \bx^{(b-1)}} = \mathbbm{1} + \frac{\partial{F}(\bx^{(b-1)})}{\partial \bx^{(b-1)}}
+    \frac{\partial \bx^{(b)}}{\partial \bx^{(b-1)}} = \mathbbm{1} + \frac{\partial{F}(\bx^{(b-1)})}{\partial \bx^{(b-1)}}
     \label{eq.grad_skip}
-\end{equation} where $\bx^{(b-1)} \in \mathbb{R}^{H \times W \times C}$ and $\mathbbm{1}$ is a $\mathbb{R}^{H \times W \times C}$-dimensional tensor with entries 1. 
+\end{equation} where $\bx^{(b-1)} \in \mathbb{R}^{C \times H \times W }$ and $\mathbbm{1}$ is a $\mathbb{R}^{C \times H \times W}$-dimensional tensor with entries 1 where $C$, $H$ and $W$ denote the number of feature maps, its height and width respectively. 
 Importantly, $\mathbbm{1}$ prevents the zero gradient flow.
 
 
@@ -238,15 +259,11 @@ Importantly, $\mathbbm{1}$ prevents the zero gradient flow.
 
 \questionTableOne
 
-We conduct our experiment on the CIFAR-100 dataset \cite{krizhevsky2009learning},
-which consists of 60,000 32x32 colour images from
-100 different classes. The number of samples per class is balanced, and the
+We conduct our experiment on the CIFAR100 dataset \cite{krizhevsky2009learning},
+which consists of 60,000 32x32 colour images from 100 different classes. The number of samples per class is balanced, and the
 samples are split into training, validation, and test set while
-maintaining balanced class proportions. In total, there are
-47,500; 2,500; and 10,000 instances in the training, validation,
-and test set, respectively. Moreover, we apply data
-augmentation strategies (cropping, horizontal flipping) to
-improve the generalization of the model.
+maintaining balanced class proportions. In total, there are 47,500; 2,500; and 10,000 instances in the training, validation,
+and test set, respectively. Moreover, we apply data augmentation strategies (cropping, horizontal flipping) to improve the generalization of the model.
 
 With the goal of understanding whether BN or skip connections
 help fighting vanishing gradients, we first test these
@@ -260,38 +277,33 @@ Additionally, training images are augmented with random
 cropping and horizontal flipping.
 Note that we do not use data augmentation at test time.
 These hyperparameters along with the augmentation strategy are used
-to produce the results shown in Figure~\ref{fig:curves}.
+to produce the results shown in Fig.~\ref{fig:curves}.
 
 When used, BN is applied
 after each convolutional layer, before the Leaky
 ReLU non-linearity. 
 Similarly, the skip connections are applied from 
 before the convolution layer to before the final activation function
-of the block as per Figure~2 of \cite{he2016deep}. 
+of the block as per Fig.~2 of \cite{he2016deep}. 
 Note that adding residual connections between the feature maps before and after downsampling requires special treatment, as there is a dimension mismatch between them. 
 Therefore in the coursework, we do not use residual connections in the down-sampling blocks. However, please note that batch normalization should still be implemented for these blocks. 
 
 \subsection{Residual Connections to Downsampling Layers}
 \label{subsec:rescimp}
 
-\questionFour.
+\questionThree.
 
 
 \section{Results and Discussion}
 \label{sec:disc}
 
-\questionFive.
+\questionFour.
 
 \section{Conclusion}
 \label{sec:concl}
-    
-\questionSix.
+
+\questionFive.    
 
 \bibliography{refs}
 
 \end{document} 
-
-
-
-
-
