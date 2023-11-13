@@ -52,7 +52,7 @@ activation functions~\cite{glorot2010understanding}, input normalization~\cite{b
 batch normalization~\cite{ioffe2015batch}, and shortcut connections \cite{he2016deep, huang2017densely}.
 
 This report focuses on diagnosing the VGP occurring in the VGG38 model\footnote{VGG stands for the Visual Geometry Group in the University of Oxford.} and addressing it by implementing two standard solutions.
-In particular, we first study a ``broken'' network in terms of its gradient flow, norm of gradients with respect to its weights for each layer and contrast it to ones in the healthy and shallower VGG08 to pinpoint the problem.
+In particular, we first study a ``broken'' network in terms of its gradient flow, L1 norm of gradients with respect to its weights for each layer and contrast it to ones in the healthy and shallower VGG08 to pinpoint the problem.
 Next, we review two standard solutions for this problem,  batch normalization (BN)~\cite{ioffe2015batch} and residual connections (RC)~\cite{he2016deep} in detail and discuss how they can address the gradient problem.
 We first incorporate batch normalization (denoted as VGG38+BN), residual connections (denoted as VGG38+RC),  and their combination (denoted as VGG38+BN+RC) to the given VGG38 architecture.
 We train the resulting three configurations, and VGG08 and VGG38 models on CIFAR100 (pronounced as `see far 100' ) dataset and present the results.
@@ -307,3 +307,8 @@ Therefore in the coursework, we do not use residual connections in the down-samp
 \bibliography{refs}
 
 \end{document} 
+
+
+
+
+
