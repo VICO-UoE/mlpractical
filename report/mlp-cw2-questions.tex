@@ -39,41 +39,36 @@ approximately 1/5 of the columns in a 2-column page}
 
 %% Question 3:
 \newcommand{\questionThree} {
-\youranswer{Question 3 - Describe Batch Normalization (BN) by using equations. Consider both training and test time and explain how BN addresses the vanishing gradient problem. Note that you are not required to provide the derivation of gradients w.r.t. weights for BN weights.
-
-The average length of an answer to this question would be around 2/3 of a column in a 2-column page}
+\youranswer{Question 3 - In this coursework, we didn't incorporate residual connections to the downsampling layers. Explain and justify what would need to be changed in order to add residual connections to the downsampling layers. Give and explain 2 ways of incorporating these changes and discuss pros and cons of each.
+}
 }
 
 %% Question 4:
 \newcommand{\questionFour} {
-\youranswer{Question 4 - In this coursework, we didn't incorporate residual connections to the downsampling layers. Explain and justify what would need to be changed in order to add residual connections to the downsampling layers. Give and explain 2 ways of incorporating these changes and discuss pros and cons of each.
+\youranswer{Question 4 - Present and discuss the experiment results (all of the results and not just the ones you had to fill in) in Table 1 and Figures 4 and 5 (you may use any of the other Figures if you think they are relevant to your analysis). You will have to determine what data are relevant to the discussion, and what information can be extracted from it. Also, discuss what further experiments you would have ran on any combination of VGG08, VGG38, BN, RC in order to
+\begin{itemize}
+    \item Improve performance of the model trained (explain why you expect your suggested experiments will help with this).
+    \item Learn more about the behaviour of BN and RC (explain what you are trying to learn and how).
+\end{itemize}
+
+The average length for an answer to this question is approximately 1 of the columns in a 2-column page
 }
 }
 
 
 %% Question 5:
 \newcommand{\questionFive} {
-\youranswer{Question 5 - Present and discuss the experiment results (all of the results and not just the ones you had to fill in) in Table 1 and Figures 4 and 5 (you may use any of the other Figures if you think they are relevant to your analysis). You will have to determine what data are relevant to the discussion, and what information can be extracted from it. Also, discuss what further experiments you would have ran on any combination of VGG08, VGG38, BN, RC in order to
-\begin{itemize}
-    \item Improve performance of the model trained (explain why you expect your suggested experiments will help with this).
-    \item Learn more about the behaviour of BN and RC (explain what you are trying to learn and how).
-\end{itemize}
-
-The average length for an answer to this question is approximately 1 of the columns in a 2-column page}
-}
-
-%% Question 6:
-\newcommand{\questionSix} {
-\youranswer{Question 6 - Briefly draw your conclusions based on the results from the previous sections (what are the take-away messages?) and conclude your report with a recommendation for future work. 
+\youranswer{Question 5 - Briefly draw your conclusions based on the results from the previous sections (what are the take-away messages?) and conclude your report with a recommendation for future work. 
 
 Good recommendations for future work also draw on the broader literature (the papers already referenced are good starting points). Great recommendations for future work are not just incremental (an example of an incremental suggestion would be: "we could also train with different learning rates") but instead also identify meaningful questions or, in other words, questions with answers that might be somewhat more generally applicable. 
 
 For example, \citep{huang2017densely} end with \begin{quote}``Because of their compact internal representations and reduced feature redundancy, DenseNets may be good feature extractors for various computer vision tasks that build on convolutional features, e.g.,  [4,5].''\end{quote} 
 
-while \cite{bengio1993problem} state in their conclusions that \begin{quote}``There remains theoretical questions to be considered,  such as whether the problem with simple gradient descent  discussed in this paper would be observed with  chaotic attractors that are not  hyperbolic.\\\end{quote}
+while \cite{bengio1993problem} state in their conclusions that \begin{quote}``There remains theoretical questions to be considered,  such as whether the problem with simple gradient descent  discussed in this paper would be observed with  chaotic attractors that are not  hyperbolic.''\\\end{quote}
 
 The length of this question description is indicative of the average length of a conclusion section}
 }
+
 
 %% - - - - - - - - - - - - FIGURES - - - - - - - - - - - - 
 
@@ -81,7 +76,7 @@ The length of this question description is indicative of the average length of a
 \newcommand{\questionFigureThree} {
 \youranswer{Question Figure 3 - Replace this image with a figure depicting the average gradient across layers, for the VGG38 model.
 
-\textit{(The Figure we give is correct, and can be used in your analysis. It is partially obscured so you can get credit for producing your own copy).}
+\textit{(The provided figure is correct, and can be used in your analysis. It is partially obscured so you can get credit for producing your own copy).}
 %
 \begin{figure}[t]
     \centering
