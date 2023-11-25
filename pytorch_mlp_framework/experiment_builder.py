@@ -158,10 +158,10 @@ class ExperimentBuilder(nn.Module):
         for n, p in named_parameters:
             if (p.requires_grad) and ('batch_norm' not in n) and ('bias' not in n):
                 all_grads.append(p.grad.abs().mean())
-                layers.append(layer_name.replace('weight',''))
                 layer_name = n.replace('.','')
                 layer_name = layer_name.replace('layer_dict.','_')
                 layer_name[1:] if layer_name.startswith('_') else layer_name
+                layers.append(layer_name.replace('weight',''))
         
         ########################################
         
