@@ -170,8 +170,6 @@ class ExperimentBuilder(nn.Module):
         return plt
     
     
-    
-    
     def run_train_iter(self, x, y):
         
         self.train()  # sets model to training mode (in case batch normalization or other methods have different procedures for training and evaluation)
