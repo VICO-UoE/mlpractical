@@ -154,18 +154,22 @@ class ExperimentBuilder(nn.Module):
         Complete the code in the block below to collect absolute mean of the gradients for each layer in all_grads with the             layer names in layers.
         """
         ########################################
-        
+
+        for n, p in named_parameters:
+            if (p.requires_grad) and ('batch_norm' not in n) and ('bias' not in n):
+                all_grads.append(p.grad.abs().mean().cpu().numpy())
+                layer_name = n.replace('.','')
+                layer_name = layer_name.replace('layer_dict.','_')
+                layer_name[1:] if layer_name.startswith('_') else layer_name
+                layers.append(layer_name.replace('weight',''))
         
         ########################################
-            
         
         plt = self.plot_func_def(all_grads, layers)
         
         return plt
     
-    
-    
-    
+
     def run_train_iter(self, x, y):
         
         self.train()  # sets model to training mode (in case batch normalization or other methods have different procedures for training and evaluation)
@@ -179,9 +183,8 @@ class ExperimentBuilder(nn.Module):
         self.optimizer.zero_grad()  # set all weight grads from previous training iters to 0
         loss.backward()  # backpropagate to compute gradients for current iter loss
         
+        self.learning_rate_scheduler.step(epoch=self.current_epoch)
         self.optimizer.step()  # update network parameters
-        self.learning_rate_scheduler.step()  # update learning rate scheduler
-        
         _, predicted = torch.max(out.data, 1)  # get argmax of predictions
         accuracy = np.mean(list(predicted.eq(y.data).cpu()))  # compute accuracy
         return loss.cpu().data.numpy(), accuracy
