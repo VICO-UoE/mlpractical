@@ -38,10 +38,11 @@ test_data = data_providers.CIFAR100(root='data', set_name='test',
                  transform=transform_test,
                  download=True)  # initialize our rngs using the argument set seed
 
-context = "fork" if sys.platform == "darwin" else None # fixes PyTorch's bug with MacOS (Intel x64 or Apple Silicon)
-train_data_loader = DataLoader(train_data, batch_size=args.batch_size, shuffle=True, num_workers=2, multiprocessing_context=context)
-val_data_loader = DataLoader(val_data, batch_size=args.batch_size, shuffle=True, num_workers=2, multiprocessing_context=context)
-test_data_loader = DataLoader(test_data, batch_size=args.batch_size, shuffle=True, num_workers=2, multiprocessing_context=context)
+context = 'fork' if sys.platform == 'darwin' else None # fixes PyTorch's bug with MacOS (Intel x64 or Apple Silicon)
+worker_num = 0 if sys.platform == 'win32' else 2
+train_data_loader = DataLoader(train_data, batch_size=args.batch_size, shuffle=True, num_workers=worker_num, multiprocessing_context=context)
+val_data_loader = DataLoader(val_data, batch_size=args.batch_size, shuffle=True, num_workers=worker_num, multiprocessing_context=context)
+test_data_loader = DataLoader(test_data, batch_size=args.batch_size, shuffle=True, num_workers=worker_num, multiprocessing_context=context)
 
 if args.block_type == 'conv_block':
     processing_block_type = ConvolutionalProcessingBlock

@@ -47,7 +47,7 @@ class ExperimentBuilder(nn.Module):
         elif torch.backends.mps.is_available():
             self.device = torch.device('mps')  # sets the device to be GPU (mps)
             self.model.to(self.device)  # sends the model from the cpu to the gpu (mps)
-            print("Use MPS", self.device)
+            print('Use MPS', self.device)
         else:
             print("use CPU")
             self.device = torch.device('cpu')  # sets the device to be CPU
