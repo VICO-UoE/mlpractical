@@ -8,6 +8,7 @@ from pytorch_mlp_framework.arg_extractor import get_args
 from pytorch_mlp_framework.experiment_builder import ExperimentBuilder
 from pytorch_mlp_framework.model_architectures import *
 import os 
+import sys
 # os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 args = get_args()  # get arguments from command line
@@ -37,9 +38,10 @@ test_data = data_providers.CIFAR100(root='data', set_name='test',
                  transform=transform_test,
                  download=True)  # initialize our rngs using the argument set seed
 
-train_data_loader = DataLoader(train_data, batch_size=args.batch_size, shuffle=True, num_workers=2)
-val_data_loader = DataLoader(val_data, batch_size=args.batch_size, shuffle=True, num_workers=2)
-test_data_loader = DataLoader(test_data, batch_size=args.batch_size, shuffle=True, num_workers=2)
+context = "fork" if sys.platform == "darwin" else None # fixes PyTorch's bug with MacOS (Intel x64 or Apple Silicon)
+train_data_loader = DataLoader(train_data, batch_size=args.batch_size, shuffle=True, num_workers=2, multiprocessing_context=context)
+val_data_loader = DataLoader(val_data, batch_size=args.batch_size, shuffle=True, num_workers=2, multiprocessing_context=context)
+test_data_loader = DataLoader(test_data, batch_size=args.batch_size, shuffle=True, num_workers=2, multiprocessing_context=context)
 
 if args.block_type == 'conv_block':
     processing_block_type = ConvolutionalProcessingBlock
