@@ -44,7 +44,7 @@ class ExperimentBuilder(nn.Module):
             self.device =  torch.cuda.current_device()
             self.model.to(self.device)  # sends the model from the cpu to the gpu
             print('Use GPU', self.device)
-        elif torch.backends.mps.is_available():
+        elif torch.backends.mps.is_available() and use_gpu:
             self.device = torch.device('mps')  # sets the device to be GPU (mps)
             self.model.to(self.device)  # sends the model from the cpu to the gpu (mps)
             print('Use MPS', self.device)
