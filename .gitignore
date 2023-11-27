@@ -69,3 +69,7 @@ notebooks/.ipynb_checkpoints/
 
 #Google Cloud stuff
 /google-cloud-sdk
+
+VGG_08_experiment/*
+VGG_38_experiment/*
+data/*
