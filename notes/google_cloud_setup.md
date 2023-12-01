@@ -38,7 +38,8 @@ Name your project sxxxxxxx-MLPractical - replacing the sxxxxxxx with your studen
 10. Under ```Boot disk```, click change.
 11. On the right-hand new menu that appears (under ```PUBLIC IMAGES```), select
     * ```Deep Learning on Linux``` operating system,
-    * ```Depp Learning VM for PyTorch 2.0 with CUDA 11.8 M112``` version,
+    * ```Deep Learning VM for PyTorch 2.0 with CUDA 11.8 M112``` or ```Deep Learning VM for PyTorch 2.0 with CUDA 11.8 M113``` version
+        * **Note**: If none of the above versions are available, you can use any ```Deep Learning VM for PyTorch 2.0 with CUDA 11.8 M***``` instead.
     * ```Balanced persistent disk``` as boot disk type, 
     * ```100```GB as disk size, and then click select at the bottom.
 
@@ -143,7 +144,7 @@ To access the instance in the future simply run the `gcloud` command you copied 
 
 ## Copying data to and from an instance
 
-Please look at the [google docs page on copying data](https://cloud.google.com/filestore/docs/copying-data).
+Please look at the [transfering files to VMs from Linux, macOS and Windows](https://cloud.google.com/compute/docs/instances/transfer-files?hl=en) and [google docs page on copying data](https://cloud.google.com/filestore/docs/copying-data). Note also the link on the page for [seting up your SSH keys (Linux or MacOS)](https://cloud.google.com/compute/docs/instances/access-overview?hl=en).
 
 To copy from local machine to a google instance, have a look at this [stackoverflow post](https://stackoverflow.com/questions/27857532/rsync-to-google-compute-engine-instance-from-jenkins).
 
@@ -164,3 +165,18 @@ While in a session, you can use:
 - ```ctrl+a+n``` to see the next session.
 - ```ctrl+a+c``` to create a new session.
  
+## Troubleshooting:
+
+| Error| Fix|
+| --- | --- |
+| ```ERROR: (gcloud.compute.ssh) [/usr/bin/ssh] exited with return code [255].``` | Delete the ssh key files and try again: ```rm ~/.ssh/google_compute_engine*``` |
+|"Mapping" error after following step 3 (```tar zxvf google-cloud-sdk-365.0.0-linux-x86_64.tar.gz; bash google-cloud-sdk/install.sh```) | This is due to conflicts and several packages not being installed properly according to your Python version when creating your Conda environment. Run ```conda create --name mlp python=3.9``` to recreate the environment supported with Python 3.9.  Then, activate the environment ```conda activate mlp``` and follow the instructions from step 3 again.  |
+|"Mapping" error even after successfully completing steps 3 and 4 when using the ```gcloud``` command | Restart your computer and run the following command: ```export CLOUDSDK_PYTHON="/usr/bin/python3"``` |
+| ```gcloud command not found``` | Restart your computer and run the following command: ```export CLOUDSDK_PYTHON="/usr/bin/python3"``` |
+| ```module 'collections' has no attribute 'Mapping'``` when installing the Google Cloud SDK | Install Google Cloud SDK with brew: ```brew install --cask google-cloud-sdk```|
+| ```Access blocked: authorisation error``` in your browser after running ```gcloud auth login``` | Run ```gcloud components update``` and retry to login again. |
+| ```ModuleNotFoundError: No module named 'GPUtil'``` | Install the GPUtil package and you should be able to run the script afterwards: ```pip install GPUtil``` |
+| ```module mlp not found``` | Install the mlp package in your environment: ```python setup.py develop``` |
+| ```NVIDIA-SMI has failed because it couldn't communicate with the NVIDIA driver. Make sure that the latest NVIDIA driver is installed and running.``` | Remove the current driver by running: ```cd /``` and ```sudo apt purge nvidia-*``` Follow step 11 of the instructions or the following commands: (1) download the R470 driver ```wget https://us.download.nvidia.com/XFree86/Linux-x86_64/470.223.02/NVIDIA-Linux-x86_64-470.223.02.run```, (2) change the file permissions to make it executable with ```chmod +x NVIDIA-Linux-x86_64-470.223.02.run``` and (3) install the driver ```sudo ./NVIDIA-Linux-x86_64-470.223.02.run``` |
+| ```module 'torch' has no attribute 'cuda'``` | You most probably have a file named ```torch.py``` in your current directory. Rename it to something else and try again. You might need to run the setup again. Else ```import torch``` will be calling this file instead of the PyTorch library and thus causing a conflict. |
+| ```Finalizing NVIDIA driver installation. Error! Your kernel headers for kernel 5.10.0-26-cloud-amd64 cannot be found. Please install the linux-headers-5.10.0-26-cloud-amd64 package, or use the --kernelsourcedir option to tell DKMS where it's located. Driver updated for latest kernel.``` | Install the header package with ```sudo apt install linux-headers-5.10.0-26-cloud-amd64``` |
