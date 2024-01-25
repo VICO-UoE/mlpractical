@@ -33,19 +33,25 @@ an exhaustive guide that goes deep into micro-details of the Slurm ecosystem. Fo
       - Press CTRL-C to abort the installation
       - Or specify a different location below
     ```
-4. Now you need to activate your environment by first running:
+4. At the last prompt to initialise conda reply 'yes':
+    ```
+    Do you wish the installer to initialize Miniconda3
+    by running conda init [yes|no]
+    [no] >>> yes
+    ```
+5. Now you need to activate your environment by first running:
 ```source .bashrc```.
 This reloads .bashrc which includes the new miniconda path.
-5. Run ```source activate``` to load miniconda root.
-6. Now run ```conda create -n mlp python=3``` this will create the mlp environment. At the prompt choose y.
-7. Now run ```source activate mlp```.
-8. Install git using```conda install git```. Then config git using: 
+6. Run ```source activate``` to load miniconda root.
+7. Now run ```conda create -n mlp python=3``` this will create the mlp environment. At the prompt choose y.
+8. Now run ```source activate mlp```.
+9. Install git using```conda install git```. Then config git using: 
 ```git config --global user.name "[your name]"; git config --global user.email "[matric-number]@sms.ed.ac.uk"```
-9. Now clone the mlpractical repo using ```git clone https://github.com/VICO-UoE/mlpractical.git```.
-10. ```cd mlpractical```
-11. Checkout the mlp_cluster_tutorial branch using ```git checkout mlp2023-24/mlp_compute_engines```.
-12. Install the required packages using ```bash install.sh```.
-13. This includes all of the required installations. Proceed to the next section outlining how to use the slurm cluster
+10. Now clone the mlpractical repo using ```git clone https://github.com/VICO-UoE/mlpractical.git```.
+11. ```cd mlpractical```
+12. Checkout the mlp_cluster_tutorial branch using ```git checkout mlp2023-24/mlp_compute_engines```.
+13. Install the required packages using ```bash install.sh```.
+14. This includes all of the required installations. Proceed to the next section outlining how to use the slurm cluster
  management software. Please remember to clean your setup files using ```conda clean -t```
  
 ### Using Slurm
