@@ -14,7 +14,7 @@ an exhaustive guide that goes deep into micro-details of the Slurm ecosystem. Fo
 2. Then ssh into either mlp1 or mlp2 which are the headnodes of the GPU cluster - it does not matter which you use. To do that
  run ```ssh mlp1``` or ```ssh mlp2```.
 3. You are now logged into the MLP gpu cluster. If this is your first time logging in you'll need to build your environment.  This is because your home directory on the GPU cluster is separate to your usual AFS home directory on DICE.
-- Note: Alternatively you can just ```ssh @sxxxxxxx@mlp.ed.ac.uk``` to get there in one step.
+- Note: Alternatively you can just ```ssh sxxxxxxx@mlp.inf.ed.ac.uk``` to get there in one step.
 
 ### Installing requirements:
 1. Start by downloading the miniconda3 installation file using 
