@@ -51,6 +51,9 @@ This reloads .bashrc which includes the new miniconda path.
 11. ```cd mlpractical```
 12. Checkout the mlp_cluster_tutorial branch using ```git checkout mlp2023-24/mlp_compute_engines```.
 13. Install the required packages using ```bash install.sh```.
+
+> Note: Check that you can use the GPU version of PyTorch by running ```python -c "import torch; print(torch.cuda.is_available())"``` in a `bash` script (see the example below). If this returns `True`, then you are good to go. If it returns `False`, then you need to install the GPU version of PyTorch manually. To do this, run ```conda uninstall pytorch``` and then ```pip install torch torchvision --index-url https://download.pytorch.org/whl/cu118``` or ```pip install torch torchvision```. This will install the latest version of PyTorch with CUDA support. This version is also compatible with older CUDA versions installed on the cluster.
+
 14. This includes all of the required installations. Proceed to the next section outlining how to use the slurm cluster
  management software. Please remember to clean your setup files using ```conda clean -t```
  
