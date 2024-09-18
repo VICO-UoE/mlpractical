@@ -137,7 +137,7 @@ class MNISTDataProvider(DataProvider):
     #    """Returns next data batch or raises `StopIteration` if at end."""
     #    inputs_batch, targets_batch = super(MNISTDataProvider, self).next()
     #    return inputs_batch, self.to_one_of_k(targets_batch)
-    #
+    
     def __next__(self):
         return self.next()
 
@@ -163,14 +163,14 @@ class MetOfficeDataProvider(DataProvider):
     """South Scotland Met Office weather data provider."""
 
     def __init__(self, window_size, batch_size=10, max_num_batches=-1,
-                 shuffle_order=True, rng=None):
+                shuffle_order=True, rng=None):
         """Create a new Met Offfice data provider object.
 
         Args:
             window_size (int): Size of windows to split weather time series
-               data into. The constructed input features will be the first
-               `window_size - 1` entries in each window and the target outputs
-               the last entry in each window.
+            data into. The constructed input features will be the first
+            `window_size - 1` entries in each window and the target outputs
+            the last entry in each window.
             batch_size (int): Number of data points to include in each batch.
             max_num_batches (int): Maximum number of batches to iterate over
                 in an epoch. If `max_num_batches * batch_size > num_data` then
@@ -187,19 +187,21 @@ class MetOfficeDataProvider(DataProvider):
         assert os.path.isfile(data_path), (
             'Data file does not exist at expected path: ' + data_path
         )
-        # load raw data from text file
-        # ...
-        # filter out all missing datapoints and flatten to a vector
-        # ...
-        # normalise data to zero mean, unit standard deviation
-        # ...
-        # convert from flat sequence to windowed data
-        # ...
-        # inputs are first (window_size - 1) entries in windows
+        #TODO: load raw data from text file
+        
+        #TODO: filter out all missing datapoints and flatten to a vector
+        
+        #TODO: normalise data to zero mean, unit standard deviation
+
+        #TODO: convert from flat sequence to windowed data
+
+        #TODO: separate into inputs and targets
+        # inputs are the first (window_size - 1) entries in windows
         # inputs = ...
-        # targets are last entry in windows
+        # targets are the last entries in windows
         # targets = ...
-        # initialise base class with inputs and targets arrays
+        
+        # initialise base class with inputs and targets arrays (uncomment below)
         # super(MetOfficeDataProvider, self).__init__(
         #     inputs, targets, batch_size, max_num_batches, shuffle_order, rng)
     def __next__(self):
