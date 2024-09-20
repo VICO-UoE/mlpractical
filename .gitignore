@@ -61,6 +61,3 @@ target/
 
 # Notebook stuff
 notebooks/.ipynb_checkpoints/
-
-# Data folder
-data/
