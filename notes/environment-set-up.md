@@ -347,8 +347,8 @@ And on Windows systems (replacing the `[]` placeholders with the relevant paths)
 cd [path-to-conda-root]\envs\mlp
 mkdir .\etc\conda\activate.d
 mkdir .\etc\conda\deactivate.d
-@echo "set MLP_DATA_DIR=[path-to-local-repository]\data" >> .\etc\conda\activate.d\env_vars.bat
-@echo "set MLP_DATA_DIR="  >> .\etc\conda\deactivate.d\env_vars.bat
+echo "set MLP_DATA_DIR=[path-to-local-repository]\data" >> .\etc\conda\activate.d\env_vars.bat
+echo "set MLP_DATA_DIR="  >> .\etc\conda\deactivate.d\env_vars.bat
 set MLP_DATA_DIR=[path-to-local-repository]\data
 ```
 
