@@ -23,7 +23,7 @@ fi
 # Get user to enter notebook server password
 echo "Getting notebook server password hash. Enter password when prompted ..."
 printf $SEPARATOR
-HASH=$(python -c "from notebook.auth import passwd; print(passwd());")
+HASH=$(python -c "from jupyter_server.auth import passwd; print(passwd());")
 printf $SEPARATOR
 echo "... got password hash."
 # Generate self-signed OpenSSL certificate and key file
