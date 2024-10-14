@@ -1,3 +1,4 @@
+
 #dropbox stuff
 *.dropbox*
 
@@ -25,7 +26,6 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
-etc/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -60,9 +60,17 @@ docs/_build/
 # PyBuilder
 target/
 
+# Pycharm
+.idea/*
+
 # Notebook stuff
 notebooks/.ipynb_checkpoints/
 
 # Data folder
 data/
-solutions/
+
+# Latex stuff
+report/mlp-cw1-template.aux
+report/mlp-cw1-template.out
+report/mlp-cw1-template.pdf
+report/mlp-cw1-template.synctex.gz
