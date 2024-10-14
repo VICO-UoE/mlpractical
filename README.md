@@ -11,5 +11,5 @@ The code in this repository is split into:
 
 ## Coursework 1
 This branch contains the python code and latex files of the first coursework. The code follows the same structure as the labs, in particular the mlp package, and a specific notebook is provided to help you run experiments.
- * Detailed instructions are given in MLP2024_25_CW1_Spec.pdf (see Learn, Assignment Submission, Coursework 1).
+ * Detailed instructions are given in MLP2024_25_CW1_Spec.pdf (see Learn, Assignment Submission, CW1).
  * The [report directory](https://github.com/VICO-UoE/mlpractical/tree/mlp2024-25/coursework1/report) contains the latex files that you will use to create your report.
