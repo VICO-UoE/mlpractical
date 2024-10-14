@@ -26,6 +26,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+etc/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -68,6 +69,7 @@ notebooks/.ipynb_checkpoints/
 
 # Data folder
 data/
+solutions/
 
 # Latex stuff
 report/mlp-cw1-template.aux
