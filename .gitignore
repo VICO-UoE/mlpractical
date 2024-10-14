@@ -68,7 +68,6 @@ target/
 notebooks/.ipynb_checkpoints/
 
 # Data folder
-data/
 solutions/
 
 # Latex stuff
