@@ -111,7 +111,7 @@ You only have $50 dollars worth of credit, which should be about 6 days of GPU u
     exit()
     ```
 14. Well done, you are now in your instance and ready to use it for your coursework.
-15. Clone a fresh mlpractical repository, and checkout branch `mlp2023-24/mlp_compute_engines`: 
+15. Clone a fresh mlpractical repository, and checkout branch `mlp2024-25/mlp_compute_engines`: 
 
     ```
     git clone https://github.com/VICO-UoE/mlpractical.git ~/mlpractical
