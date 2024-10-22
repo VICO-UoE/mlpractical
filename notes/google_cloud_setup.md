@@ -116,7 +116,7 @@ You only have $50 dollars worth of credit, which should be about 6 days of GPU u
     ```
     git clone https://github.com/VICO-UoE/mlpractical.git ~/mlpractical
     cd ~/mlpractical
-    git checkout mlp2023-24/mlp_compute_engines
+    git checkout mlp2024-25/mlp_compute_engines
     ```
 
     Then, to test PyTorch running on the GPU, run this script that trains a small convolutional network on EMNIST dataset:
