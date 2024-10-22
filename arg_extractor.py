@@ -2,7 +2,6 @@ import argparse
 import json
 import os
 import sys
-import GPUtil
 
 def str2bool(v):
     if v.lower() in ('yes', 'true', 't', 'y', '1'):
