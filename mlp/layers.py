@@ -274,6 +274,7 @@ class RadialBasisFunctionLayer(Layer):
                 tile basis functions in grid across. For example for a 2D input
                 space spanning [0, 1] x [0, 1] use intervals=[[0, 1], [0, 1]].
         """
+        self.grid_dim = grid_dim
         num_basis = grid_dim**len(intervals)
         self.centres = np.array(np.meshgrid(*[
             np.linspace(low, high, grid_dim) for (low, high) in intervals])
