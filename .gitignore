@@ -1,3 +1,6 @@
+#editors
+*.idea/
+
 #dropbox stuff
 *.dropbox*
 
@@ -58,6 +61,8 @@ docs/_build/
 
 # PyBuilder
 target/
-
-# Notebook stuff
-notebooks/.ipynb_checkpoints/
+*.tar.gz
+google-cloud-sdk/
+solutions/
+.ipynb_checkpoints/
+emnist_tutorial/
